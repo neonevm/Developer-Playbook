@@ -63,13 +63,7 @@ const topics = [
         link: 'https://www.preethikasireddy.com/post/how-does-ethereum-work-anyway',
         difficulty: 'Advanced',
       },
-      {
-        title: 'DeFi Product Design',
-        type: 'Design Guide',
-        description: 'Designing DeFi products and protocols',
-        link: 'https://defiroadmap.com/',
-        difficulty: 'Advanced',
-      },
+
     ],
   },
   {

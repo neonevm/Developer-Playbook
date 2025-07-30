@@ -3,34 +3,6 @@ import { ArrowLeft, BookOpen, ExternalLink, Github, Globe, Video, FileText, Shie
 
 const curatedLinks = [
   {
-    category: 'DeFi & Blockchain Development',
-    description: 'Essential resources for DeFi and blockchain development',
-    links: [
-      {
-        title: 'DeFi Developer Roadmap',
-        description: 'Here we collect and discuss the best DeFi & Blockchain researches and tools',
-        url: 'https://defiroadmap.com/',
-        type: 'Development Roadmap',
-        icon: Globe,
-      },
-      {
-        title: 'Smart Contract Best Practices',
-        description: 'A guide to Ethereum smart contract security best practices',
-        url: 'https://consensys.net/blog/developers/smart-contract-security-best-practices/',
-        type: 'Security Guide',
-        icon: Shield,
-      },
-      {
-        title: 'ETH Gas Tracker',
-        description: 'Monitor and track the Ethereum, and L2 gas prices to reduce transaction fees and save money',
-        url: 'https://etherscan.io/gastracker',
-        type: 'Gas Tracking',
-        icon: Zap,
-      },
-    ],
-  },
-
-  {
     category: 'Development Tools & Resources',
     description: 'Essential tools and resources for Web3 development',
     links: [

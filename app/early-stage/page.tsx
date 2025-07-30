@@ -77,13 +77,7 @@ const topics = [
     description: 'Understanding token standards and blockchain transactions',
     icon: Globe,
     resources: [
-      {
-        title: 'ETH Gas Tracker',
-        type: 'Gas Tracking',
-        description: 'Monitor and track the Ethereum, and L2 gas prices to reduce transaction fees and save money',
-        link: 'https://etherscan.io/gastracker',
-        difficulty: 'Beginner',
-      },
+
       {
         title: 'Ethereum Book',
         type: 'Book',

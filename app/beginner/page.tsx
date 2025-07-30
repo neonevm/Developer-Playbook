@@ -72,13 +72,7 @@ const topics = [
     icon: Shield,
     resources: [
 
-      {
-        title: 'Smart Contract Security Best Practices',
-        type: 'Security Guide',
-        description: 'A guide to Ethereum smart contract security best practices',
-        link: 'https://consensys.net/blog/developers/smart-contract-security-best-practices/',
-        difficulty: 'Intermediate',
-      },
+
       {
         title: 'OpenZeppelin',
         type: 'Security Library',

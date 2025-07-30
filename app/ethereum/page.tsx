@@ -105,13 +105,7 @@ const topics = [
     description: 'Decentralized Finance protocols and applications',
     icon: Globe,
     resources: [
-      {
-        title: 'DeFi Developer Roadmap',
-        type: 'Development Roadmap',
-        description: 'Here we collect and discuss the best DeFi & Blockchain researches and tools',
-        link: 'https://defiroadmap.com/',
-        difficulty: 'Intermediate to Advanced',
-      },
+
       {
         title: 'Uniswap V2 Core',
         type: 'Protocol Implementation',

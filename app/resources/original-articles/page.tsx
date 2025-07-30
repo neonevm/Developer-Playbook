@@ -255,17 +255,7 @@ const originalArticles = [
     category: 'Best Practices & Security',
     description: 'Articles on development best practices and security considerations',
     articles: [
-      {
-        title: 'Smart Contract Security Best Practices',
-        description: 'Essential security practices for Ethereum smart contract development',
-        author: 'Consensys',
-        date: '2022',
-        readTime: '20 min',
-        difficulty: 'Intermediate',
-        url: 'https://consensys.net/blog/developers/smart-contract-security-best-practices/',
-        type: 'Security Guide',
-        icon: Shield,
-      },
+
       {
         title: 'DeFi Security: A Comprehensive Guide',
         description: 'Security considerations and best practices for DeFi protocol development',
