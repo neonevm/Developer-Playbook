@@ -10,15 +10,6 @@ Explore. Learn. Build. Contribute.
 
 https://dev-playbook.vercel.app/
 
-<!-- TABLE OF CONTENTS -->
-&nbsp;
-
-## Table of Contents
-
-- [Getting Started](#getting-started)
-
-&nbsp;
-
 ## Contributing
 
 ### How to Contribute
