@@ -29,110 +29,7 @@ const curatedLinks = [
       },
     ],
   },
-  {
-    category: 'Web3 Design Examples',
-    description: 'Top Web3 design examples and inspiration from the community',
-    links: [
-      {
-        title: 'Tableland.xyz',
-        description: 'Decentralized database protocol for structured data',
-        url: 'https://tableland.xyz/',
-        type: 'Protocol',
-        icon: Globe,
-      },
-      {
-        title: 'Arweave',
-        description: 'Permanent data storage for the web',
-        url: 'https://www.arweave.org/',
-        type: 'Storage',
-        icon: Globe,
-      },
-      {
-        title: 'Curve.fi',
-        description: 'Decentralized exchange for stablecoins',
-        url: 'https://curve.fi/',
-        type: 'DeFi',
-        icon: Globe,
-      },
-      {
-        title: 'WalletConnect',
-        description: 'Open protocol for connecting wallets to dapps',
-        url: 'https://walletconnect.com/',
-        type: 'Wallet Protocol',
-        icon: Globe,
-      },
-      {
-        title: 'CryptoDickbutts',
-        description: 'NFT collection with unique design',
-        url: 'https://www.cryptodickbutts.com/',
-        type: 'NFT Collection',
-        icon: Globe,
-      },
-      {
-        title: 'Juicebox',
-        description: 'Programmable treasury and governance for communities and projects',
-        url: 'https://juicebox.money/#/',
-        type: 'Treasury',
-        icon: Globe,
-      },
-      {
-        title: 'CryptoZombies',
-        description: 'Learn Solidity by building your own crypto-collectibles game',
-        url: 'https://cryptozombies.io/',
-        type: 'Learning Platform',
-        icon: Globe,
-      },
-      {
-        title: 'Sandclock',
-        description: 'Time-based DeFi protocol',
-        url: 'https://www.sandclock.org/#start',
-        type: 'DeFi Protocol',
-        icon: Globe,
-      },
-      {
-        title: 'DDP',
-        description: 'Decentralized data protocol',
-        url: 'https://theddp.com/',
-        type: 'Data Protocol',
-        icon: Globe,
-      },
-      {
-        title: 'EPNS',
-        description: 'Ethereum Push Notification Service',
-        url: 'https://epns.io/',
-        type: 'Notification Service',
-        icon: Globe,
-      },
-      {
-        title: 'Rarity Punks',
-        description: 'NFT rarity tracking and analytics',
-        url: 'https://raritypunks.io/',
-        type: 'NFT Analytics',
-        icon: Globe,
-      },
-      {
-        title: 'Trustless',
-        description: 'DeFi protocol with focus on security',
-        url: 'https://www.trustless.fi/',
-        type: 'DeFi Protocol',
-        icon: Globe,
-      },
-      {
-        title: 'PWN',
-        description: 'Peer-to-peer lending protocol',
-        url: 'https://pwn.xyz/',
-        type: 'Lending Protocol',
-        icon: Globe,
-      },
-      {
-        title: 'Odyssey DAO',
-        description: 'Community-driven Web3 education platform',
-        url: 'https://www.odysseydao.com/',
-        type: 'Education',
-        icon: Globe,
-      },
-    ],
-  },
+
   {
     category: 'Development Tools & Resources',
     description: 'Essential tools and resources for Web3 development',
@@ -324,7 +221,7 @@ export default function CuratedLinksPage() {
             Help the community by suggesting new curated links. Your contributions help other developers find the best resources.
           </p>
           <a
-            href="https://github.com/neon-playbook"
+                            href="https://github.com/Avvrik/Dev-Playbook"
             target="_blank"
             rel="noopener noreferrer"
             className="bg-white text-[#8E1CF1] hover:bg-gray-100 font-medium py-3 px-6 rounded-lg transition-all duration-300 shadow-lg transform hover:scale-105 inline-flex items-center"

@@ -126,27 +126,7 @@ const topics = [
         link: 'https://github.com/compound-finance/compound-protocol',
         difficulty: 'Advanced',
       },
-      {
-        title: 'Curve.fi',
-        type: 'DeFi Protocol',
-        description: 'Decentralized exchange for stablecoins',
-        link: 'https://curve.fi/',
-        difficulty: 'Advanced',
-      },
-      {
-        title: 'Sandclock',
-        type: 'DeFi Protocol',
-        description: 'Time-based DeFi protocol',
-        link: 'https://www.sandclock.org/#start',
-        difficulty: 'Advanced',
-      },
-      {
-        title: 'PWN',
-        type: 'Lending Protocol',
-        description: 'Peer-to-peer lending protocol',
-        link: 'https://pwn.xyz/',
-        difficulty: 'Advanced',
-      },
+
     ],
   },
   {
@@ -309,7 +289,7 @@ export default function EthereumPage() {
                      Join Discord
                    </a>
                                <a
-                     href="https://github.com/neon-playbook"
+                     href="https://github.com/Avvrik/Dev-Playbook"
                      target="_blank"
                      rel="noopener noreferrer"
                      className="bg-white/20 border border-white/30 text-white hover:bg-white/30 font-medium py-3 px-6 rounded-lg transition-all duration-300"

@@ -227,7 +227,7 @@ export default function SolanaPage() {
                      Join Discord
                    </a>
                                <a
-                     href="https://github.com/neon-playbook"
+                     href="https://github.com/Avvrik/Dev-Playbook"
                      target="_blank"
                      rel="noopener noreferrer"
                      className="bg-white/20 border border-white/30 text-white hover:bg-white/30 font-medium py-3 px-6 rounded-lg transition-all duration-300"

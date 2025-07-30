@@ -304,7 +304,7 @@ export default function MiniGuidesPage() {
             Have a specific concept you want to explain? Create a focused mini-guide to help other developers understand it quickly.
           </p>
           <a
-            href="https://github.com/neon-playbook"
+                            href="https://github.com/Avvrik/Dev-Playbook"
             target="_blank"
             rel="noopener noreferrer"
             className="bg-white text-[#8E1CF1] hover:bg-gray-100 font-medium py-3 px-6 rounded-lg transition-all duration-300 shadow-lg transform hover:scale-105 inline-flex items-center"

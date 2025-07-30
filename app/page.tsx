@@ -127,24 +127,21 @@ const contentTypes = [
 
 const featuredContributors = [
   {
-    name: 'Alex Chen',
-    role: 'Smart Contract Developer',
-    contribution: 'Neon EVM Gas Optimization Guide',
-    twitter: '@alexchen',
+    name: '@Jules_Gallen',
+    role: 'DevRel',
+    twitter: 'Jules_Gallen',
     avatar: '👨‍💻',
   },
   {
-    name: 'Sarah Kim',
-    role: 'DeFi Researcher',
-    contribution: 'Ethereum DeFi Security Patterns',
-    twitter: '@sarahkim',
-    avatar: '👩‍🔬',
+    name: '@Goodnesmbakara',
+    role: 'Software Engineer',
+    twitter: 'Goodnesmbakara',
+    avatar: '👨‍💻',
   },
   {
-    name: 'Mike Rodriguez',
-    role: 'Solana Developer',
-    contribution: 'SPL Token Development Tutorial',
-    twitter: '@mikerod',
+    name: '@victorokpukpan_',
+    role: 'Blockchain Security Researcher',
+    twitter: 'victorokpukpan_',
     avatar: '👨‍💻',
   },
 ]
@@ -167,7 +164,7 @@ export default function HomePage() {
               <Link href="/beginner" className="bg-gradient-to-r from-[#FF00AA] to-[#8E1CF1] text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
                 Start Your Journey
               </Link>
-              <a href="https://github.com/neon-playbook" target="_blank" rel="noopener noreferrer" className="bg-white/10 border border-white/20 text-white hover:bg-white/20 font-medium py-3 px-6 rounded-lg transition-all duration-300">
+              <a href="https://github.com/Avvrik/Dev-Playbook" target="_blank" rel="noopener noreferrer" className="bg-white/10 border border-white/20 text-white hover:bg-white/20 font-medium py-3 px-6 rounded-lg transition-all duration-300">
                 Contribute
               </a>
             </div>
@@ -271,9 +268,9 @@ export default function HomePage() {
             <h3 className="text-3xl font-display font-bold text-white">
               Featured Contributors
             </h3>
-            <p className="mt-4 text-lg text-white/90">
-              Meet developers who are building their reputation through contributions
-            </p>
+                         <p className="mt-4 text-lg text-white/90">
+               Meet developers who are building their portfolio through contributions
+             </p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -283,10 +280,7 @@ export default function HomePage() {
                 <h4 className="text-lg font-display font-semibold text-white mb-2">
                   {contributor.name}
                 </h4>
-                <p className="text-white/80 mb-2">{contributor.role}</p>
-                <p className="text-sm text-white/70 mb-4">
-                  "{contributor.contribution}"
-                </p>
+                                 <p className="text-white/80 mb-2">{contributor.role}</p>
                 <div className="flex justify-center space-x-2">
                   <a
                     href={`https://twitter.com/${contributor.twitter}`}
@@ -314,7 +308,7 @@ export default function HomePage() {
             Join our VIP Discord community and build your reputation as a blockchain expert.
           </p>
           <div className="flex justify-center space-x-4">
-            <a href="https://github.com/neon-playbook" target="_blank" rel="noopener noreferrer" className="bg-white text-[#8E1CF1] hover:bg-gray-100 font-medium py-3 px-6 rounded-lg transition-all duration-300 shadow-lg transform hover:scale-105">
+            <a href="https://github.com/Avvrik/Dev-Playbook" target="_blank" rel="noopener noreferrer" className="bg-white text-[#8E1CF1] hover:bg-gray-100 font-medium py-3 px-6 rounded-lg transition-all duration-300 shadow-lg transform hover:scale-105">
               Contribute Now
             </a>
             <a
@@ -352,7 +346,7 @@ export default function HomePage() {
             <div>
               <h4 className="font-display font-semibold text-white mb-4">Community</h4>
               <ul className="space-y-2 text-white/80">
-                <li><a href="https://github.com/neon-playbook" target="_blank" rel="noopener noreferrer" className="hover:text-[#73FDEA] transition-colors duration-300">Contribute</a></li>
+                <li><a href="https://github.com/Avvrik/Dev-Playbook" target="_blank" rel="noopener noreferrer" className="hover:text-[#73FDEA] transition-colors duration-300">Contribute</a></li>
                 <li><Link href="/" className="hover:text-[#73FDEA] transition-colors duration-300">About</Link></li>
                 <li><a href="https://discord.gg/Y6E3FZAguZ" className="hover:text-[#73FDEA] transition-colors duration-300">Discord</a></li>
               </ul>
@@ -363,7 +357,7 @@ export default function HomePage() {
                 <a href="https://x.com/Neon_EVM" className="text-white/70 hover:text-[#73FDEA] transition-colors duration-300">
                   <Twitter className="h-6 w-6" />
                 </a>
-                <a href="https://github.com/neon-playbook" className="text-white/70 hover:text-[#73FDEA] transition-colors duration-300">
+                <a href="https://github.com/Avvrik/Dev-Playbook" className="text-white/70 hover:text-[#73FDEA] transition-colors duration-300">
                   <Github className="h-6 w-6" />
                 </a>
               </div>

@@ -238,7 +238,7 @@ export default function NeonEVMPage() {
               create code examples, or share best practices.
             </p>
             <div className="flex justify-center space-x-4">
-              <a href="https://github.com/neon-playbook" target="_blank" rel="noopener noreferrer" className="btn-primary">
+                              <a href="https://github.com/Avvrik/Dev-Playbook" target="_blank" rel="noopener noreferrer" className="btn-primary">
                 Contribute Content
               </a>
               <a
@@ -278,7 +278,7 @@ export default function NeonEVMPage() {
           </Link>
           
                       <a
-              href="https://github.com/neon-playbook"
+                              href="https://github.com/Avvrik/Dev-Playbook"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center p-4 border border-gray-200 rounded-lg hover:border-primary-300 hover:bg-primary-50 transition-colors duration-200"

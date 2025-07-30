@@ -105,13 +105,7 @@ const topics = [
     description: 'Web3 integration and frontend development',
     icon: Target,
     resources: [
-      {
-        title: 'WalletConnect',
-        type: 'Wallet Protocol',
-        description: 'Open protocol for connecting wallets to dapps',
-        link: 'https://walletconnect.com/',
-        difficulty: 'Intermediate',
-      },
+
       {
         title: 'WalletConnect DApp',
         type: 'Template',
@@ -260,7 +254,7 @@ export default function EarlyStagePage() {
                      Join Discord
                    </a>
                                <a
-                     href="https://github.com/neon-playbook"
+                     href="https://github.com/Avvrik/Dev-Playbook"
                      target="_blank"
                      rel="noopener noreferrer"
                      className="bg-white/20 border border-white/30 text-white hover:bg-white/30 font-medium py-3 px-6 rounded-lg transition-all duration-300"

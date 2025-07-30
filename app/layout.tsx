@@ -92,7 +92,7 @@ export default function RootLayout({
                   />
                 </Link>
                 <a
-                  href="https://github.com/neon-playbook"
+                  href="https://github.com/Avvrik/Dev-Playbook"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center bg-gradient-to-r from-[#FF00AA] to-[#8E1CF1] hover:from-[#8E1CF1] hover:to-[#FF00AA] text-white px-4 py-2 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"

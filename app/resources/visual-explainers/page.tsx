@@ -306,7 +306,7 @@ export default function VisualExplainersPage() {
             Have a complex concept that would benefit from visual explanation? Create diagrams, charts, or interactive visualizations to help others understand.
           </p>
           <a
-            href="https://github.com/neon-playbook"
+                            href="https://github.com/Avvrik/Dev-Playbook"
             target="_blank"
             rel="noopener noreferrer"
             className="bg-white text-[#8E1CF1] hover:bg-gray-100 font-medium py-3 px-6 rounded-lg transition-all duration-300 shadow-lg transform hover:scale-105 inline-flex items-center"

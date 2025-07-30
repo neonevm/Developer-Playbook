@@ -42,13 +42,7 @@ const topics = [
     description: 'Essential programming concepts and development tools',
     icon: Code,
     resources: [
-      {
-        title: 'CryptoZombies',
-        type: 'Interactive Course',
-        description: 'Learn Solidity by building your own crypto-collectibles game',
-        link: 'https://cryptozombies.io/',
-        difficulty: 'Beginner',
-      },
+
       {
         title: 'Solidity Language Docs',
         type: 'Documentation',
@@ -77,13 +71,7 @@ const topics = [
     description: 'Understanding cryptocurrency wallets and basic security practices',
     icon: Shield,
     resources: [
-      {
-        title: 'WalletConnect',
-        type: 'Wallet Protocol',
-        description: 'Open protocol for connecting wallets to dapps',
-        link: 'https://walletconnect.com/',
-        difficulty: 'Beginner',
-      },
+
       {
         title: 'Smart Contract Security Best Practices',
         type: 'Security Guide',
@@ -260,7 +248,7 @@ export default function BeginnerPage() {
                      Join Discord
                    </a>
                                <a
-                     href="https://github.com/neon-playbook"
+                     href="https://github.com/Avvrik/Dev-Playbook"
                      target="_blank"
                      rel="noopener noreferrer"
                      className="bg-white/20 border border-white/30 text-white hover:bg-white/30 font-medium py-3 px-6 rounded-lg transition-all duration-300"
