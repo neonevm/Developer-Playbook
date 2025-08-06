@@ -1,188 +1,165 @@
 import Link from 'next/link'
-import { ArrowLeft, BookOpen, Code, Target, Shield, Globe, Github, ExternalLink, Zap, Database } from 'lucide-react'
+import { ArrowLeft, BookOpen, Code, Target, Shield, Globe, Github, ExternalLink, GraduationCap } from 'lucide-react'
 
 const topics = [
   {
-    title: 'Advanced Solidity',
-    description: 'Master advanced Solidity concepts and patterns',
-    icon: Code,
-    resources: [
-      {
-        title: 'Solidity Language Docs',
-        type: 'Documentation',
-        description: 'Official Solidity documentation',
-        link: 'https://docs.soliditylang.org/',
-        difficulty: 'Intermediate to Advanced',
+    title: 'Neon EVM',
+    description: 'Resources for neon evm development and learning',
+    icon: Globe,
+    resources: [      {
+        title: 'Building a Neon EVM Plugin for ElizaOS - A Developer\'s Tutorial',
+        type: 'Neon EVM',
+        description: 'Step-by-step guide to building custom plugins for ElizaOS on Neon EVM',
+        link: 'https://www.neonevm.org/blog/building-a-neon-evm-plugin-for-elizaos--a-developers-tutorial',
+        difficulty: 'Intermediate',
+      },      {
+        title: 'Developer Demo: Memecoin Launchpad with Raydium Integration via Neon EVM',
+        type: 'Neon EVM',
+        description: 'Building a memecoin launchpad with Raydium integration on Neon EVM',
+        link: 'https://www.neonevm.org/blog/developer-demo--memecoin-launchpad-with-raydium-integration-via-neon-evm',
+        difficulty: 'Intermediate',
+      },      {
+        title: 'ElizaOS Plugin Action for Deploying Contracts on Neon EVM - A Developer\'s Tutorial',
+        type: 'Neon EVM',
+        description: 'Complete tutorial on creating ElizaOS plugins for Neon EVM contract deployment',
+        link: 'https://www.neonevm.org/blog/elizaos-plugin-action-for-deploying-contracts-on-neon-evm--a-developers-tutorial',
+        difficulty: 'Intermediate',
+      },      {
+        title: 'Hardhat Keystore: Secure Private Key Management for Developers',
+        type: 'Neon EVM',
+        description: 'A comprehensive guide to secure private key management using Hardhat keystore',
+        link: 'https://www.neonevm.org/blog/hardhat-keystore-secure-private-key-management-for-developers',
+        difficulty: 'Intermediate',
+      },      {
+        title: 'Neon\'s Composability Libraries: Babel Fish for Blockchains',
+        type: 'Neon EVM',
+        description: 'Exploring Neon\'s composability libraries and their role in cross-chain communication',
+        link: 'https://www.neonevm.org/blog/neons-composability-libraries-babel-fish-for-blockchains',
+        difficulty: 'Intermediate',
       },
-      {
-        title: 'Solidity by Example',
-        type: 'Code Examples',
-        description: 'Solidity code samples and examples',
-        link: 'https://solidity-by-example.org/',
-        difficulty: 'Intermediate to Advanced',
+    ],
+  },  {
+    title: 'Ethereum',
+    description: 'Resources for ethereum development and learning',
+    icon: Globe,
+    resources: [      {
+        title: 'The Complete Guide to Full Stack Ethereum Development',
+        type: 'Ethereum',
+        description: 'Building Full Stack dApps with React, Ethers.js, Solidity, and Hardhat',
+        link: 'https://www.freecodecamp.org/news/full-stack-ethereum-development/',
+        difficulty: 'Intermediate',
+      },      {
+        title: 'How Does Ethereum Work, Anyway?',
+        type: 'Ethereum',
+        description: 'A comprehensive breakdown of Ethereum\'s inner workings and mechanisms',
+        link: 'https://www.preethikasireddy.com/post/how-does-ethereum-work-anyway',
+        difficulty: 'Intermediate',
+      },      {
+        title: 'What Happens When You Send One DAI',
+        type: 'Ethereum',
+        description: 'Detailed walkthrough of what happens when you send a DAI transaction',
+        link: 'https://www.notonlyowner.com/learn/what-happens-when-you-send-one-dai',
+        difficulty: 'Intermediate',
+      },      {
+        title: 'What is ERC-4337?',
+        type: 'Ethereum',
+        description: 'Account abstraction without Ethereum protocol changes',
+        link: 'https://www.youtube.com/watch?v=QuYZWJj65AY',
+        difficulty: 'Intermediate',
       },
-      {
+    ],
+  },  {
+    title: 'Cross-Chain',
+    description: 'Resources for cross-chain development and learning',
+    icon: Globe,
+    resources: [      {
+        title: 'Enabling Solana Users to Access EVM dApps Running on Solana',
+        type: 'Cross-Chain',
+        description: 'Technical implementation of cross-chain dApp access for Solana users',
+        link: 'https://www.neonevm.org/blog/enabling-solana-users-to-access-evm-dapps-running-on-solana',
+        difficulty: 'Intermediate',
+      },      {
+        title: 'Unveiling Solana Signature SDK: Enabling Solana Users to Access EVM dApps',
+        type: 'Cross-Chain',
+        description: 'Introduction to the Solana Signature SDK for cross-chain dApp access',
+        link: 'https://www.neonevm.org/blog/unveiling-solana-signature-sdk-enabling-solana-users-to-access-evm-dapps',
+        difficulty: 'Intermediate',
+      },
+    ],
+  },  {
+    title: 'Blockchain Resources',
+    description: 'Resources for blockchain resources development and learning',
+    icon: Globe,
+    resources: [      {
+        title: 'Ethereum Book',
+        type: 'Blockchain Resources',
+        description: 'Andreas M\'s book on Mastering Ethereum Development',
+        link: 'https://github.com/ethereumbook/ethereumbook',
+        difficulty: 'Intermediate',
+      },      {
+        title: 'Solana Cookbook',
+        type: 'Blockchain Resources',
+        description: 'Developing with Solana and Rust',
+        link: 'https://solanacookbook.com/',
+        difficulty: 'Intermediate',
+      },
+    ],
+  },  {
+    title: 'Smart Contract Templates',
+    description: 'Resources for smart contract templates development and learning',
+    icon: Globe,
+    resources: [      {
         title: 'OpenZeppelin Contracts',
-        type: 'Security Library',
+        type: 'Smart Contract Templates',
+        description: 'Library for secure smart contract development with battle-tested implementations',
+        link: 'https://github.com/OpenZeppelin/openzeppelin-contracts',
+        difficulty: 'Advanced',
+      },
+    ],
+  },  {
+    title: 'Security',
+    description: 'Resources for security development and learning',
+    icon: Shield,
+    resources: [      {
+        title: 'OpenZeppelin',
+        type: 'Security',
         description: 'Library for secure smart contract development',
         link: 'https://openzeppelin.com/',
-        difficulty: 'Advanced',
-      },
-      {
-        title: 'Awesome Solidity',
-        type: 'GitHub Repository',
-        description: 'Github repository containing a collection of Solidity tools, libraries, and resources',
-        link: 'https://github.com/bkrem/awesome-solidity',
-        difficulty: 'Advanced',
-      },
-    ],
-  },
-  {
-    title: 'Token Standards',
-    description: 'ERC standards and token implementations',
-    icon: Database,
-    resources: [
-      {
-        title: 'OpenZeppelin Contracts',
-        type: 'Security Library',
-        description: 'Library for secure smart contract development with ERC20, ERC721 implementations',
-        link: 'https://openzeppelin.com/',
-        difficulty: 'Advanced',
-      },
-      {
-        title: 'ERC20 Token Implementation',
-        type: 'Code Example',
-        description: 'Complete ERC-20 token contract with all standard functions',
-        link: 'https://github.com/OpenZeppelin/openzeppelin-contracts',
-        difficulty: 'Intermediate',
-      },
-      {
-        title: 'ERC-721 NFT Contract',
-        type: 'Code Example',
-        description: 'Non-fungible token contract with metadata support',
-        link: 'https://github.com/OpenZeppelin/openzeppelin-contracts',
         difficulty: 'Intermediate',
       },
     ],
-  },
-  {
-    title: 'Tooling',
-    description: 'Advanced development tools and frameworks',
-    icon: Zap,
-    resources: [
-      {
-        title: 'Hardhat',
-        type: 'Development Framework',
-        description: 'Professional Solidity development environment',
-        link: 'https://hardhat.org/',
-        difficulty: 'Intermediate to Advanced',
-      },
-      {
+  },  {
+    title: 'Full-Stack Development Templates',
+    description: 'Resources for full-stack development templates development and learning',
+    icon: Globe,
+    resources: [      {
         title: 'Scaffold ETH 2',
-        type: 'Full Stack Template',
+        type: 'Full-Stack Development Templates',
         description: 'Forkable Ethereum development stack focused on fast product iterations',
         link: 'https://github.com/scaffold-eth/scaffold-eth-2',
         difficulty: 'Advanced',
       },
-      {
-        title: 'Foundry',
-        type: 'Development Framework',
-        description: 'Fast, portable and modular toolkit for Ethereum application development',
-        link: 'https://github.com/foundry-rs/foundry',
-        difficulty: 'Advanced',
-      },
-      {
-        title: 'Mythril',
-        type: 'Security Analysis',
-        description: 'Security analysis tool for Ethereum smart contracts',
-        link: 'https://github.com/ConsenSys/mythril',
-        difficulty: 'Advanced',
-      },
     ],
-  },
-  {
-    title: 'DeFi',
-    description: 'Decentralized Finance protocols and applications',
+  },  {
+    title: 'General',
+    description: 'Resources for general development and learning',
     icon: Globe,
-    resources: [
-
-      {
-        title: 'Uniswap V2 Core',
-        type: 'Protocol Implementation',
-        description: 'Core smart contracts for Uniswap V2 AMM',
-        link: 'https://github.com/Uniswap/v2-core',
-        difficulty: 'Advanced',
-      },
-      {
-        title: 'Compound Protocol',
-        type: 'Protocol Implementation',
-        description: 'The Compound protocol implementation',
-        link: 'https://github.com/compound-finance/compound-protocol',
-        difficulty: 'Advanced',
-      },
-
-    ],
-  },
-  {
-    title: 'Oracles',
-    description: 'Data oracles and external data integration',
-    icon: Target,
-    resources: [
-      {
-        title: 'Chainlink',
-        type: 'Oracle Network',
-        description: 'Decentralized oracle network for smart contracts',
-        link: 'https://chainlink.org/',
-        difficulty: 'Intermediate to Advanced',
-      },
-    ],
-  },
-  {
-    title: 'Data Indexing',
-    description: 'Blockchain data indexing and analytics',
-    icon: Database,
-    resources: [
-      {
-        title: 'The Graph',
-        type: 'Indexing Protocol',
-        description: 'Decentralized protocol for indexing and querying blockchain data',
-        link: 'https://thegraph.com/',
-        difficulty: 'Intermediate to Advanced',
-      },
-      {
-        title: 'Blockscout',
-        type: 'Blockchain Explorer',
-        description: 'Open-source blockchain explorer',
-        link: 'https://blockscout.com/',
+    resources: [      {
+        title: 'Zero Knowledge is Easy - The Ultimate How-To Article',
+        type: 'General',
+        description: 'Comprehensive guide to understanding and implementing zero-knowledge proofs',
+        link: 'https://blog.borodutch.com/zero-knowledge-is-easy-or-the-ultimate-how-to-article/',
         difficulty: 'Intermediate',
       },
     ],
-  },
-]
-
-const nextSteps = [
-  {
-    title: 'Solana Development',
-    description: 'Build high-performance applications on Solana',
-    link: '/solana',
-  },
-  {
-    title: 'Cross-Chain Development',
-    description: 'Master cross-chain development with Neon EVM',
-    link: '/cross-chain',
-  },
-  {
-    title: 'Beyond: Advanced Topics',
-    description: 'Advanced blockchain development and ecosystem',
-    link: '/beyond-advanced-topics',
   },
 ]
 
 export default function EthereumPage() {
   return (
     <div className="min-h-screen bg-black">
+      {/* Header */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Page Header */}
         <div className="mb-8">
           <Link
             href="/"
@@ -191,47 +168,53 @@ export default function EthereumPage() {
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Home
           </Link>
-          <h1 className="text-3xl font-display font-bold text-white mb-4">Ethereum Development</h1>
+          <h1 className="text-3xl font-display font-bold text-white mb-4">
+            Ethereum
+          </h1>
           <p className="text-lg text-white/90 max-w-3xl">
-            Master Ethereum development, advanced Solidity, DeFi protocols, and the Ethereum ecosystem. 
-            Build sophisticated smart contracts and decentralized applications.
+            Comprehensive resources for ethereum development. 
+            From fundamentals to advanced topics, find everything you need to master ethereum development.
           </p>
         </div>
 
         {/* Topics */}
-        <div className="space-y-8 mb-12">
+        <div className="space-y-12">
           {topics.map((topic) => (
             <div key={topic.title} className="bg-[#1a1a1a] border border-white/10 rounded-lg p-6">
-              <div className="flex items-center mb-4">
-                <div className="w-10 h-10 bg-gradient-to-r from-[#FF00AA] to-[#8E1CF1] rounded-lg flex items-center justify-center mr-4">
-                  <topic.icon className="h-5 w-5 text-white" />
+              <div className="mb-6">
+                <div className="flex items-center mb-4">
+                  <div className="w-10 h-10 bg-gradient-to-r from-[#FF00AA] to-[#8E1CF1] rounded-lg flex items-center justify-center mr-4">
+                    <topic.icon className="h-5 w-5 text-white" />
+                  </div>
+                  <h2 className="text-2xl font-display font-semibold text-white">
+                    {topic.title}
+                  </h2>
                 </div>
-                <h2 className="text-xl font-display font-semibold text-white">{topic.title}</h2>
+                <p className="text-white/80">{topic.description}</p>
               </div>
-              <p className="text-white/80 mb-6">{topic.description}</p>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {topic.resources.map((resource) => (
                   <a
                     key={resource.title}
                     href={resource.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block p-4 border border-white/20 rounded-lg hover:border-white/40 hover:bg-[#2a2a2a] transition-all duration-300 bg-[#2a2a2a] group"
+                    className="block p-6 border border-white/20 rounded-lg hover:border-white/40 hover:bg-[#2a2a2a] transition-all duration-300 bg-[#2a2a2a] group"
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <h3 className="text-lg font-display font-semibold text-white group-hover:text-[#73FDEA] transition-colors duration-300 mb-2">
                           {resource.title}
                         </h3>
-                        <p className="text-white/80 text-sm mb-3">{resource.description}</p>
-                        <div className="flex items-center space-x-3">
-                          <span className="inline-block bg-[#1a1a1a] text-white/70 text-xs px-2 py-1 rounded border border-white/20">
-                            {resource.type}
-                          </span>
-                          <span className="inline-block bg-[#1a1a1a] text-white/70 text-xs px-2 py-1 rounded border border-white/20">
+                        <p className="text-white/80 text-sm mb-3">
+                          {resource.description}
+                        </p>
+                        <div className="flex items-center justify-between">
+                          <span className="inline-block bg-[#1a1a1a] text-white/70 px-2 py-1 rounded border border-white/20 text-xs">
                             {resource.difficulty}
                           </span>
+                          <span className="text-white/50 text-xs">{resource.type}</span>
                         </div>
                       </div>
                       <ExternalLink className="h-4 w-4 text-white/50 group-hover:text-[#73FDEA] transition-colors duration-300" />
@@ -243,56 +226,25 @@ export default function EthereumPage() {
           ))}
         </div>
 
-        {/* Next Steps */}
-        <div className="bg-[#1a1a1a] border border-white/10 rounded-lg p-6 mb-8">
-          <h2 className="text-2xl font-display font-semibold text-white mb-4">What's Next?</h2>
-          <p className="text-white/80 mb-6">
-            Ready to expand your blockchain expertise? Choose your next learning path.
-          </p>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {nextSteps.map((step) => (
-              <Link
-                key={step.title}
-                href={step.link}
-                className="block p-4 border border-white/20 rounded-lg hover:border-white/40 hover:bg-[#2a2a2a] transition-all duration-300 bg-[#2a2a2a] group"
-              >
-                <h3 className="text-lg font-display font-semibold text-white group-hover:text-[#73FDEA] transition-colors duration-300 mb-2">
-                  {step.title}
-                </h3>
-                <p className="text-white/80 text-sm">{step.description}</p>
-              </Link>
-            ))}
-          </div>
-        </div>
-
-        {/* Community Call to Action */}
-        <div className="bg-gradient-to-r from-[#8E1CF1] to-[#FF00AA] rounded-lg p-8 text-center">
-          <h3 className="text-2xl font-display font-bold text-white mb-4">Join Our Community</h3>
+        {/* Call to Action */}
+        <div className="mt-12 bg-gradient-to-r from-[#8E1CF1] to-[#FF00AA] rounded-lg p-8 text-center">
+          <h3 className="text-2xl font-display font-bold text-white mb-4">
+            Share Your Knowledge
+          </h3>
           <p className="text-white/90 mb-6 max-w-2xl mx-auto">
-            Connect with other Ethereum developers, ask questions, and share your progress. 
-            Our community is here to support your blockchain development journey.
+            Have a great ethereum resource? Help the community by contributing to our collection.
           </p>
-          <div className="flex justify-center space-x-4">
-                               <a
-                     href="https://discord.gg/Y6E3FZAguZ"
-                     className="bg-white text-[#8E1CF1] hover:bg-gray-100 font-medium py-3 px-6 rounded-lg transition-all duration-300 shadow-lg transform hover:scale-105 inline-flex items-center"
-                     target="_blank"
-                     rel="noopener noreferrer"
-                   >
-                     Join Discord
-                   </a>
-                               <a
-                     href="https://github.com/Avvrik/Dev-Playbook"
-                     target="_blank"
-                     rel="noopener noreferrer"
-                     className="bg-white/20 border border-white/30 text-white hover:bg-white/30 font-medium py-3 px-6 rounded-lg transition-all duration-300"
-                   >
-                     Contribute Resources
-                   </a>
-          </div>
+          <a
+            href="https://github.com/Avvrik/Dev-Playbook"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-white text-[#8E1CF1] hover:bg-gray-100 font-medium py-3 px-6 rounded-lg transition-all duration-300 shadow-lg transform hover:scale-105 inline-flex items-center"
+          >
+            Contribute Resource
+            <Github className="h-4 w-4 ml-2" />
+          </a>
         </div>
       </div>
     </div>
   )
-} 
+}

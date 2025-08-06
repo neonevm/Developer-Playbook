@@ -1,0 +1,155 @@
+name: Content Validation
+
+on:
+  pull_request:
+    paths:
+      - 'app/courses-tutorials/**'
+      - 'app/mini-guides/**'
+      - 'app/code-examples/**'
+      - 'app/visual-explainers/**'
+      - 'app/original-articles/**'
+      - 'app/curated-links/**'
+      - 'app/beginner/**'
+      - 'app/early-stage/**'
+      - 'app/ethereum/**'
+      - 'app/solana/**'
+      - 'app/cross-chain/**'
+      - 'app/devops/**'
+      - 'app/best-practices/**'
+      - 'app/development/**'
+      - 'app/beyond-advanced-topics/**'
+  push:
+    branches:
+      - main
+    paths:
+      - 'app/courses-tutorials/**'
+      - 'app/mini-guides/**'
+      - 'app/code-examples/**'
+      - 'app/visual-explainers/**'
+      - 'app/original-articles/**'
+      - 'app/curated-links/**'
+      - 'app/beginner/**'
+      - 'app/early-stage/**'
+      - 'app/ethereum/**'
+      - 'app/solana/**'
+      - 'app/cross-chain/**'
+      - 'app/devops/**'
+      - 'app/best-practices/**'
+      - 'app/development/**'
+      - 'app/beyond-advanced-topics/**'
+
+jobs:
+  validate-content:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        
+    - name: Install dependencies
+      run: npm install
+      
+    - name: Validate markdown files
+      run: |
+        # Check for required YAML frontmatter
+        for file in app/courses-tutorials/**/*.md app/mini-guides/**/*.md app/code-examples/**/*.md app/visual-explainers/**/*.md app/original-articles/**/*.md app/curated-links/**/*.md app/beginner/**/*.md app/early-stage/**/*.md app/ethereum/**/*.md app/solana/**/*.md app/cross-chain/**/*.md app/devops/**/*.md app/best-practices/**/*.md app/development/**/*.md app/beyond-advanced-topics/**/*.md; do
+          if [ -f "$file" ]; then
+            echo "Validating $file"
+            
+            # Check if file has YAML frontmatter
+            if ! head -n 1 "$file" | grep -q "---"; then
+              echo "❌ Error: $file missing YAML frontmatter"
+              exit 1
+            fi
+            
+            # Check for required fields
+            if ! grep -q "title:" "$file"; then
+              echo "❌ Error: $file missing title field"
+              exit 1
+            fi
+            
+            if ! grep -q "description:" "$file"; then
+              echo "❌ Error: $file missing description field"
+              exit 1
+            fi
+            
+            if ! grep -q "authors:" "$file"; then
+              echo "❌ Error: $file missing authors field"
+              exit 1
+            fi
+            
+            if ! grep -q "tags:" "$file"; then
+              echo "❌ Error: $file missing tags field"
+              exit 1
+            fi
+            
+            # Check for required learning journey stage tag
+            if ! grep -q "Beginner Dev\|Early Stage Blockchain Dev\|Ethereum Dev\|Solana Dev\|Cross-Chain Dev\|Beyond: Advanced Topics" "$file"; then
+              echo "❌ Error: $file missing required learning journey stage tag"
+              echo "Must include one of: Beginner Dev, Early Stage Blockchain Dev, Ethereum Dev, Solana Dev, Cross-Chain Dev, Beyond: Advanced Topics"
+              exit 1
+            fi
+            
+            if ! grep -q "url:" "$file"; then
+              echo "❌ Error: $file missing url field"
+              exit 1
+            fi
+            
+            if ! grep -q "dateAdded:" "$file"; then
+              echo "❌ Error: $file missing dateAdded field"
+              exit 1
+            fi
+            
+            if ! grep -q "level:" "$file"; then
+              echo "❌ Error: $file missing level field"
+              exit 1
+            fi
+            
+            if ! grep -q "category:" "$file"; then
+              echo "❌ Error: $file missing category field"
+              exit 1
+            fi
+            
+            echo "✅ $file validation passed"
+          fi
+        done
+        
+    - name: Check markdown syntax
+      run: |
+        npm install -g markdownlint-cli
+        markdownlint app/courses-tutorials/**/*.md app/mini-guides/**/*.md app/code-examples/**/*.md app/visual-explainers/**/*.md app/original-articles/**/*.md app/curated-links/**/*.md app/beginner/**/*.md app/early-stage/**/*.md app/ethereum/**/*.md app/solana/**/*.md app/cross-chain/**/*.md app/devops/**/*.md app/best-practices/**/*.md app/development/**/*.md app/beyond-advanced-topics/**/*.md --ignore node_modules
+        
+    - name: Validate URLs
+      run: |
+        # Simple URL validation (basic check)
+        for file in app/courses-tutorials/**/*.md app/mini-guides/**/*.md app/code-examples/**/*.md app/visual-explainers/**/*.md app/original-articles/**/*.md app/curated-links/**/*.md app/beginner/**/*.md app/early-stage/**/*.md app/ethereum/**/*.md app/solana/**/*.md app/cross-chain/**/*.md app/devops/**/*.md app/best-practices/**/*.md app/development/**/*.md app/beyond-advanced-topics/**/*.md; do
+          if [ -f "$file" ]; then
+            echo "Checking URLs in $file"
+            # Extract URLs and check if they're valid format
+            grep -o 'https://[^[:space:]]*' "$file" | while read url; do
+              if [[ ! "$url" =~ ^https://[a-zA-Z0-9.-]+\.[a-zA-Z]{2,} ]]; then
+                echo "⚠️  Warning: Potentially invalid URL in $file: $url"
+              fi
+            done
+          fi
+        done
+        
+    - name: Build project
+      run: npm run build
+      
+    - name: Comment PR
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: '✅ Content validation passed! Your submission looks good.'
+          }) 

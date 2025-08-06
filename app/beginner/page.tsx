@@ -3,145 +3,199 @@ import { ArrowLeft, BookOpen, Code, Target, Shield, Globe, Github, ExternalLink,
 
 const topics = [
   {
-    title: 'Blockchain Fundamentals',
-    description: 'Understanding the basics of blockchain technology and cryptocurrency',
-    icon: BookOpen,
-    resources: [
-      {
-        title: 'Blockchain Basics',
-        type: 'Course',
-        description: 'Coursera course on blockchain fundamentals and applications',
-        link: 'https://www.coursera.org/learn/blockchain-basics',
+    title: 'Ethereum',
+    description: 'Resources for ethereum development and learning',
+    icon: Globe,
+    resources: [      {
+        title: 'Alchemy University',
+        type: 'Ethereum',
+        description: 'Learn Web3 skills at no cost with Alchemy\'s free online university',
+        link: 'https://university.alchemy.com/',
         difficulty: 'Beginner',
-      },
-      {
-        title: 'Blockchain and Money',
-        type: 'Course',
-        description: 'MIT course on blockchain technology and financial applications',
-        link: 'https://ocw.mit.edu/courses/15-s12-blockchain-and-money-fall-2018/',
-        difficulty: 'Intermediate',
-      },
-      {
-        title: 'Blockchain Glossary',
-        type: 'Reference',
-        description: 'A Glossary of common web3 terms',
-        link: 'https://www.blockchain.com/glossary',
+      },      {
+        title: 'A Beginner\'s Guide to Polygon',
+        type: 'Ethereum',
+        description: 'Ethereum\'s scaling solution explained',
+        link: 'https://www.youtube.com/watch?v=f6GpXyOoYGo',
         difficulty: 'Beginner',
-      },
-      {
-        title: 'ETH.Build',
-        type: 'Interactive Learning',
-        description: 'Educational sandbox for building on web3. Visually understand how Ethereum works by doing',
-        link: 'https://eth.build/',
+      },      {
+        title: 'Blockchain Developer Course',
+        type: 'Ethereum',
+        description: 'Consensys course on blockchain development fundamentals',
+        link: 'https://consensys.net/academy/',
+        difficulty: 'Beginner',
+      },      {
+        title: 'Buildspace',
+        type: 'Ethereum',
+        description: 'Master Web 3.0, release awesome projects, accumulate NFTs',
+        link: 'https://buildspace.so/',
+        difficulty: 'Beginner',
+      },      {
+        title: 'Intro to Blockchain Programming',
+        type: 'Ethereum',
+        description: 'Ethereum, Web3.js, Solidity, Smart Contracts introduction',
+        link: 'https://www.youtube.com/watch?v=gyMwXuJrbJQ',
+        difficulty: 'Beginner',
+      },      {
+        title: 'LearnWeb3',
+        type: 'Ethereum',
+        description: 'Free Web3 developer training program with comprehensive curriculum',
+        link: 'https://learnweb3.io/',
+        difficulty: 'Beginner',
+      },      {
+        title: 'Speedrun Ethereum',
+        type: 'Ethereum',
+        description: 'Gamified Ethereum development learning with practical projects',
+        link: 'https://speedrunethereum.com/',
         difficulty: 'Beginner',
       },
     ],
-  },
-  {
-    title: 'Programming Languages & Tools',
-    description: 'Essential programming concepts and development tools',
-    icon: Code,
-    resources: [
-
-      {
-        title: 'Solidity Language Docs',
-        type: 'Documentation',
-        description: 'Official Solidity documentation',
-        link: 'https://docs.soliditylang.org/',
+  },  {
+    title: 'Development Tools',
+    description: 'Resources for development tools development and learning',
+    icon: Globe,
+    resources: [      {
+        title: 'Awesome Solidity',
+        type: 'Development Tools',
+        description: 'Github repository containing a collection of Solidity tools, libraries, and resources',
+        link: 'https://github.com/bkrem/awesome-solidity',
         difficulty: 'Beginner',
-      },
-      {
-        title: 'Solidity by Example',
-        type: 'Code Examples',
-        description: 'Solidity code samples and examples',
-        link: 'https://solidity-by-example.org/',
-        difficulty: 'Beginner to Intermediate',
-      },
-      {
+      },      {
         title: 'Hardhat',
-        type: 'Development Framework',
+        type: 'Development Tools',
         description: 'Professional Solidity development environment',
         link: 'https://hardhat.org/',
         difficulty: 'Beginner',
+      },      {
+        title: 'Solidity by Example',
+        type: 'Development Tools',
+        description: 'Solidity code samples and examples',
+        link: 'https://solidity-by-example.org/',
+        difficulty: 'Beginner',
+      },      {
+        title: 'Solidity Language Docs',
+        type: 'Development Tools',
+        description: 'Official Solidity documentation',
+        link: 'https://docs.soliditylang.org/',
+        difficulty: 'Beginner',
+      },      {
+        title: 'Web3Collection',
+        type: 'Development Tools',
+        description: 'The biggest collection of tools and resources for web3 developers',
+        link: 'https://www.web3collection.app/',
+        difficulty: 'Beginner',
       },
     ],
-  },
-  {
-    title: 'Wallets and Security',
-    description: 'Understanding cryptocurrency wallets and basic security practices',
-    icon: Shield,
-    resources: [
-
-
-      {
-        title: 'OpenZeppelin',
-        type: 'Security Library',
-        description: 'Library for secure smart contract development',
-        link: 'https://openzeppelin.com/',
-        difficulty: 'Intermediate',
-      },
-    ],
-  },
-  {
-    title: 'Learning Platforms',
-    description: 'Structured learning paths for blockchain development',
-    icon: GraduationCap,
-    resources: [
-      {
-        title: 'Alchemy University',
-        type: 'Course',
-        description: 'Learn Web3 skills at no cost with Alchemy\'s free online university',
-        link: 'https://university.alchemy.com/',
-        difficulty: 'Beginner to Advanced',
-      },
-      {
-        title: 'LearnWeb3',
-        type: 'Course',
-        description: 'Free Web3 developer training program with comprehensive curriculum',
-        link: 'https://learnweb3.io/',
+  },  {
+    title: 'General',
+    description: 'Resources for general development and learning',
+    icon: Globe,
+    resources: [      {
+        title: 'Become a Blockchain Engineer',
+        type: 'General',
+        description: 'Complete roadmap to becoming a blockchain, solidity, and smart contract engineer',
+        link: 'https://www.freecodecamp.org/news/how-to-become-a-blockchain-engineer/',
         difficulty: 'Beginner to Intermediate',
-      },
-      {
-        title: 'Buildspace',
-        type: 'Course',
-        description: 'Master Web 3.0, release awesome projects, accumulate NFTs',
-        link: 'https://buildspace.so/',
-        difficulty: 'Beginner to Advanced',
-      },
-      {
-        title: 'Speedrun Ethereum',
-        type: 'Course',
-        description: 'Gamified Ethereum development learning with practical projects',
-        link: 'https://speedrunethereum.com/',
-        difficulty: 'Beginner to Intermediate',
+      },      {
+        title: 'Blockchain Basics',
+        type: 'General',
+        description: 'Coursera course on blockchain fundamentals and applications',
+        link: 'https://www.coursera.org/learn/blockchain-basics',
+        difficulty: 'Beginner',
+      },      {
+        title: 'Blockchain Fundamentals',
+        type: 'General',
+        description: 'Berkeley University course on blockchain technology',
+        link: 'https://blockchain.berkeley.edu/courses/',
+        difficulty: 'Beginner',
+      },      {
+        title: 'Cryptography for Beginners',
+        type: 'General',
+        description: 'Securing your digital world with cryptography fundamentals',
+        link: 'https://www.youtube.com/watch?v=jhXCTbFnK8o',
+        difficulty: 'Beginner',
+      },      {
+        title: 'Introduction to Blockchain and Bitcoin',
+        type: 'General',
+        description: 'Harvard University course on blockchain and cryptocurrency',
+        link: 'https://cs50.harvard.edu/blockchain/',
+        difficulty: 'Beginner',
+      },      {
+        title: 'Learn Python with freeCodeCamp',
+        type: 'General',
+        description: 'Full Python course for beginners in blockchain development',
+        link: 'https://www.freecodecamp.org/learn/scientific-computing-with-python/',
+        difficulty: 'Beginner',
+      },      {
+        title: 'Modern JavaScript Tutorial',
+        type: 'General',
+        description: 'Complete JavaScript course for Web3 development',
+        link: 'https://www.youtube.com/watch?v=W6NZfCO5SIk',
+        difficulty: 'Beginner',
+      },      {
+        title: 'Ultimate Guide to Web3: The Fundamentals',
+        type: 'General',
+        description: 'Industry-ready Web3 fundamentals by BitDegree',
+        link: 'https://www.bitdegree.org/courses/course/ultimate-guide-to-web3-fundamentals',
+        difficulty: 'Beginner',
+      },      {
+        title: 'What is a DAO in Crypto?',
+        type: 'General',
+        description: 'Decentralized Autonomous Organization explained',
+        link: 'https://www.youtube.com/watch?v=KHm0uUPqmVE',
+        difficulty: 'Beginner',
+      },      {
+        title: 'What is Web 3.0?',
+        type: 'General',
+        description: 'Comprehensive introduction to Web3 technology',
+        link: 'https://www.youtube.com/watch?v=n-PzI9KX7Eg',
+        difficulty: 'Beginner',
       },
     ],
-  },
-]
-
-const nextSteps = [
-  {
-    title: 'Early Stage Blockchain Development',
-    description: 'Learn smart contracts, tooling, and basic blockchain architecture',
-    link: '/early-stage',
-  },
-  {
-    title: 'Ethereum Development',
-    description: 'Master Solidity, DeFi protocols, and Ethereum ecosystem',
-    link: '/ethereum',
-  },
-  {
-    title: 'Solana Development',
-    description: 'Build high-performance applications on Solana',
-    link: '/solana',
+  },  {
+    title: 'Blockchain Resources',
+    description: 'Resources for blockchain resources development and learning',
+    icon: Globe,
+    resources: [      {
+        title: 'Blockchain Glossary',
+        type: 'Blockchain Resources',
+        description: 'A Glossary of common web3 terms',
+        link: 'https://www.blockchain.com/glossary',
+        difficulty: 'Beginner',
+      },      {
+        title: 'ETH.Build',
+        type: 'Blockchain Resources',
+        description: 'Educational sandbox for building on web3. Visually understand how Ethereum works by doing',
+        link: 'https://eth.build/',
+        difficulty: 'Beginner',
+      },      {
+        title: 'Ethereum.org',
+        type: 'Blockchain Resources',
+        description: 'Official Ethereum website with documentation and resources',
+        link: 'https://ethereum.org/',
+        difficulty: 'Beginner',
+      },
+    ],
+  },  {
+    title: 'Neon EVM',
+    description: 'Resources for neon evm development and learning',
+    icon: Globe,
+    resources: [      {
+        title: 'How to Use Blockscout for Neon EVM',
+        type: 'Neon EVM',
+        description: 'Step-by-step guide to using Blockscout for Neon EVM blockchain exploration',
+        link: 'https://www.neonevm.org/blog/how-to-use-blockscout-for-neon-evm',
+        difficulty: 'Beginner',
+      },
+    ],
   },
 ]
 
 export default function BeginnerPage() {
   return (
     <div className="min-h-screen bg-black">
+      {/* Header */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Page Header */}
         <div className="mb-8">
           <Link
             href="/"
@@ -150,47 +204,53 @@ export default function BeginnerPage() {
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Home
           </Link>
-          <h1 className="text-3xl font-display font-bold text-white mb-4">Beginner Developer Journey</h1>
+          <h1 className="text-3xl font-display font-bold text-white mb-4">
+            Beginner
+          </h1>
           <p className="text-lg text-white/90 max-w-3xl">
-            Start your blockchain development journey with fundamental concepts, programming basics, 
-            and essential tools. Build a strong foundation for advanced blockchain development.
+            Comprehensive resources for beginner development. 
+            From fundamentals to advanced topics, find everything you need to master beginner development.
           </p>
         </div>
 
         {/* Topics */}
-        <div className="space-y-8 mb-12">
+        <div className="space-y-12">
           {topics.map((topic) => (
             <div key={topic.title} className="bg-[#1a1a1a] border border-white/10 rounded-lg p-6">
-              <div className="flex items-center mb-4">
-                <div className="w-10 h-10 bg-gradient-to-r from-[#FF00AA] to-[#8E1CF1] rounded-lg flex items-center justify-center mr-4">
-                  <topic.icon className="h-5 w-5 text-white" />
+              <div className="mb-6">
+                <div className="flex items-center mb-4">
+                  <div className="w-10 h-10 bg-gradient-to-r from-[#FF00AA] to-[#8E1CF1] rounded-lg flex items-center justify-center mr-4">
+                    <topic.icon className="h-5 w-5 text-white" />
+                  </div>
+                  <h2 className="text-2xl font-display font-semibold text-white">
+                    {topic.title}
+                  </h2>
                 </div>
-                <h2 className="text-xl font-display font-semibold text-white">{topic.title}</h2>
+                <p className="text-white/80">{topic.description}</p>
               </div>
-              <p className="text-white/80 mb-6">{topic.description}</p>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {topic.resources.map((resource) => (
                   <a
                     key={resource.title}
                     href={resource.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block p-4 border border-white/20 rounded-lg hover:border-white/40 hover:bg-[#2a2a2a] transition-all duration-300 bg-[#2a2a2a] group"
+                    className="block p-6 border border-white/20 rounded-lg hover:border-white/40 hover:bg-[#2a2a2a] transition-all duration-300 bg-[#2a2a2a] group"
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <h3 className="text-lg font-display font-semibold text-white group-hover:text-[#73FDEA] transition-colors duration-300 mb-2">
                           {resource.title}
                         </h3>
-                        <p className="text-white/80 text-sm mb-3">{resource.description}</p>
-                        <div className="flex items-center space-x-3">
-                          <span className="inline-block bg-[#1a1a1a] text-white/70 text-xs px-2 py-1 rounded border border-white/20">
-                            {resource.type}
-                          </span>
-                          <span className="inline-block bg-[#1a1a1a] text-white/70 text-xs px-2 py-1 rounded border border-white/20">
+                        <p className="text-white/80 text-sm mb-3">
+                          {resource.description}
+                        </p>
+                        <div className="flex items-center justify-between">
+                          <span className="inline-block bg-[#1a1a1a] text-white/70 px-2 py-1 rounded border border-white/20 text-xs">
                             {resource.difficulty}
                           </span>
+                          <span className="text-white/50 text-xs">{resource.type}</span>
                         </div>
                       </div>
                       <ExternalLink className="h-4 w-4 text-white/50 group-hover:text-[#73FDEA] transition-colors duration-300" />
@@ -202,56 +262,25 @@ export default function BeginnerPage() {
           ))}
         </div>
 
-        {/* Next Steps */}
-        <div className="bg-[#1a1a1a] border border-white/10 rounded-lg p-6 mb-8">
-          <h2 className="text-2xl font-display font-semibold text-white mb-4">What's Next?</h2>
-          <p className="text-white/80 mb-6">
-            Ready to advance? Choose your next learning path based on your interests and goals.
-          </p>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {nextSteps.map((step) => (
-              <Link
-                key={step.title}
-                href={step.link}
-                className="block p-4 border border-white/20 rounded-lg hover:border-white/40 hover:bg-[#2a2a2a] transition-all duration-300 bg-[#2a2a2a] group"
-              >
-                <h3 className="text-lg font-display font-semibold text-white group-hover:text-[#73FDEA] transition-colors duration-300 mb-2">
-                  {step.title}
-                </h3>
-                <p className="text-white/80 text-sm">{step.description}</p>
-              </Link>
-            ))}
-          </div>
-        </div>
-
-        {/* Community Call to Action */}
-        <div className="bg-gradient-to-r from-[#8E1CF1] to-[#FF00AA] rounded-lg p-8 text-center">
-          <h3 className="text-2xl font-display font-bold text-white mb-4">Join Our Community</h3>
+        {/* Call to Action */}
+        <div className="mt-12 bg-gradient-to-r from-[#8E1CF1] to-[#FF00AA] rounded-lg p-8 text-center">
+          <h3 className="text-2xl font-display font-bold text-white mb-4">
+            Share Your Knowledge
+          </h3>
           <p className="text-white/90 mb-6 max-w-2xl mx-auto">
-            Connect with other developers, ask questions, and share your progress. 
-            Our community is here to support your blockchain development journey.
+            Have a great beginner resource? Help the community by contributing to our collection.
           </p>
-          <div className="flex justify-center space-x-4">
-                               <a
-                     href="https://discord.gg/Y6E3FZAguZ"
-                     className="bg-white text-[#8E1CF1] hover:bg-gray-100 font-medium py-3 px-6 rounded-lg transition-all duration-300 shadow-lg transform hover:scale-105 inline-flex items-center"
-                     target="_blank"
-                     rel="noopener noreferrer"
-                   >
-                     Join Discord
-                   </a>
-                               <a
-                     href="https://github.com/Avvrik/Dev-Playbook"
-                     target="_blank"
-                     rel="noopener noreferrer"
-                     className="bg-white/20 border border-white/30 text-white hover:bg-white/30 font-medium py-3 px-6 rounded-lg transition-all duration-300"
-                   >
-                     Contribute Resources
-                   </a>
-          </div>
+          <a
+            href="https://github.com/Avvrik/Dev-Playbook"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-white text-[#8E1CF1] hover:bg-gray-100 font-medium py-3 px-6 rounded-lg transition-all duration-300 shadow-lg transform hover:scale-105 inline-flex items-center"
+          >
+            Contribute Resource
+            <Github className="h-4 w-4 ml-2" />
+          </a>
         </div>
       </div>
     </div>
   )
-} 
+}

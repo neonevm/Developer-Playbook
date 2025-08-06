@@ -1,131 +1,125 @@
 import Link from 'next/link'
-import { ArrowLeft, BookOpen, Code, Target, Shield, Globe, Github, ExternalLink, Zap, Database, TrendingUp, Users } from 'lucide-react'
+import { ArrowLeft, BookOpen, Code, Target, Shield, Globe, Github, ExternalLink, GraduationCap } from 'lucide-react'
 
 const topics = [
   {
-    title: 'Advanced Protocol Design & Cryptography',
-    description: 'Advanced cryptographic concepts and protocol design patterns',
+    title: 'Security',
+    description: 'Resources for security development and learning',
     icon: Shield,
-    resources: [
-      {
-        title: 'Zero Knowledge Proofs',
-        type: 'Technical Deep Dive',
-        description: 'Understanding zero-knowledge proofs and their applications',
-        link: 'https://blog.borodutch.com/zero-knowledge-is-easy-or-the-ultimate-how-to-article/',
+    resources: [      {
+        title: 'Certik',
+        type: 'Security',
+        description: 'Blockchain security platform and auditing services',
+        link: 'https://www.certik.com/',
+        difficulty: 'Advanced',
+      },      {
+        title: 'Consensys Diligence',
+        type: 'Security',
+        description: 'Smart contract security auditing and best practices',
+        link: 'https://consensys.net/diligence/',
+        difficulty: 'Advanced',
+      },      {
+        title: 'MythX',
+        type: 'Security',
+        description: 'Security analysis platform for Ethereum smart contracts',
+        link: 'https://mythx.io/',
+        difficulty: 'Advanced',
+      },      {
+        title: 'Trail of Bits',
+        type: 'Security',
+        description: 'Security research and consulting for blockchain',
+        link: 'https://www.trailofbits.com/',
         difficulty: 'Advanced',
       },
-      {
-        title: 'zkSNARK Protocol Deep Dive',
-        type: 'Technical Analysis',
-        description: 'Under the hood of zkSNARK Groth16 protocol',
-        link: 'https://medium.com/coinmonks/under-the-hood-of-zksnark-groth16-protocol-2843b0d1558b',
-        difficulty: 'Expert',
-      },
-      {
-        title: 'ERC20 Weirdness & Attacks',
-        type: 'Security Analysis',
-        description: 'Understanding ERC20 vulnerabilities and attack vectors',
+    ],
+  },  {
+    title: 'General',
+    description: 'Resources for general development and learning',
+    icon: Globe,
+    resources: [      {
+        title: 'Cryptography for Developers',
+        type: 'General',
+        description: 'Advanced cryptography concepts for blockchain developers',
+        link: 'https://www.youtube.com/watch?v=NuyzuNBF6xQ',
+        difficulty: 'Advanced',
+      },      {
+        title: 'DeFi Security: A Comprehensive Guide',
+        type: 'General',
+        description: 'Security considerations and best practices for DeFi protocol development',
+        link: 'https://blog.openzeppelin.com/defi-security/',
+        difficulty: 'Advanced',
+      },      {
+        title: 'ERC20 Weirdness & Attacks - Part 1',
+        type: 'General',
+        description: 'Analysis of ERC20 token vulnerabilities and attack vectors',
         link: 'https://33audits.hashnode.dev/erc20-weirdness-attacks-part-1',
         difficulty: 'Advanced',
-      },
-    ],
-  },
-  {
-    title: 'Infrastructure & DevOps',
-    description: 'Blockchain infrastructure and development operations',
-    icon: Zap,
-    resources: [
-      {
-        title: 'Blockchain Infrastructure Design',
-        type: 'Architecture Guide',
-        description: 'Designing scalable blockchain infrastructure',
-        link: 'https://github.com/foundry-rs/foundry',
+      },      {
+        title: 'Under the Hood of zkSNARK Groth16 Protocol',
+        type: 'General',
+        description: 'Deep technical dive into the Groth16 zkSNARK protocol implementation',
+        link: 'https://medium.com/coinmonks/under-the-hood-of-zksnark-groth16-protocol-2843b0d1558b',
         difficulty: 'Advanced',
-      },
-      {
-        title: 'DevOps for Blockchain',
-        type: 'Best Practices',
-        description: 'DevOps practices for blockchain development',
-        link: 'https://docs.soliditylang.org/',
+      },      {
+        title: 'Zero Knowledge Proofs',
+        type: 'General',
+        description: 'Simple examples and explanations of ZK proofs',
+        link: 'https://www.youtube.com/watch?v=OcmvMs4AMbM',
         difficulty: 'Advanced',
       },
     ],
-  },
-  {
-    title: 'Product Development & GTM',
-    description: 'Product development and go-to-market strategies',
-    icon: Target,
-    resources: [
-      {
-        title: 'Blockchain Product Strategy',
-        type: 'Strategy Guide',
-        description: 'Developing blockchain products and go-to-market strategies',
-        link: 'https://www.preethikasireddy.com/post/how-does-ethereum-work-anyway',
-        difficulty: 'Advanced',
-      },
-
-    ],
-  },
-  {
-    title: 'Grants, Funding & Growth',
-    description: 'Funding opportunities and ecosystem growth',
-    icon: TrendingUp,
-    resources: [
-      {
-        title: 'Blockchain Grants Guide',
-        type: 'Resource Guide',
-        description: 'Finding and applying for blockchain grants',
-        link: 'https://ethereum.org/',
-        difficulty: 'Intermediate to Advanced',
-      },
-      {
-        title: 'Ecosystem Funding',
-        type: 'Funding Guide',
-        description: 'Funding opportunities in blockchain ecosystems',
-        link: 'https://solanacookbook.com/',
-        difficulty: 'Intermediate to Advanced',
-      },
-    ],
-  },
-  {
-    title: 'Developer Relations',
-    description: 'Building developer communities and relationships',
-    icon: Users,
-    resources: [
-      {
-        title: 'DevRel Best Practices',
-        type: 'Community Guide',
-        description: 'Best practices for developer relations',
-        link: 'https://www.devrel.agency/developerjourney',
-        difficulty: 'Advanced',
-      },
-      {
-        title: 'Community Building',
-        type: 'Strategy Guide',
-        description: 'Building and managing developer communities',
-        link: 'https://www.devrel.agency/post/mind-the-gap-dev-journey-tube-map',
-        difficulty: 'Advanced',
-      },
-    ],
-  },
-  {
-    title: 'Ecosystem Contributions & Careers',
-    description: 'Contributing to blockchain ecosystems and career development',
+  },  {
+    title: 'Cross-Chain',
+    description: 'Resources for cross-chain development and learning',
     icon: Globe,
-    resources: [
-      {
-        title: 'Open Source Contributions',
-        type: 'Contribution Guide',
-        description: 'Contributing to blockchain open source projects',
-        link: 'https://github.com/OpenZeppelin/openzeppelin-contracts',
+    resources: [      {
+        title: 'Deep Dive into Neon and Solana Composability',
+        type: 'Cross-Chain',
+        description: 'Comprehensive analysis of composability between Neon and Solana ecosystems',
+        link: 'https://www.neon-evm.org/blog/deep-dive-into-neon-and-solana-composability',
+        difficulty: 'Advanced',
+      },      {
+        title: 'Effortless Cross-Chain Communication with NeonEVM, Hyperlane, and Solana\'s Speed - Part 2',
+        type: 'Cross-Chain',
+        description: 'Advanced cross-chain communication techniques using NeonEVM and Hyperlane',
+        link: 'https://www.neonevm.org/blog/effortless-cross-chain-communication-with-neonevm-hyperlane-and-solana-s-speed-part-2',
+        difficulty: 'Advanced',
+      },      {
+        title: 'Unveiling Composability Whitepaper: A Unified Framework for Ethereum-Solana Interaction',
+        type: 'Cross-Chain',
+        description: 'Deep dive into the composability whitepaper and cross-chain interaction framework',
+        link: 'https://www.neonevm.org/blog/unveiling-composability-whitepaper-a-unified-framework-for-ethereum-solana-interaction',
         difficulty: 'Advanced',
       },
-      {
-        title: 'Blockchain Career Paths',
-        type: 'Career Guide',
-        description: 'Career opportunities in blockchain development',
-        link: 'https://www.freecodecamp.org/news/how-to-become-a-blockchain-engineer/',
-        difficulty: 'Intermediate to Advanced',
+    ],
+  },  {
+    title: 'Solana',
+    description: 'Resources for solana development and learning',
+    icon: Code,
+    resources: [      {
+        title: 'Exploring SVM Scalability Solutions with Demand-Driven Modularity',
+        type: 'Solana',
+        description: 'Analysis of Solana Virtual Machine scalability solutions and modular approaches',
+        link: 'https://www.neon-evm.org/blog/exploring-svm-scalability-solutions-with-demand-driven-modularity',
+        difficulty: 'Advanced',
+      },      {
+        title: 'Solana\'s 64 Account Limit: Thinking Past the Constraint',
+        type: 'Solana',
+        description: 'Understanding and working around Solana\'s 64 account limit in smart contract development',
+        link: 'https://www.neonevm.org/blog/solanas-64-account-limit-thinking-past-the-constraint',
+        difficulty: 'Advanced',
+      },
+    ],
+  },  {
+    title: 'Ethereum',
+    description: 'Resources for ethereum development and learning',
+    icon: Globe,
+    resources: [      {
+        title: 'Gas Optimization Techniques',
+        type: 'Ethereum',
+        description: 'Advanced techniques for optimizing gas usage in Ethereum smart contracts',
+        link: 'https://solidity-by-example.org/gas/',
+        difficulty: 'Advanced',
       },
     ],
   },
@@ -134,8 +128,8 @@ const topics = [
 export default function BeyondAdvancedTopicsPage() {
   return (
     <div className="min-h-screen bg-black">
+      {/* Header */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Page Header */}
         <div className="mb-8">
           <Link
             href="/"
@@ -144,47 +138,53 @@ export default function BeyondAdvancedTopicsPage() {
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Home
           </Link>
-          <h1 className="text-3xl font-display font-bold text-white mb-4">Beyond: Advanced Topics</h1>
+          <h1 className="text-3xl font-display font-bold text-white mb-4">
+            Beyond Advanced Topics
+          </h1>
           <p className="text-lg text-white/90 max-w-3xl">
-            Advanced blockchain development concepts, ecosystem contributions, and career development. 
-            Master the cutting-edge technologies and strategies that drive the blockchain industry forward.
+            Comprehensive resources for beyond advanced-topics development. 
+            From fundamentals to advanced topics, find everything you need to master beyond advanced-topics development.
           </p>
         </div>
 
         {/* Topics */}
-        <div className="space-y-8 mb-12">
+        <div className="space-y-12">
           {topics.map((topic) => (
             <div key={topic.title} className="bg-[#1a1a1a] border border-white/10 rounded-lg p-6">
-              <div className="flex items-center mb-4">
-                <div className="w-10 h-10 bg-gradient-to-r from-[#FF00AA] to-[#8E1CF1] rounded-lg flex items-center justify-center mr-4">
-                  <topic.icon className="h-5 w-5 text-white" />
+              <div className="mb-6">
+                <div className="flex items-center mb-4">
+                  <div className="w-10 h-10 bg-gradient-to-r from-[#FF00AA] to-[#8E1CF1] rounded-lg flex items-center justify-center mr-4">
+                    <topic.icon className="h-5 w-5 text-white" />
+                  </div>
+                  <h2 className="text-2xl font-display font-semibold text-white">
+                    {topic.title}
+                  </h2>
                 </div>
-                <h2 className="text-xl font-display font-semibold text-white">{topic.title}</h2>
+                <p className="text-white/80">{topic.description}</p>
               </div>
-              <p className="text-white/80 mb-6">{topic.description}</p>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {topic.resources.map((resource) => (
                   <a
                     key={resource.title}
                     href={resource.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block p-4 border border-white/20 rounded-lg hover:border-white/40 hover:bg-[#2a2a2a] transition-all duration-300 bg-[#2a2a2a] group"
+                    className="block p-6 border border-white/20 rounded-lg hover:border-white/40 hover:bg-[#2a2a2a] transition-all duration-300 bg-[#2a2a2a] group"
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <h3 className="text-lg font-display font-semibold text-white group-hover:text-[#73FDEA] transition-colors duration-300 mb-2">
                           {resource.title}
                         </h3>
-                        <p className="text-white/80 text-sm mb-3">{resource.description}</p>
-                        <div className="flex items-center space-x-3">
-                          <span className="inline-block bg-[#1a1a1a] text-white/70 text-xs px-2 py-1 rounded border border-white/20">
-                            {resource.type}
-                          </span>
-                          <span className="inline-block bg-[#1a1a1a] text-white/70 text-xs px-2 py-1 rounded border border-white/20">
+                        <p className="text-white/80 text-sm mb-3">
+                          {resource.description}
+                        </p>
+                        <div className="flex items-center justify-between">
+                          <span className="inline-block bg-[#1a1a1a] text-white/70 px-2 py-1 rounded border border-white/20 text-xs">
                             {resource.difficulty}
                           </span>
+                          <span className="text-white/50 text-xs">{resource.type}</span>
                         </div>
                       </div>
                       <ExternalLink className="h-4 w-4 text-white/50 group-hover:text-[#73FDEA] transition-colors duration-300" />
@@ -196,33 +196,25 @@ export default function BeyondAdvancedTopicsPage() {
           ))}
         </div>
 
-        {/* Community Call to Action */}
-        <div className="bg-gradient-to-r from-[#8E1CF1] to-[#FF00AA] rounded-lg p-8 text-center">
-          <h3 className="text-2xl font-display font-bold text-white mb-4">Join Our Community</h3>
+        {/* Call to Action */}
+        <div className="mt-12 bg-gradient-to-r from-[#8E1CF1] to-[#FF00AA] rounded-lg p-8 text-center">
+          <h3 className="text-2xl font-display font-bold text-white mb-4">
+            Share Your Knowledge
+          </h3>
           <p className="text-white/90 mb-6 max-w-2xl mx-auto">
-            Connect with other advanced developers, share your expertise, and contribute to the ecosystem. 
-            Our community is here to support your blockchain development journey.
+            Have a great beyond advanced-topics resource? Help the community by contributing to our collection.
           </p>
-          <div className="flex justify-center space-x-4">
-                             <a
-                   href="https://discord.gg/Y6E3FZAguZ"
-                   className="bg-white text-[#8E1CF1] hover:bg-gray-100 font-medium py-3 px-6 rounded-lg transition-all duration-300 shadow-lg transform hover:scale-105 inline-flex items-center"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                 >
-                   Join Discord
-                 </a>
-                             <a
-                   href="https://github.com/Avvrik/Dev-Playbook"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   className="bg-white/20 border border-white/30 text-white hover:bg-white/30 font-medium py-3 px-6 rounded-lg transition-all duration-300"
-                 >
-                   Contribute Resources
-                 </a>
-          </div>
+          <a
+            href="https://github.com/Avvrik/Dev-Playbook"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-white text-[#8E1CF1] hover:bg-gray-100 font-medium py-3 px-6 rounded-lg transition-all duration-300 shadow-lg transform hover:scale-105 inline-flex items-center"
+          >
+            Contribute Resource
+            <Github className="h-4 w-4 ml-2" />
+          </a>
         </div>
       </div>
     </div>
   )
-} 
+}
