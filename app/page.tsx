@@ -107,7 +107,7 @@ const contentTypes = [
     description: 'Tutorials, deep dives, and personal dev journeys',
     icon: Code,
     color: 'from-[#E200F1] to-[#8e1cf1]',
-    href: '/resources/original-articles',
+    href: '/resources/guides-articles',
   },
   {
     title: 'Code Samples & Templates',
@@ -121,7 +121,7 @@ const contentTypes = [
     description: 'Structured learning paths and comprehensive courses',
     icon: GraduationCap,
     color: 'from-[#340ceb] to-[#24e4b3]',
-    href: '/resources/courses-tutorials',
+    href: '/resources/courses-grants',
   },
 ]
 
