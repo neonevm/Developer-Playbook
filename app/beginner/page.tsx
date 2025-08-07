@@ -19,12 +19,6 @@ const topics = [
         link: 'https://consensys.net/academy/',
         difficulty: 'Beginner',
       },      {
-        title: 'Buildspace',
-        type: 'Ethereum',
-        description: 'Master Web 3.0, release awesome projects, accumulate NFTs',
-        link: 'https://buildspace.so/',
-        difficulty: 'Beginner',
-      },      {
         title: 'Intro to Blockchain Programming',
         type: 'Ethereum',
         description: 'Ethereum, Web3.js, Solidity, Smart Contracts introduction',
@@ -55,10 +49,28 @@ const topics = [
         link: 'https://github.com/bkrem/awesome-solidity',
         difficulty: 'Beginner',
       },      {
+        title: 'GitHub Documentation',
+        type: 'Development Tools',
+        description: 'Comprehensive documentation for GitHub platform, including guides for repositories, pull requests, and collaborative coding',
+        link: 'https://docs.github.com/en',
+        difficulty: 'Beginner',
+      },      {
+        title: 'Git Basics',
+        type: 'Development Tools',
+        description: 'Essential Git fundamentals including setup, workflows, and version control concepts',
+        link: 'https://docs.github.com/en/get-started/git-basics',
+        difficulty: 'Beginner',
+      },      {
         title: 'Hardhat',
         type: 'Development Tools',
         description: 'Professional Solidity development environment',
         link: 'https://hardhat.org/',
+        difficulty: 'Beginner',
+      },      {
+        title: 'REST API Tutorial',
+        type: 'Development Tools',
+        description: 'Comprehensive guide to REST API design, development, and best practices for web services',
+        link: 'https://www.restapitutorial.com/introduction',
         difficulty: 'Beginner',
       },      {
         title: 'Solidity by Example',
@@ -73,6 +85,18 @@ const topics = [
         link: 'https://docs.soliditylang.org/',
         difficulty: 'Beginner',
       },      {
+        title: 'VisuAlgo',
+        type: 'Development Tools',
+        description: 'Interactive visualization of algorithms and data structures for learning computer science concepts',
+        link: 'https://visualgo.net/en',
+        difficulty: 'Beginner',
+      },      {
+        title: 'Visual Studio Code Documentation',
+        type: 'Development Tools',
+        description: 'Complete documentation for VS Code editor including setup, extensions, and development features',
+        link: 'https://code.visualstudio.com/docs',
+        difficulty: 'Beginner',
+      },      {
         title: 'Web3Collection',
         type: 'Development Tools',
         description: 'The biggest collection of tools and resources for web3 developers',
@@ -85,22 +109,10 @@ const topics = [
     description: 'Resources for general development and learning',
     icon: Globe,
     resources: [      {
-        title: 'Become a Blockchain Engineer',
-        type: 'General',
-        description: 'Complete roadmap to becoming a blockchain, solidity, and smart contract engineer',
-        link: 'https://www.freecodecamp.org/news/how-to-become-a-blockchain-engineer/',
-        difficulty: 'Beginner to Intermediate',
-      },      {
         title: 'Blockchain Basics',
         type: 'General',
         description: 'Coursera course on blockchain fundamentals and applications',
         link: 'https://www.coursera.org/learn/blockchain-basics',
-        difficulty: 'Beginner',
-      },      {
-        title: 'Blockchain Fundamentals',
-        type: 'General',
-        description: 'Berkeley University course on blockchain technology',
-        link: 'https://blockchain.berkeley.edu/courses/',
         difficulty: 'Beginner',
       },      {
         title: 'Cryptography for Beginners',
@@ -161,6 +173,18 @@ const topics = [
         type: 'Blockchain Resources',
         description: 'Official Ethereum website with documentation and resources',
         link: 'https://ethereum.org/',
+        difficulty: 'Beginner',
+      },      {
+        title: 'MetaMask Documentation',
+        type: 'Blockchain Resources',
+        description: 'Official documentation for MetaMask wallet including setup, features, and developer integration',
+        link: 'https://docs.metamask.io/',
+        difficulty: 'Beginner',
+      },      {
+        title: 'Phantom Documentation',
+        type: 'Blockchain Resources',
+        description: 'Official documentation for Phantom wallet including setup, features, and Solana ecosystem integration',
+        link: 'https://docs.phantom.com/introduction',
         difficulty: 'Beginner',
       },
     ],
