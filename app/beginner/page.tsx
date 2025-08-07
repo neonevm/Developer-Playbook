@@ -13,12 +13,6 @@ const topics = [
         link: 'https://university.alchemy.com/',
         difficulty: 'Beginner',
       },      {
-        title: 'A Beginner\'s Guide to Polygon',
-        type: 'Ethereum',
-        description: 'Ethereum\'s scaling solution explained',
-        link: 'https://www.youtube.com/watch?v=f6GpXyOoYGo',
-        difficulty: 'Beginner',
-      },      {
         title: 'Blockchain Developer Course',
         type: 'Ethereum',
         description: 'Consensys course on blockchain development fundamentals',
@@ -133,12 +127,6 @@ const topics = [
         link: 'https://www.youtube.com/watch?v=W6NZfCO5SIk',
         difficulty: 'Beginner',
       },      {
-        title: 'Ultimate Guide to Web3: The Fundamentals',
-        type: 'General',
-        description: 'Industry-ready Web3 fundamentals by BitDegree',
-        link: 'https://www.bitdegree.org/courses/course/ultimate-guide-to-web3-fundamentals',
-        difficulty: 'Beginner',
-      },      {
         title: 'What is a DAO in Crypto?',
         type: 'General',
         description: 'Decentralized Autonomous Organization explained',
@@ -173,18 +161,6 @@ const topics = [
         type: 'Blockchain Resources',
         description: 'Official Ethereum website with documentation and resources',
         link: 'https://ethereum.org/',
-        difficulty: 'Beginner',
-      },
-    ],
-  },  {
-    title: 'Neon EVM',
-    description: 'Resources for neon evm development and learning',
-    icon: Globe,
-    resources: [      {
-        title: 'How to Use Blockscout for Neon EVM',
-        type: 'Neon EVM',
-        description: 'Step-by-step guide to using Blockscout for Neon EVM blockchain exploration',
-        link: 'https://www.neonevm.org/blog/how-to-use-blockscout-for-neon-evm',
         difficulty: 'Beginner',
       },
     ],

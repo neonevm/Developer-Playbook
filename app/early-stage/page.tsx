@@ -15,24 +15,6 @@ const topics = [
       },
     ],
   },  {
-    title: 'Ethereum',
-    description: 'Resources for ethereum development and learning',
-    icon: Globe,
-    resources: [      {
-        title: 'Complete Solidity Smart Contract Guide',
-        type: 'Ethereum',
-        description: 'Comprehensive guide to Solidity smart contract development',
-        link: 'https://www.bitdegree.org/courses/course/complete-solidity-smart-contract-guide',
-        difficulty: 'Intermediate',
-      },      {
-        title: 'Solidity Path: Beginner to Intermediate',
-        type: 'Ethereum',
-        description: 'Complete path from beginner to intermediate smart contract development',
-        link: 'https://cryptodevhub.io/learn/solidity-path-beginner-to-intermediate',
-        difficulty: 'Beginner',
-      },
-    ],
-  },  {
     title: 'Solana',
     description: 'Resources for solana development and learning',
     icon: Code,
