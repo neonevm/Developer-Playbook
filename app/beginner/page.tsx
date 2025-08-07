@@ -3,52 +3,10 @@ import { ArrowLeft, BookOpen, Code, Target, Shield, Globe, Github, ExternalLink,
 
 const topics = [
   {
-    title: 'Ethereum',
-    description: 'Resources for ethereum development and learning',
-    icon: Globe,
-    resources: [      {
-        title: 'Alchemy University',
-        type: 'Ethereum',
-        description: 'Learn Web3 skills at no cost with Alchemy\'s free online university',
-        link: 'https://university.alchemy.com/',
-        difficulty: 'Beginner',
-      },      {
-        title: 'Blockchain Developer Course',
-        type: 'Ethereum',
-        description: 'Consensys course on blockchain development fundamentals',
-        link: 'https://consensys.net/academy/',
-        difficulty: 'Beginner',
-      },      {
-        title: 'Intro to Blockchain Programming',
-        type: 'Ethereum',
-        description: 'Ethereum, Web3.js, Solidity, Smart Contracts introduction',
-        link: 'https://www.youtube.com/watch?v=gyMwXuJrbJQ',
-        difficulty: 'Beginner',
-      },      {
-        title: 'LearnWeb3',
-        type: 'Ethereum',
-        description: 'Free Web3 developer training program with comprehensive curriculum',
-        link: 'https://learnweb3.io/',
-        difficulty: 'Beginner',
-      },      {
-        title: 'Speedrun Ethereum',
-        type: 'Ethereum',
-        description: 'Gamified Ethereum development learning with practical projects',
-        link: 'https://speedrunethereum.com/',
-        difficulty: 'Beginner',
-      },
-    ],
-  },  {
     title: 'Development Tools',
     description: 'Resources for development tools development and learning',
     icon: Globe,
     resources: [      {
-        title: 'Awesome Solidity',
-        type: 'Development Tools',
-        description: 'Github repository containing a collection of Solidity tools, libraries, and resources',
-        link: 'https://github.com/bkrem/awesome-solidity',
-        difficulty: 'Beginner',
-      },      {
         title: 'GitHub Documentation',
         type: 'Development Tools',
         description: 'Comprehensive documentation for GitHub platform, including guides for repositories, pull requests, and collaborative coding',
@@ -61,28 +19,10 @@ const topics = [
         link: 'https://docs.github.com/en/get-started/git-basics',
         difficulty: 'Beginner',
       },      {
-        title: 'Hardhat',
-        type: 'Development Tools',
-        description: 'Professional Solidity development environment',
-        link: 'https://hardhat.org/',
-        difficulty: 'Beginner',
-      },      {
         title: 'REST API Tutorial',
         type: 'Development Tools',
         description: 'Comprehensive guide to REST API design, development, and best practices for web services',
         link: 'https://www.restapitutorial.com/introduction',
-        difficulty: 'Beginner',
-      },      {
-        title: 'Solidity by Example',
-        type: 'Development Tools',
-        description: 'Solidity code samples and examples',
-        link: 'https://solidity-by-example.org/',
-        difficulty: 'Beginner',
-      },      {
-        title: 'Solidity Language Docs',
-        type: 'Development Tools',
-        description: 'Official Solidity documentation',
-        link: 'https://docs.soliditylang.org/',
         difficulty: 'Beginner',
       },      {
         title: 'VisuAlgo',
@@ -121,12 +61,6 @@ const topics = [
         link: 'https://www.youtube.com/watch?v=jhXCTbFnK8o',
         difficulty: 'Beginner',
       },      {
-        title: 'Introduction to Blockchain and Bitcoin',
-        type: 'General',
-        description: 'Harvard University course on blockchain and cryptocurrency',
-        link: 'https://cs50.harvard.edu/blockchain/',
-        difficulty: 'Beginner',
-      },      {
         title: 'Learn Python with freeCodeCamp',
         type: 'General',
         description: 'Full Python course for beginners in blockchain development',
@@ -145,10 +79,10 @@ const topics = [
         link: 'https://www.youtube.com/watch?v=KHm0uUPqmVE',
         difficulty: 'Beginner',
       },      {
-        title: 'What is Web 3.0?',
-        type: 'General',
-        description: 'Comprehensive introduction to Web3 technology',
-        link: 'https://www.youtube.com/watch?v=n-PzI9KX7Eg',
+        title: 'Intro to Blockchain Programming',
+        type: 'Ethereum',
+        description: 'Ethereum, Web3.js, Solidity, Smart Contracts introduction',
+        link: 'https://www.youtube.com/watch?v=gyMwXuJrbJQ',
         difficulty: 'Beginner',
       },
     ],
@@ -157,24 +91,6 @@ const topics = [
     description: 'Resources for blockchain resources development and learning',
     icon: Globe,
     resources: [      {
-        title: 'Blockchain Glossary',
-        type: 'Blockchain Resources',
-        description: 'A Glossary of common web3 terms',
-        link: 'https://www.blockchain.com/glossary',
-        difficulty: 'Beginner',
-      },      {
-        title: 'ETH.Build',
-        type: 'Blockchain Resources',
-        description: 'Educational sandbox for building on web3. Visually understand how Ethereum works by doing',
-        link: 'https://eth.build/',
-        difficulty: 'Beginner',
-      },      {
-        title: 'Ethereum.org',
-        type: 'Blockchain Resources',
-        description: 'Official Ethereum website with documentation and resources',
-        link: 'https://ethereum.org/',
-        difficulty: 'Beginner',
-      },      {
         title: 'MetaMask Documentation',
         type: 'Blockchain Resources',
         description: 'Official documentation for MetaMask wallet including setup, features, and developer integration',
