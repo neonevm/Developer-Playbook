@@ -44,8 +44,6 @@ dateAdded: 2024-01-15
 level: "Beginner"
 category: "Neon EVM"
 ---
-
-Your content goes here...
 ```
 
 ### Learning Journey Stages
