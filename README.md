@@ -28,30 +28,6 @@ https://dev-playbook.vercel.app/
    - Our automated validation will check your submission
    - We'll review and approve
 
-### What We're Looking For
-
-We accept submissions in these categories:
-
-**Resource Types** (in `app/`):
-- **courses-tutorials/**: Online courses and tutorials
-- **mini-guides/**: Step-by-step guides and how-tos
-- **code-examples/**: Code snippets and examples
-- **visual-explainers/**: Infographics and visual content
-- **original-articles/**: Blog posts and articles
-- **curated-links/**: Curated resource collections
-
-**Learning Journey Content** (in learning journey folders):
-- **beginner/**: Basic programming concepts
-- **early-stage/**: Smart contracts and tooling
-- **ethereum/**: Ethereum development
-- **solana/**: Solana development
-- **cross-chain/**: Cross-chain development
-
-- **devops/**: Infrastructure and deployment
-- **best-practices/**: Development best practices
-- **development/**: General development topics
-- **beyond-advanced-topics/**: Advanced topics
-
 ### Submission Format
 
 All content should be submitted as markdown files with YAML frontmatter. **Important**: Include a learning journey stage tag for automatic categorization:
