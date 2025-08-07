@@ -19,7 +19,7 @@ https://dev-playbook.vercel.app/
 
 2. **Submit Content**
    - Add new resources as individual markdown files in the appropriate folders
-   - Use `app/courses-tutorials/`, `app/mini-guides/`, `app/code-examples/`, etc.
+   - Use `app/resources/courses-grants/`, `app/resources/curated-links`, etc.
    - Include a learning journey stage tag for automatic categorization
    - Follow our content submission format (see below)
 
@@ -56,8 +56,6 @@ Your content goes here...
 - **Solana Dev**: Program logic, account management, performance optimization
 - **Cross-Chain Dev**: Neon EVM, cross-chain DEX, bridge development
 - **Beyond: Advanced Topics**: Advanced protocol design, infrastructure, product development
-
-For detailed instructions, see our [Contribution Guide](./templates/contribution-guide.md) or [Quick Start Guide](./templates/quick-start-guide.md).
 
 # Powered by
 
