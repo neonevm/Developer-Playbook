@@ -34,8 +34,7 @@ export default function SolanaPage() {
             Solana
           </h1>
           <p className="text-lg text-white/90 max-w-3xl">
-            Comprehensive resources for solana development. 
-            From fundamentals to advanced topics, find everything you need to master solana development.
+          Explore Solana’s account model, Rust/Anchor programming, and program deployment. Building dApps using Solana-native tools and work with SPL tokens, PDAs, and the Anchor framework.
           </p>
         </div>
 

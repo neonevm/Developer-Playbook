@@ -188,8 +188,7 @@ export default function CrossChainPage() {
           </Link>
           <h1 className="text-3xl font-display font-bold text-white mb-4">Cross-Chain Development</h1>
           <p className="text-lg text-white/90 max-w-3xl">
-            Master cross-chain development with Neon EVM. Learn to build applications that work seamlessly 
-            across Ethereum and Solana, leveraging the best of both ecosystems.
+          Combine Ethereum and Solana knowledge to build composable cross-chain dApps using Neon EVM. Learning composability feature, cross-chain token transfers, and interacting with Solana programs from EVM smart contracts.
           </p>
         </div>
 

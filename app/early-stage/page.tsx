@@ -46,8 +46,7 @@ export default function EarlyStagePage() {
             Early Stage
           </h1>
           <p className="text-lg text-white/90 max-w-3xl">
-            Comprehensive resources for early stage development. 
-            From fundamentals to advanced topics, find everything you need to master early stage development.
+          Learning blockchain basics: smart contracts, tokens, main programming languages, gas calculations, devnet & tooling setup (Hardhat, Node.js, Remix, etc.)
           </p>
         </div>
 

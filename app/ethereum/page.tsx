@@ -172,8 +172,8 @@ export default function EthereumPage() {
             Ethereum
           </h1>
           <p className="text-lg text-white/90 max-w-3xl">
-            Comprehensive resources for ethereum development. 
-            From fundamentals to advanced topics, find everything you need to master ethereum development.
+          Deep dive into Solidity, smart contract patterns, and EVM-based workflows.
+          Learning to build dApps on EVM chains, interact with DeFi protocols, and optimize contracts.
           </p>
         </div>
 

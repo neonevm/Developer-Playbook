@@ -17,7 +17,7 @@ const getStageUrl = (stageName: string): string => {
 const developerJourney = [
   {
     stage: 'Beginner Dev',
-    description: 'Start your blockchain development journey',
+    description: 'Getting started from scratch: you are new to coding. This stage covers programming fundamentals, basic tools (like Git and VS Code), and introduces key blockchain concepts like wallets, decentralization, and what makes blockchains different from traditional tech.',
     color: 'bg-gradient-to-r from-neon-blue to-neon-violet',
     icon: BookOpen,
     topics: [
@@ -30,7 +30,7 @@ const developerJourney = [
   },
   {
     stage: 'Early Stage Blockchain Dev',
-    description: 'Learn the fundamentals of blockchain development',
+    description: 'Learning blockchain basics: smart contracts, tokens, main programming languages, gas calculations, devnet & tooling setup (Hardhat, Node.js, Remix, etc.)',
     color: 'bg-gradient-to-r from-neon-green to-neon-light-green',
     icon: Code,
     topics: [
@@ -42,7 +42,7 @@ const developerJourney = [
   },
   {
     stage: 'Ethereum Dev',
-    description: 'Master Ethereum development and DeFi',
+    description: 'Deep dive into Solidity, smart contract patterns, and EVM-based workflows. Learning to build dApps on EVM chains, interact with DeFi protocols, and optimize contracts.',
     color: 'bg-gradient-to-r from-neon-purple to-neon-fuchsia',
     icon: Shield,
     topics: [
@@ -56,7 +56,7 @@ const developerJourney = [
   },
   {
     stage: 'Solana Dev',
-    description: 'Build high-performance blockchain applications',
+    description: 'Explore Solana’s account model, Rust/Anchor programming, and program deployment. Building dApps using Solana-native tools and work with SPL tokens, PDAs, and the Anchor framework.',
     color: 'bg-gradient-to-r from-neon-dark-violet to-neon-violet',
     icon: Zap,
     topics: [
@@ -68,7 +68,7 @@ const developerJourney = [
   },
   {
     stage: 'Cross-Chain Dev',
-    description: 'Master cross-chain development with Neon EVM',
+    description: 'Combine Ethereum and Solana knowledge to build composable cross-chain dApps using Neon EVM. Learning composability feature, cross-chain token transfers, and interacting with Solana programs from EVM smart contracts.',
     color: 'bg-gradient-to-r from-neon-fuchsia to-neon-light-pink',
     icon: Globe,
     topics: [
@@ -80,7 +80,7 @@ const developerJourney = [
   },
   {
     stage: 'Beyond: Advanced Topics',
-    description: 'Advanced blockchain development and ecosystem',
+    description: 'Tackle advanced topics like zero-knowledge, infra tooling, or creating your own product with a go-to-market strategy. Learning how to build your own protocols, contribute to ecosystems, search and apply for grants and incubators.',
     color: 'bg-gradient-to-r from-gray-600 to-gray-800',
     icon: Target,
     topics: [
@@ -157,9 +157,8 @@ export default function HomePage() {
               Developer's Playbook
             </h1>
             <p className="mt-6 text-xl text-white/90 max-w-3xl mx-auto">
-              A comprehensive learning journey for blockchain developers. From beginner to advanced, 
-              structured learning paths for Neon EVM, Ethereum, and Solana development.
-            </p>
+            Developer’s Playbook is a collection of resources that developers found genuinely helpful in their learning journeys. It’s open-source and community-driven — you can use it to learn, or contribute what helped you. 
+             </p>
             <div className="mt-10 flex justify-center space-x-4">
               <Link href="/beginner" className="bg-gradient-to-r from-[#FF00AA] to-[#8E1CF1] text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
                 Start Your Journey
@@ -172,39 +171,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* What is Developer's Playbook */}
-      <section className="py-16 bg-black">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-display font-bold text-white mb-4">
-              What is Developer's Playbook?
-            </h2>
-            <p className="text-lg text-white/90 max-w-3xl mx-auto">
-              A collection of resources linked to stages of your development journey. 
-              Curated by the community, for the community.
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {contentTypes.map((type) => (
-              <Link
-                key={type.title}
-                href={type.href}
-                className="bg-[#1a1a1a] border border-white/10 rounded-lg p-6 text-center hover:bg-[#2a2a2a] transition-all duration-300 group"
-              >
-                <div className={`w-12 h-12 bg-gradient-to-r ${type.color} rounded-lg flex items-center justify-center mx-auto mb-4 shadow-lg`}>
-                  <type.icon className="h-6 w-6 text-white" />
-                </div>
-                <h3 className="text-lg font-display font-semibold text-white mb-2 group-hover:text-[#73FDEA] transition-colors duration-300">
-                  {type.title}
-                </h3>
-                <p className="text-white/80">{type.description}</p>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Developer Journey */}
       <section className="py-16 bg-black">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -213,7 +179,7 @@ export default function HomePage() {
               Your Development Journey
             </h2>
             <p className="text-lg text-white/90 max-w-3xl mx-auto">
-              Structured learning paths that grow with your skills and experience
+            A comprehensive learning journey for blockchain developers. From beginner to advanced, structured learning paths to grow as a developer and a tech founder.
             </p>
           </div>
           
@@ -256,6 +222,38 @@ export default function HomePage() {
                   </div>
                 </div>
               </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* What is Developer's Playbook */}
+      <section className="py-16 bg-black">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-display font-bold text-white mb-4">
+              What to contribute and why?
+            </h2>
+            
+            <p className="mt-6 text-xl text-white/90 max-w-3xl mx-auto">Contributing is also a way to build your GitHub proof-of-work and get access to the private Discord channel with mentorship, resume reviews, grant advice, and other actionalble tactics to help you grow as a dev or tech founder.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {contentTypes.map((type) => (
+              <Link
+                key={type.title}
+                href={type.href}
+                className="bg-[#1a1a1a] border border-white/10 rounded-lg p-6 text-center hover:bg-[#2a2a2a] transition-all duration-300 group"
+              >
+                <div className={`w-12 h-12 bg-gradient-to-r ${type.color} rounded-lg flex items-center justify-center mx-auto mb-4 shadow-lg`}>
+                  <type.icon className="h-6 w-6 text-white" />
+                </div>
+                <h3 className="text-lg font-display font-semibold text-white mb-2 group-hover:text-[#73FDEA] transition-colors duration-300">
+                  {type.title}
+                </h3>
+                <p className="text-white/80">{type.description}</p>
+              </Link>
             ))}
           </div>
         </div>

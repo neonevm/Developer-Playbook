@@ -124,8 +124,8 @@ export default function BeginnerPage() {
             Beginner
           </h1>
           <p className="text-lg text-white/90 max-w-3xl">
-            Comprehensive resources for beginner development. 
-            From fundamentals to advanced topics, find everything you need to master beginner development.
+          Getting started from scratch: you're new to coding. This stage covers programming fundamentals, basic tools (like Git and VS Code), and introduces key blockchain concepts like wallets, decentralization, and what makes blockchains different from traditional tech.
+
           </p>
         </div>
 
