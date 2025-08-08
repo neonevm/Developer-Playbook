@@ -142,8 +142,7 @@ export default function BeyondAdvancedTopicsPage() {
             Beyond Advanced Topics
           </h1>
           <p className="text-lg text-white/90 max-w-3xl">
-            Comprehensive resources for beyond advanced-topics development. 
-            From fundamentals to advanced topics, find everything you need to master beyond advanced-topics development.
+          Tackle advanced topics like zero-knowledge, infra tooling, or creating your own product with a go-to-market strategy. Learning how to build your own protocols, contribute to ecosystems, search and apply for grants and incubators.
           </p>
         </div>
 
