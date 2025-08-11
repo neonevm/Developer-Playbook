@@ -1,117 +1,206 @@
+// app/beginner/page.tsx
+import fs from 'fs'
+import path from 'path'
+import matter from 'gray-matter'
+import { marked } from 'marked'
 import Link from 'next/link'
-import { ArrowLeft, BookOpen, Code, Target, Shield, Globe, Github, ExternalLink, GraduationCap } from 'lucide-react'
+import Image from 'next/image'
+import { ArrowLeft, Globe, Github, ExternalLink, ChevronRight } from 'lucide-react'
+
+export const runtime = 'nodejs'
+export const dynamic = 'force-static' // static at build time
+
+type ResourceMeta = {
+  title: string
+  description?: string
+  authors?: string[]
+  tags?: string[]
+  languages?: string[]
+  url?: string
+  dateAdded?: string | Date
+  level?: string
+  category?: string
+}
 
 const topics = [
-  {
-    title: 'Development Tools',
-    description: 'Resources for development tools development and learning',
-    icon: Globe,
-    resources: [      {
-        title: 'GitHub Documentation',
-        type: 'Development Tools',
-        description: 'Comprehensive documentation for GitHub platform, including guides for repositories, pull requests, and collaborative coding',
-        link: 'https://docs.github.com/en',
-        difficulty: 'Beginner',
-      },      {
-        title: 'Git Basics',
-        type: 'Development Tools',
-        description: 'Essential Git fundamentals including setup, workflows, and version control concepts',
-        link: 'https://docs.github.com/en/get-started/git-basics',
-        difficulty: 'Beginner',
-      },      {
-        title: 'REST API Tutorial',
-        type: 'Development Tools',
-        description: 'Comprehensive guide to REST API design, development, and best practices for web services',
-        link: 'https://www.restapitutorial.com/introduction',
-        difficulty: 'Beginner',
-      },      {
-        title: 'VisuAlgo',
-        type: 'Development Tools',
-        description: 'Interactive visualization of algorithms and data structures for learning computer science concepts',
-        link: 'https://visualgo.net/en',
-        difficulty: 'Beginner',
-      },      {
-        title: 'Visual Studio Code Documentation',
-        type: 'Development Tools',
-        description: 'Complete documentation for VS Code editor including setup, extensions, and development features',
-        link: 'https://code.visualstudio.com/docs',
-        difficulty: 'Beginner',
-      },      {
-        title: 'Web3Collection',
-        type: 'Development Tools',
-        description: 'The biggest collection of tools and resources for web3 developers',
-        link: 'https://www.web3collection.app/',
-        difficulty: 'Beginner',
-      },
-    ],
-  },  {
-    title: 'General',
-    description: 'Resources for general development and learning',
-    icon: Globe,
-    resources: [      {
-        title: 'Blockchain Basics',
-        type: 'General',
-        description: 'Coursera course on blockchain fundamentals and applications',
-        link: 'https://www.coursera.org/learn/blockchain-basics',
-        difficulty: 'Beginner',
-      },      {
-        title: 'Cryptography for Beginners',
-        type: 'General',
-        description: 'Securing your digital world with cryptography fundamentals',
-        link: 'https://www.youtube.com/watch?v=jhXCTbFnK8o',
-        difficulty: 'Beginner',
-      },      {
-        title: 'Learn Python with freeCodeCamp',
-        type: 'General',
-        description: 'Full Python course for beginners in blockchain development',
-        link: 'https://www.freecodecamp.org/learn/scientific-computing-with-python/',
-        difficulty: 'Beginner',
-      },      {
-        title: 'Modern JavaScript Tutorial',
-        type: 'General',
-        description: 'Complete JavaScript course for Web3 development',
-        link: 'https://www.youtube.com/watch?v=W6NZfCO5SIk',
-        difficulty: 'Beginner',
-      },      {
-        title: 'What is a DAO in Crypto?',
-        type: 'General',
-        description: 'Decentralized Autonomous Organization explained',
-        link: 'https://www.youtube.com/watch?v=KHm0uUPqmVE',
-        difficulty: 'Beginner',
-      },      {
-        title: 'Intro to Blockchain Programming',
-        type: 'Ethereum',
-        description: 'Ethereum, Web3.js, Solidity, Smart Contracts introduction',
-        link: 'https://www.youtube.com/watch?v=gyMwXuJrbJQ',
-        difficulty: 'Beginner',
-      },
-    ],
-  },  {
-    title: 'Blockchain Resources',
-    description: 'Resources for blockchain resources development and learning',
-    icon: Globe,
-    resources: [      {
-        title: 'MetaMask Documentation',
-        type: 'Blockchain Resources',
-        description: 'Official documentation for MetaMask wallet including setup, features, and developer integration',
-        link: 'https://docs.metamask.io/',
-        difficulty: 'Beginner',
-      },      {
-        title: 'Phantom Documentation',
-        type: 'Blockchain Resources',
-        description: 'Official documentation for Phantom wallet including setup, features, and Solana ecosystem integration',
-        link: 'https://docs.phantom.com/introduction',
-        difficulty: 'Beginner',
-      },
-    ],
-  },
+  // keep or remove your manual topics section as you like
 ]
 
-export default function BeginnerPage() {
+// ---------- Helpers ----------
+const toLower = (s: unknown) => String(s || '').toLowerCase().trim()
+const hasAny = (hay: string[], needles: string[]) =>
+  hay.some(h => needles.includes(toLower(h)))
+
+const isBeginnerDevTag = (tags?: unknown) => {
+  if (!Array.isArray(tags)) return false
+  const t = tags.map(toLower)
+  return t.includes('beginner dev') || t.includes('beignner dev')
+}
+
+const formatDate = (d?: Date | string) => {
+  if (!d) return ''
+  const dt = typeof d === 'string' ? new Date(d) : d
+  if (isNaN(dt.getTime())) return ''
+  return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`
+}
+
+// Classifier → 'tools' | 'languages' | 'fundamentals' | 'other'
+function classify(meta: ResourceMeta): 'tools' | 'languages' | 'fundamentals' | 'other' {
+  const tags = (meta.tags || []).map(toLower)
+  const langs = (meta.languages || []).map(toLower)
+  const cat = toLower(meta.category)
+  const title = toLower(meta.title)
+
+  const toolWords = [
+    'tool','tools','development tools','devtools','git','github','vs code','vscode','ide',
+    'editor','wallet','metamask','phantom','docker','postman','rest api','api','cli'
+  ]
+  const langWords = [
+    'python','javascript','typescript','solidity','rust','go','java','c++','c#','swift','kotlin'
+  ]
+  const fundaWords = [
+    'fundamentals','fundamental','basics','intro','introduction','foundations','concepts','primer',
+    'blockchain basics','theory','cryptography','algorithms','data structures','html','css','general'
+  ]
+
+  // Languages: explicit language in languages[]/tags/title/category
+  if (hasAny(langs, langWords) || hasAny(tags, langWords) || langWords.some(w => title.includes(w)) || langWords.some(w => cat === w)) {
+    return 'languages'
+  }
+  // Tools: tags/category/title match tool words
+  if (hasAny(tags, toolWords) || toolWords.some(w => title.includes(w)) || toolWords.some(w => cat.includes(w))) {
+    return 'tools'
+  }
+  // Fundamentals: tags/category/title match fundamentals OR category is 'general' with Beginner level
+  if (
+    hasAny(tags, fundaWords) ||
+    fundaWords.some(w => title.includes(w)) ||
+    fundaWords.some(w => cat.includes(w)) ||
+    (cat === 'general' && toLower(meta.level) === 'beginner')
+  ) {
+    return 'fundamentals'
+  }
+  return 'other'
+}
+
+// Blog MD -> HTML
+async function getBlogHtml() {
+  try {
+    const filePath = path.join(process.cwd(), 'app', 'beginner', 'blogpost.md')
+    const fileContent = await fs.promises.readFile(filePath, 'utf-8')
+    const { content } = matter(fileContent)
+    return marked.parse(content)
+  } catch {
+    return marked.parse('# How to Start Your Coding Journey\n\n_Add **blogpost.md** to show this section._')
+  }
+}
+
+// Read all .md (except blogpost.md) with "Beginner Dev" tag
+async function getBeginnerResources(): Promise<(ResourceMeta & { key: string; section: ReturnType<typeof classify> })[]> {
+  const dir = path.join(process.cwd(), 'app', 'beginner')
+  const files = await fs.promises.readdir(dir)
+  const mdFiles = files.filter(f => f.toLowerCase().endsWith('.md') && f.toLowerCase() !== 'blogpost.md')
+
+  const list: (ResourceMeta & { key: string; section: ReturnType<typeof classify> })[] = []
+  for (const file of mdFiles) {
+    const raw = await fs.promises.readFile(path.join(dir, file), 'utf-8')
+    const { data } = matter(raw)
+    const meta = data as ResourceMeta
+    if (!isBeginnerDevTag(meta.tags)) continue
+    if (!meta.url) continue
+    const section = classify(meta)
+    list.push({
+      key: file,
+      title: meta.title || file.replace(/\.md$/i, ''),
+      description: meta.description || '',
+      authors: Array.isArray(meta.authors) ? meta.authors : [],
+      tags: Array.isArray(meta.tags) ? meta.tags : [],
+      languages: Array.isArray(meta.languages) ? meta.languages : [],
+      url: meta.url,
+      dateAdded: meta.dateAdded,
+      level: meta.level || '',
+      category: meta.category || '',
+      section,
+    })
+  }
+
+  // newest first
+  list.sort((a, b) => (new Date(b.dateAdded || 0).getTime()) - (new Date(a.dateAdded || 0).getTime()))
+  return list
+}
+
+export default async function BeginnerPage() {
+  const [blogContent, resources] = await Promise.all([getBlogHtml(), getBeginnerResources()])
+
+  const tools = resources.filter(r => r.section === 'tools')
+  const languages = resources.filter(r => r.section === 'languages')
+  const fundamentals = resources.filter(r => r.section === 'fundamentals')
+  const other = resources.filter(r => r.section === 'other') // only rendered if non-empty
+
+  const Card = ({ r }: { r: (ResourceMeta & { key: string }) }) => (
+    <a
+      key={r.key}
+      href={r.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group block rounded-lg border border-white/10 bg-[#1a1a1a] p-5 hover:border-white/30 hover:bg-[#232323] transition-all"
+    >
+      <div className="flex items-start justify-between gap-2 mb-2">
+        <h3 className="text-lg font-display font-semibold text-white group-hover:text-[#73FDEA] transition-colors">
+          {r.title}
+        </h3>
+        <ExternalLink className="h-4 w-4 text-white/50 group-hover:text-[#73FDEA] transition-colors shrink-0" />
+      </div>
+
+      {r.description && <p className="text-sm text-white/80 mb-4">{r.description}</p>}
+
+      <div className="flex flex-wrap gap-2 text-xs">
+        {r.level && <span className="inline-block bg-[#0b0b0b] border border-white/20 text-white/70 px-2 py-0.5 rounded">{r.level}</span>}
+        {r.category && <span className="inline-block bg-[#0b0b0b] border border-white/20 text-white/70 px-2 py-0.5 rounded">{r.category}</span>}
+        {r.languages && r.languages.length > 0 && (
+          <span className="inline-block bg-[#0b0b0b] border border-white/20 text-white/70 px-2 py-0.5 rounded">
+            {r.languages.join(', ')}
+          </span>
+        )}
+      </div>
+
+      <div className="mt-3 flex items-center justify-between text-xs text-white/50">
+        <span className="truncate">{r.authors && r.authors.length > 0 ? r.authors.join(', ') : ''}</span>
+        <span>{formatDate(r.dateAdded)}</span>
+      </div>
+    </a>
+  )
+
+  const Section = ({ title, items }: { title: string; items: (ResourceMeta & { key: string })[] }) =>
+    items.length ? (
+      <section className="mb-12">
+        <h2 className="text-lg md:text-xl font-display font-semibold text-white mb-4">{title}</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {items.map((r) => <Card key={r.key} r={r} />)}
+        </div>
+      </section>
+    ) : null
+
   return (
     <div className="min-h-screen bg-black">
-      {/* Header */}
+      {/* Contained Banner */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+        <div className="rounded-lg overflow-hidden border border-white/10 bg-[#0b0b0b]">
+          <div className="relative h-40 sm:h-48 md:h-56 lg:h-64">
+            <Image
+              src="/No coding background - no problem Start here.svg"
+              alt="No coding background - no problem. Start here."
+              fill
+              className="object-cover"
+              priority
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Header */}
         <div className="mb-8">
           <Link
             href="/"
@@ -120,71 +209,86 @@ export default function BeginnerPage() {
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Home
           </Link>
-          <h1 className="text-3xl font-display font-bold text-white mb-4">
+          <h1 className="text-xl md:text-2xl font-display font-bold text-white mb-3">
             Beginner
           </h1>
           <p className="text-lg text-white/90 max-w-3xl">
-          Getting started from scratch: you're new to coding. This stage covers programming fundamentals, basic tools (like Git and VS Code), and introduces key blockchain concepts like wallets, decentralization, and what makes blockchains different from traditional tech.
-
+            Getting started from scratch: you're new to coding. This stage covers programming fundamentals,
+            basic tools (like Git and VS Code), and introduces key blockchain concepts like wallets,
+            decentralization, and what makes blockchains different from traditional tech.
           </p>
         </div>
 
-        {/* Topics */}
-        <div className="space-y-12">
-          {topics.map((topic) => (
-            <div key={topic.title} className="bg-[#1a1a1a] border border-white/10 rounded-lg p-6">
-              <div className="mb-6">
-                <div className="flex items-center mb-4">
-                  <div className="w-10 h-10 bg-gradient-to-r from-[#FF00AA] to-[#8E1CF1] rounded-lg flex items-center justify-center mr-4">
-                    <topic.icon className="h-5 w-5 text-white" />
-                  </div>
-                  <h2 className="text-2xl font-display font-semibold text-white">
-                    {topic.title}
-                  </h2>
-                </div>
-                <p className="text-white/80">{topic.description}</p>
-              </div>
+        {/* Blogpost — foldable */}
+        <details className="dropdown group mb-8 rounded-lg border border-white/10 bg-[#1a1a1a]">
+          <summary className="flex items-center gap-2 cursor-pointer select-none px-4 md:px-5 py-3 md:py-4 list-none focus:outline-none focus:ring-2 focus:ring-[#73FDEA]/40">
+            <ChevronRight className="h-4 w-4 text-white/70 transition-transform duration-200 group-open:rotate-90 shrink-0" />
+            <span className="text-sm md:text-base font-semibold text-white">
+              Starter Guide: What if I don&apos;t know how to code?
+            </span>
+          </summary>
+          <div className="px-4 md:px-5 pb-4 md:pb-5 pt-0">
+            <article className="md-content md-compact" dangerouslySetInnerHTML={{ __html: blogContent }} />
+          </div>
+        </details>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {topic.resources.map((resource) => (
-                  <a
-                    key={resource.title}
-                    href={resource.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block p-6 border border-white/20 rounded-lg hover:border-white/40 hover:bg-[#2a2a2a] transition-all duration-300 bg-[#2a2a2a] group"
-                  >
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <h3 className="text-lg font-display font-semibold text-white group-hover:text-[#73FDEA] transition-colors duration-300 mb-2">
-                          {resource.title}
-                        </h3>
-                        <p className="text-white/80 text-sm mb-3">
-                          {resource.description}
-                        </p>
-                        <div className="flex items-center justify-between">
-                          <span className="inline-block bg-[#1a1a1a] text-white/70 px-2 py-1 rounded border border-white/20 text-xs">
-                            {resource.difficulty}
-                          </span>
-                          <span className="text-white/50 text-xs">{resource.type}</span>
-                        </div>
-                      </div>
-                      <ExternalLink className="h-4 w-4 text-white/50 group-hover:text-[#73FDEA] transition-colors duration-300" />
+        {/* Auto sections */}
+        <Section title="Main Tools" items={tools} />
+        <Section title="Main Languages" items={languages} />
+        <Section title="Fundamentals" items={fundamentals} />
+        {other.length ? <Section title="Other" items={other} /> : null}
+
+        {/* (Optional) keep or remove your manual Topics section below */}
+        {topics.length > 0 && (
+          <div className="space-y-12">
+            {topics.map((topic) => (
+              <div key={topic.title} className="bg-[#1a1a1a] border border-white/10 rounded-lg p-6">
+                <div className="mb-6">
+                  <div className="flex items-center mb-4">
+                    <div className="w-10 h-10 bg-gradient-to-r from-[#FF00AA] to-[#8E1CF1] rounded-lg flex items-center justify-center mr-4">
+                      <topic.icon className="h-5 w-5 text-white" />
                     </div>
-                  </a>
-                ))}
+                    <h2 className="text-2xl font-display font-semibold text-white">{topic.title}</h2>
+                  </div>
+                  <p className="text-white/80">{topic.description}</p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {topic.resources.map((resource) => (
+                    <a
+                      key={resource.title}
+                      href={resource.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block p-6 border border-white/20 rounded-lg hover:border-white/40 hover:bg-[#2a2a2a] transition-all duration-300 bg-[#2a2a2a] group"
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <h3 className="text-lg font-display font-semibold text-white group-hover:text-[#73FDEA] transition-colors duration-300 mb-2">
+                            {resource.title}
+                          </h3>
+                          <p className="text-white/80 text-sm mb-3">{resource.description}</p>
+                          <div className="flex items-center justify-between">
+                            <span className="inline-block bg-[#1a1a1a] text-white/70 px-2 py-1 rounded border border-white/20 text-xs">
+                              {resource.difficulty}
+                            </span>
+                            <span className="text-white/50 text-xs">{resource.type}</span>
+                          </div>
+                        </div>
+                        <ExternalLink className="h-4 w-4 text-white/50 group-hover:text-[#73FDEA] transition-colors duration-300" />
+                      </div>
+                    </a>
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
-        {/* Call to Action */}
+        {/* CTA */}
         <div className="mt-12 bg-gradient-to-r from-[#8E1CF1] to-[#FF00AA] rounded-lg p-8 text-center">
-          <h3 className="text-2xl font-display font-bold text-white mb-4">
-            Share Your Knowledge
-          </h3>
+          <h3 className="text-2xl font-display font-bold text-white mb-4">Share Your Knowledge</h3>
           <p className="text-white/90 mb-6 max-w-2xl mx-auto">
-            Have a great beginner resource? Help the community by contributing to our collection.
+            Have a great beginner resource? Help the community by contributing to this collection.
           </p>
           <a
             href="https://github.com/Avvrik/Dev-Playbook"

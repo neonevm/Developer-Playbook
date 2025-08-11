@@ -7,5 +7,5 @@ languages: ["General"]
 url: "https://www.coursera.org/learn/blockchain-basics"
 dateAdded: 2024-01-15
 level: "Beginner"
-category: "General"
+category: "Course"
 ---

@@ -6,6 +6,10 @@
   html {
     font-family: var(--font-inter), Inter, Arial, sans-serif;
   }
+
+  body {
+    margin: 0; /* ✅ Remove default browser margin */
+  }
   
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-syne), Syne, sans-serif;
@@ -28,4 +32,34 @@
   .neon-gradient-text {
     @apply bg-gradient-to-r from-neon-violet to-neon-purple bg-clip-text text-transparent;
   }
-} 
+  /* Blog markdown sizing */
+  .md-content { @apply text-sm md:text-base leading-7 text-white/90; }
+
+  .md-content h1 { @apply text-xl md:text-2xl font-semibold leading-tight mt-2 mb-3 text-white; }
+  .md-content h2 { @apply text-lg md:text-xl font-semibold mt-6 mb-2 text-white; }
+  .md-content h3 { @apply text-base md:text-lg font-semibold mt-4 mb-2 text-white; }
+
+  .md-content p   { @apply my-3; }
+  .md-content ul,
+  .md-content ol  { @apply my-3 pl-5; }
+  .md-content li  { @apply my-1; }
+
+  .md-content strong { @apply font-semibold text-white; }
+  .md-content a { @apply underline text-[#73FDEA]; }
+  .md-content code { @apply text-xs md:text-sm bg-white/10 text-white px-1 py-0.5 rounded; }
+  .md-content hr { border-color: rgba(255,255,255,0.2); @apply my-6; }
+  /* Compact sizing for markdown */
+  .md-compact { @apply text-[13px] md:text-sm leading-6 text-white/85; }
+
+  .md-compact h1 { @apply text-base md:text-lg font-semibold leading-tight mt-1 mb-3 text-white; }
+  .md-compact h2 { @apply text-sm md:text-base font-semibold mt-4 mb-2 text-white; }
+  .md-compact h3 { @apply text-xs md:text-sm font-semibold mt-3 mb-1 text-white; }
+
+  .md-compact p { @apply my-2; }
+  .md-compact ul, .md-compact ol { @apply my-2 pl-5; }
+  .md-compact li { @apply my-1; }
+  /* Hide default disclosure marker just for our dropdowns */
+  .dropdown > summary { list-style: none; }
+  .dropdown > summary::-webkit-details-marker { display: none; }
+  .dropdown > summary::marker { content: ''; }
+}

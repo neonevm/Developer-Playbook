@@ -1,11 +1,11 @@
 ---
-title: "Modern JavaScript Tutorial"
+title: "Learn JavaScript"
 description: "Complete JavaScript course for Web3 development"
-authors: ["@youtube"]
+authors: ["@codecademy"]
 tags: ["Beginner Dev", "JavaScript", "Web3", "Frontend"]
 languages: ["JavaScript"]
-url: "https://www.youtube.com/watch?v=W6NZfCO5SIk"
+url: "https://www.codecademy.com/learn/introduction-to-javascript"
 dateAdded: 2024-01-15
 level: "Beginner"
-category: "General"
+category: "Course"
 ---

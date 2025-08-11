@@ -74,7 +74,7 @@ export default function HomePage() {
       <section className="py-16 bg-black">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-display font-bold text-white mb-4">What to contribute?</h2>
+            <h2 className="text-3xl font-display font-bold text-white mb-4">Want to contribute?</h2>
 
           </div>
 
@@ -104,8 +104,7 @@ export default function HomePage() {
       <section className="py-16 bg-black">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h3 className="text-3xl font-display font-bold text-white">Featured Contributors</h3>
-            <p className="mt-4 text-lg text-white/90">Meet the developers powering this community of knowledge</p>
+            <h3 className="text-3xl font-display font-bold text-white">Backed by True Web3 Builders</h3>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
