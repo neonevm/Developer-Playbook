@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ArrowLeft, GraduationCap, ExternalLink, Clock, Code, Shield, Globe, BookOpen } from 'lucide-react'
+import { ArrowLeft, GraduationCap, ExternalLink, Code, Shield, Globe, BookOpen } from 'lucide-react'
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
@@ -25,21 +25,20 @@ function getCoursesData() {
           const fileContents = fs.readFileSync(filePath, 'utf8')
           const { data } = matter(fileContents)
           
-          return {
-            title: data.title || 'Untitled',
-            description: data.description || 'No description available',
-            authors: data.authors || [],
-            tags: data.tags || [],
-            languages: data.languages || [],
-            url: data.url || '#',
-            dateAdded: data.dateAdded || '2024-01-01',
-            level: data.level || 'Beginner',
-            category: data.category || 'General',
-            platform: data.authors?.[0]?.replace('@', '') || 'Unknown',
-            duration: 'Varies',
-            difficulty: data.level || 'Beginner',
-            icon: getIconForCategory(data.category || 'General', data.tags || [])
-          }
+                     return {
+             title: data.title || 'Untitled',
+             description: data.description || 'No description available',
+             authors: data.authors || [],
+             tags: data.tags || [],
+             languages: data.languages || [],
+             url: data.url || '#',
+             dateAdded: data.dateAdded || '2024-01-01',
+             level: data.level || 'Beginner',
+             category: data.category || 'General',
+             platform: data.authors?.[0]?.replace('@', '') || 'Unknown',
+             difficulty: data.level || 'Beginner',
+             icon: getIconForCategory(data.category || 'General', data.tags || [])
+           }
         } catch (error) {
           console.error(`Error parsing ${file}:`, error)
           return {
@@ -53,7 +52,6 @@ function getCoursesData() {
             level: 'Beginner',
             category: 'General',
             platform: 'Unknown',
-            duration: 'Varies',
             difficulty: 'Beginner',
             icon: 'GraduationCap'
           }
@@ -83,6 +81,14 @@ function getIconForCategory(category: string, tags: string[]) {
   
   if (tags.some(tag => tag.includes('Rust') || tag.includes('Programming'))) {
     return 'Code'
+  }
+  
+  if (tags.some(tag => tag.includes('Grants') || tag.includes('Funding'))) {
+    return 'GraduationCap'
+  }
+  
+  if (tags.some(tag => tag.includes('Accelerator'))) {
+    return 'GraduationCap'
   }
   
   if (category.includes('Fundamentals') || tags.some(tag => tag.includes('Academic'))) {
@@ -141,6 +147,18 @@ function groupCoursesByCategory(courses: any[]) {
       description: 'Specialized courses on advanced blockchain concepts',
       courses: courses.filter(course => 
         course.tags.some((tag: string) => tag.includes('Advanced') || tag.includes('Cryptography'))
+      )
+    },
+    'Grants & Funding': {
+      description: 'Resources for finding and applying to blockchain grants and funding opportunities',
+      courses: courses.filter(course => 
+        course.tags.some((tag: string) => tag.includes('Grants') || tag.includes('Funding'))
+      )
+    },
+    'Accelerator Programs': {
+      description: 'Comprehensive accelerator and incubator programs for blockchain startups and Web3 projects',
+      courses: courses.filter(course => 
+        course.tags.some((tag: string) => tag.includes('Accelerator'))
       )
     }
   }
@@ -213,17 +231,13 @@ export default function CoursesPage() {
                               <p className="text-white/80 text-sm mb-3">
                                 {course.description}
                               </p>
-                              <div className="flex items-center justify-between mb-3">
-                                <div className="flex items-center space-x-4 text-xs text-white/70">
-                                  <span className="flex items-center">
-                                    <Clock className="h-3 w-3 mr-1" />
-                                    {course.duration}
-                                  </span>
-                                  <span className="inline-block bg-[#1a1a1a] text-white/70 px-2 py-1 rounded border border-white/20">
-                                    {course.difficulty}
-                                  </span>
-                                </div>
-                              </div>
+                                                             <div className="flex items-center justify-between mb-3">
+                                 <div className="flex items-center space-x-4 text-xs text-white/70">
+                                   <span className="inline-block bg-[#1a1a1a] text-white/70 px-2 py-1 rounded border border-white/20">
+                                     {course.difficulty}
+                                   </span>
+                                 </div>
+                               </div>
                               <div className="flex items-center justify-between">
                                 <div className="flex flex-wrap gap-2">
                                   {course.tags.slice(0, 3).map((tag: string) => (
