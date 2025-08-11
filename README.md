@@ -8,8 +8,6 @@ Explore the latest resources, tutorials, challenges, tools, courses and boilerpl
 
 Explore. Learn. Build. Contribute.
 
-https://dev-playbook.vercel.app/
-
 ## Contributing
 
 ### How to Contribute
