@@ -7,5 +7,5 @@ languages: ["General"]
 url: "https://ocw.mit.edu/courses/15-s12-blockchain-and-money-fall-2018/"
 dateAdded: 2024-01-15
 level: "Intermediate"
-category: "General"
+category: "Blockchain Courses"
 ---

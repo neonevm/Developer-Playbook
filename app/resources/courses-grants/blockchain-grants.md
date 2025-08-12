@@ -7,5 +7,5 @@ languages: ["English"]
 url: "https://blockchaingrants.org/"
 dateAdded: 2025-01-20
 level: "Advanced"
-category: "General"
+category: "Grants"
 ---

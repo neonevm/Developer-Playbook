@@ -1,27 +1,259 @@
+// app/solana/page.tsx
+import fs from 'fs'
+import path from 'path'
+import matter from 'gray-matter'
+import { marked } from 'marked'
 import Link from 'next/link'
-import { ArrowLeft, BookOpen, Code, Target, Shield, Globe, Github, ExternalLink, GraduationCap } from 'lucide-react'
+import Image from 'next/image'
+import { ArrowLeft, Github, ExternalLink, ChevronRight } from 'lucide-react'
+import SolanaTimelines from './SolanaTimelines'
 
-const topics = [
-  {
-    title: 'Solana',
-    description: 'Resources for solana development and learning',
-    icon: Code,
-    resources: [      {
-        title: '60 Days of Solana',
-        type: 'Solana',
-        description: 'Comprehensive Solana course by Rareskills',
-        link: 'https://www.rareskills.io/solana',
-        difficulty: 'Intermediate',
-      },
-    ],
-  },
-]
+export const runtime = 'nodejs'
+export const dynamic = 'force-static' // keep static; no API calls needed
 
-export default function SolanaPage() {
+type ResourceMeta = {
+  title: string
+  description?: string
+  authors?: string[]
+  tags?: string[]
+  languages?: string[]
+  url?: string
+  dateAdded?: string | Date
+  level?: string
+  category?: string
+  // optional for Twitter profiles
+  avatar?: string
+  bio?: string
+  displayName?: string
+}
+
+type TwitterProfile = { handle: string; title?: string; avatar?: string; bio?: string }
+
+// ---------- helpers ----------
+const toLower = (s: unknown) => String(s || '').toLowerCase().trim()
+
+const isSolanaTag = (tags?: unknown) => {
+  if (!Array.isArray(tags)) return false
+  const t = tags.map(toLower)
+  return t.includes('solana') || t.includes('sol') || t.includes('svm') || t.includes('solana dev') || t.includes('solana program')
+}
+
+const isTwitterTag = (tags?: unknown) => {
+  if (!Array.isArray(tags)) return false
+  const t = tags.map(toLower)
+  return t.includes('twitter') || t.includes('x') || t.includes('twitter profile')
+}
+
+const formatDate = (d?: Date | string) => {
+  if (!d) return ''
+  const dt = typeof d === 'string' ? new Date(d) : d
+  if (isNaN(dt.getTime())) return ''
+  return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`
+}
+
+function haystack(meta: ResourceMeta) {
+  const parts = [meta.title, meta.category, ...(meta.tags || []), ...(meta.languages || []), meta.level]
+    .map(toLower)
+    .join(' ')
+  return ` ${parts.replace(/[^a-z0-9+]+/g, ' ').replace(/\s+/g, ' ').trim()} `
+}
+const containsPhrase = (hay: string, phrase: string) => hay.includes(` ${phrase.toLowerCase()} `)
+const containsAny = (hay: string, items: string[]) => items.some((p) => containsPhrase(hay, p))
+
+function classify(meta: ResourceMeta): 'tools' | 'languages' | 'fundamentals' | 'other' {
+  const hay = haystack(meta)
+
+  const toolNames = [
+    'anchor','solana cli','solana-cli','solana playground','solana-playground',
+    'metaplex','sugar','phantom','solflare','backpack',
+    'helius','quicknode','shyft','triton','jito',
+    '@solana/web3.js','web3.js','solana explorer','explorer'
+  ]
+  const toolContext = [
+    'tool','tools','devtools','framework','development framework','environment','dev environment',
+    'wallet','editor','cli','sdk','rpc','validator'
+  ]
+  const langNames = ['rust','typescript','javascript','python','c','c++']
+  const fundPhrases = [
+    'fundamentals','fundamental','basics','intro','introduction','foundations','concepts','primer',
+    'account model','cpi','pda','pdas','spl token','token program','borsh','lamports','transactions',
+    'programs','on-chain programs'
+  ]
+
+  const hasToolName   = containsAny(hay, toolNames)
+  const hasToolCtx    = containsAny(hay, toolContext)
+  const hasLang       = containsAny(hay, langNames)
+  const isFundamental = containsAny(hay, fundPhrases) || (containsPhrase(hay, 'general') && containsPhrase(hay, 'beginner'))
+
+  if (hasToolName) return 'tools'
+  if (hasLang && !hasToolCtx) return 'languages'
+  if (hasToolCtx) return 'tools'
+  if (isFundamental) return 'fundamentals'
+  return 'other'
+}
+
+// Pull @handle from authors/url/title
+function extractTwitterHandle(meta: ResourceMeta): string | null {
+  const handleRe = /^@?([A-Za-z0-9_]{1,15})$/
+  for (const a of meta.authors || []) {
+    const m = String(a).trim().match(handleRe)
+    if (m) return m[1]
+  }
+  if (meta.url) {
+    try {
+      const u = new URL(meta.url)
+      const host = u.hostname.replace(/^www\./, '')
+      if (host === 'twitter.com' || host === 'x.com') {
+        const seg = u.pathname.split('/').filter(Boolean)[0] || ''
+        const m = seg.match(handleRe)
+        if (m) return m[1]
+      }
+    } catch {}
+  }
+  if (meta.title?.trim().startsWith('@')) {
+    const m = meta.title.trim().match(handleRe)
+    if (m) return m[1]
+  }
+  return null
+}
+
+// Blog MD -> HTML
+async function getBlogHtml() {
+  try {
+    const filePath = path.join(process.cwd(), 'app', 'solana', 'blogpost.md')
+    const fileContent = await fs.promises.readFile(filePath, 'utf-8')
+    const { content } = matter(fileContent)
+    return marked.parse(content)
+  } catch {
+    return marked.parse('# Solana: Start Here\n\n_Add **app/solana/blogpost.md** to show this section._')
+  }
+}
+
+// Read .md files: resources + twitter profiles (avatar/bio pulled from frontmatter)
+async function getSolanaContent(): Promise<{
+  resources: (ResourceMeta & { key: string; section: ReturnType<typeof classify> })[]
+  profiles: TwitterProfile[]
+}> {
+  const dir = path.join(process.cwd(), 'app', 'solana')
+  const files = await fs.promises.readdir(dir)
+  const mdFiles = files.filter(f => f.toLowerCase().endsWith('.md') && f.toLowerCase() !== 'blogpost.md')
+
+  const resources: (ResourceMeta & { key: string; section: ReturnType<typeof classify> })[] = []
+  const handles = new Set<string>()
+  const profiles: TwitterProfile[] = []
+
+  for (const file of mdFiles) {
+    const raw = await fs.promises.readFile(path.join(dir, file), 'utf-8')
+    const { data } = matter(raw)
+    const meta = data as ResourceMeta
+
+    if (isTwitterTag(meta.tags)) {
+      const h = extractTwitterHandle(meta)
+      if (h) {
+        const key = h.toLowerCase()
+        if (!handles.has(key)) {
+          handles.add(key)
+          profiles.push({
+            handle: h,
+            // prefer displayName if you set it, else keep title (often @handle)
+            title: meta.displayName || meta.title,
+            avatar: typeof meta.avatar === 'string' ? meta.avatar : undefined,
+            bio: typeof meta.bio === 'string' ? meta.bio : undefined,
+          })
+        }
+      }
+      continue
+    }
+
+    if (!isSolanaTag(meta.tags)) continue
+    if (!meta.url) continue
+
+    resources.push({
+      key: file,
+      title: meta.title || file.replace(/\.md$/i, ''),
+      description: meta.description || '',
+      authors: Array.isArray(meta.authors) ? meta.authors : [],
+      tags: Array.isArray(meta.tags) ? meta.tags : [],
+      languages: Array.isArray(meta.languages) ? meta.languages : [],
+      url: meta.url,
+      dateAdded: meta.dateAdded,
+      level: meta.level || '',
+      category: meta.category || '',
+      section: classify(meta),
+    })
+  }
+
+  resources.sort((a, b) => (new Date(b.dateAdded || 0).getTime()) - (new Date(a.dateAdded || 0).getTime()))
+  return { resources, profiles }
+}
+
+export default async function SolanaPage() {
+  const [blogContent, content] = await Promise.all([getBlogHtml(), getSolanaContent()])
+  const { resources, profiles } = content
+
+  const tools = resources.filter(r => r.section === 'tools')
+  const languages = resources.filter(r => r.section === 'languages')
+  const fundamentals = resources.filter(r => r.section === 'fundamentals')
+  const other = resources.filter(r => r.section === 'other')
+
+  const Card = ({ r }: { r: (ResourceMeta & { key: string }) }) => (
+    <a
+      key={r.key}
+      href={r.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group block rounded-lg border border-white/10 bg-[#1a1a1a] p-5 hover:border-white/30 hover:bg-[#232323] transition-all"
+    >
+      <div className="flex items-start justify-between gap-2 mb-2">
+        <h3 className="text-lg font-display font-semibold text-white group-hover:text-[#73FDEA] transition-colors">
+          {r.title}
+        </h3>
+        <ExternalLink className="h-4 w-4 text-white/50 group-hover:text-[#73FDEA] transition-colors shrink-0" />
+      </div>
+
+      {r.description && <p className="text-sm text-white/80 mb-4">{r.description}</p>}
+
+      <div className="flex flex-wrap gap-2 text-xs">
+        {r.level && <span className="inline-block bg-[#0b0b0b] border border-white/20 text-white/70 px-2 py-0.5 rounded">{r.level}</span>}
+        {r.category && <span className="inline-block bg-[#0b0b0b] border border-white/20 text-white/70 px-2 py-0.5 rounded">{r.category}</span>}
+        {r.languages && r.languages.length > 0 && (
+          <span className="inline-block bg-[#0b0b0b] border border-white/20 text-white/70 px-2 py-0.5 rounded">
+            {r.languages.join(', ')}
+          </span>
+        )}
+      </div>
+
+      <div className="mt-3 flex items-center justify-between text-xs text-white/50">
+        <span className="truncate">{r.authors && r.authors.length > 0 ? r.authors.join(', ') : ''}</span>
+        <span>{formatDate(r.dateAdded)}</span>
+      </div>
+    </a>
+  )
+
+  const Section = ({ title, items }: { title: string; items: (ResourceMeta & { key: string })[] }) =>
+    items.length ? (
+      <section className="mb-12">
+        <h2 className="text-lg md:text-xl font-display font-semibold text-white mb-4">{title}</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {items.map((r) => <Card key={r.key} r={r} />)}
+        </div>
+      </section>
+    ) : null
+
   return (
     <div className="min-h-screen bg-black">
-      {/* Header */}
+      {/* Contained Banner */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+        <div className="rounded-lg overflow-hidden border border-white/10 bg-[#0b0b0b]">
+          <div className="relative h-40 sm:h-48 md:h-56 lg:h-64">
+            <Image src="/Solana.png" alt="Solana" fill className="object-cover" priority />
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Header */}
         <div className="mb-8">
           <Link
             href="/"
@@ -30,70 +262,46 @@ export default function SolanaPage() {
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Home
           </Link>
-          <h1 className="text-3xl font-display font-bold text-white mb-4">
-            Solana
-          </h1>
+          <h1 className="text-xl md:text-2xl font-display font-bold text-white mb-3">Solana</h1>
           <p className="text-lg text-white/90 max-w-3xl">
           Explore Solana’s account model, Rust/Anchor programming, and program deployment. Building dApps using Solana-native tools and work with SPL tokens, PDAs, and the Anchor framework.
           </p>
         </div>
 
-        {/* Topics */}
-        <div className="space-y-12">
-          {topics.map((topic) => (
-            <div key={topic.title} className="bg-[#1a1a1a] border border-white/10 rounded-lg p-6">
-              <div className="mb-6">
-                <div className="flex items-center mb-4">
-                  <div className="w-10 h-10 bg-gradient-to-r from-[#FF00AA] to-[#8E1CF1] rounded-lg flex items-center justify-center mr-4">
-                    <topic.icon className="h-5 w-5 text-white" />
-                  </div>
-                  <h2 className="text-2xl font-display font-semibold text-white">
-                    {topic.title}
-                  </h2>
-                </div>
-                <p className="text-white/80">{topic.description}</p>
-              </div>
+        {/* Blogpost — foldable */}
+        <details className="dropdown group mb-8 rounded-lg border border-white/10 bg-[#1a1a1a]">
+          <summary className="flex items-center gap-2 cursor-pointer select-none px-4 md:px-5 py-3 md:py-4 list-none focus:outline-none focus:ring-2 focus:ring-[#73FDEA]/40">
+            <ChevronRight className="h-4 w-4 text-white/70 transition-transform duration-200 group-open:rotate-90 shrink-0" />
+            <span className="text-sm md:text-base font-semibold text-white">
+              Solana Dev: quick start guide
+            </span>
+          </summary>
+          <div className="px-4 md:px-5 pb-4 md:pb-5 pt-0">
+            <article className="md-content md-compact" dangerouslySetInnerHTML={{ __html: blogContent }} />
+          </div>
+        </details>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {topic.resources.map((resource) => (
-                  <a
-                    key={resource.title}
-                    href={resource.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block p-6 border border-white/20 rounded-lg hover:border-white/40 hover:bg-[#2a2a2a] transition-all duration-300 bg-[#2a2a2a] group"
-                  >
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <h3 className="text-lg font-display font-semibold text-white group-hover:text-[#73FDEA] transition-colors duration-300 mb-2">
-                          {resource.title}
-                        </h3>
-                        <p className="text-white/80 text-sm mb-3">
-                          {resource.description}
-                        </p>
-                        <div className="flex items-center justify-between">
-                          <span className="inline-block bg-[#1a1a1a] text-white/70 px-2 py-1 rounded border border-white/20 text-xs">
-                            {resource.difficulty}
-                          </span>
-                          <span className="text-white/50 text-xs">{resource.type}</span>
-                        </div>
-                      </div>
-                      <ExternalLink className="h-4 w-4 text-white/50 group-hover:text-[#73FDEA] transition-colors duration-300" />
-                    </div>
-                  </a>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
+        {/* Auto sections */}
+        <Section title="Main Tools" items={tools} />
+        <Section title="Main Languages" items={languages} />
+        <Section title="Fundamentals" items={fundamentals} />
+        {other.length ? <Section title="Other" items={other} /> : null}
 
-        {/* Call to Action */}
+        {/* Solana Twitter (from .md with 'Twitter' tag; avatars/bios pulled from frontmatter) */}
+        {profiles.length > 0 && (
+          <section className="mb-12">
+            <h2 className="text-lg md:text-xl font-display font-semibold text-white mb-4">
+              Solana Twitter
+            </h2>
+            <SolanaTimelines profiles={profiles} />
+          </section>
+        )}
+
+        {/* CTA */}
         <div className="mt-12 bg-gradient-to-r from-[#8E1CF1] to-[#FF00AA] rounded-lg p-8 text-center">
-          <h3 className="text-2xl font-display font-bold text-white mb-4">
-            Share Your Knowledge
-          </h3>
+          <h3 className="text-2xl font-display font-bold text-white mb-4">Share Your Knowledge</h3>
           <p className="text-white/90 mb-6 max-w-2xl mx-auto">
-            Have a great solana resource? Help the community by contributing to our collection.
+            Have a great Solana resource? Help the community by contributing to this collection.
           </p>
           <a
             href="https://github.com/Avvrik/Dev-Playbook"

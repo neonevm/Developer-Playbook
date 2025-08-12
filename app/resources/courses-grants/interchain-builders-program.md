@@ -7,5 +7,5 @@ languages: ["English"]
 url: "https://interchain.io/builders"
 dateAdded: 2025-01-20
 level: "Advanced"
-category: "General"
+category: "Accelerators"
 ---
