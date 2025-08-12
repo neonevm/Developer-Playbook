@@ -140,7 +140,7 @@ export default async function CodeExamplesPage() {
                   >
                     <div className="flex items-start gap-3">
                       <div className="flex-shrink-0 w-9 h-9 rounded-md bg-gradient-to-r from-[#FF00AA] to-[#8E1CF1] grid place-items-center">
-                        <CodeExampleIcon tags={ex.tags} category={ex.category} />
+                        <CodeExampleIcon tags={ex.tags} category={ex.category || 'Code Example'} />
                       </div>
 
                       <div className="min-w-0 flex-1">
