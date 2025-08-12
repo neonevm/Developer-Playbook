@@ -57,30 +57,37 @@ function haystack(meta: ResourceMeta) {
 const containsPhrase = (hay: string, phrase: string) => hay.includes(` ${phrase.toLowerCase()} `)
 const containsAny = (hay: string, items: string[]) => items.some(p => containsPhrase(hay, p))
 
-function classify(meta: ResourceMeta): 'tools' | 'languages' | 'fundamentals' | 'other' {
+// 🔁 New classifier → 'guides_docs' | 'courses' | 'grants' | 'accelerators'
+function classify(meta: ResourceMeta): 'guides_docs' | 'courses' | 'grants' | 'accelerators' {
   const hay = haystack(meta)
-  const toolNames = [
-    'circom','noir','halo2','gnark','snarkjs','zokrates','arkworks','plonky','plonky2',
-    'risc0','zkvm','succinct','polyhedra','aztec','zama','tfhe','openfhe',
-    'slither','mythril','echidna','manticore','securify','kontrol','certora',
-    'foundry','forge','hevm','tenderly'
+
+  const guidesDocs = [
+    'guide','guides','tutorial','how to','how-to','docs','documentation','reference',
+    'deep dive','deep-dive','whitepaper','paper','spec','standard','blog','article','walkthrough','best practices'
   ]
-  const toolContext = ['tool','tools','framework','sdk','cli','prover','verifier','fuzzer','analyzer','coprocessor','oracle']
-  const langNames = ['rust','go','python','typescript','javascript','solidity','c','c++','noir','cairo','move']
-  const fundPhrases = [
-    'fundamentals','basics','intro','concepts','zero knowledge','zk','snark','stark','plonk','groth16',
-    'cryptography','mev','pbs','restaking','data availability','light client','rollup','security',
-    'formal verification','intents','account abstraction','erc-4337','privacy','fhe','mpc','modularity'
+  const courses = [
+    'course','bootcamp','curriculum','mooc','class','lesson','track','learning path','learning-path',
+    'tutorial series','workshop','academy'
   ]
-  const hasToolName = containsAny(hay, toolNames)
-  const hasToolCtx = containsAny(hay, toolContext)
-  const hasLang = containsAny(hay, langNames)
-  const isFundamental = containsAny(hay, fundPhrases)
-  if (hasToolName) return 'tools'
-  if (hasLang && !hasToolCtx) return 'languages'
-  if (hasToolCtx) return 'tools'
-  if (isFundamental) return 'fundamentals'
-  return 'other'
+  const grants = [
+    'grant','grants','funding','ecosystem fund','rfp','bounty','retro funding','retroactive','public goods'
+  ]
+  const accelerators = [
+    'accelerator','incubator','fellowship','residency','program','cohort','startup studio','venture studio','lab'
+  ]
+
+  // Category name shortcuts
+  const cat = toLower(meta.category)
+  if (['docs','documentation','guide','guides','articles','blog','reference'].includes(cat)) return 'guides_docs'
+  if (['course','courses','bootcamp','academy'].includes(cat)) return 'courses'
+  if (['grant','grants','funding'].includes(cat)) return 'grants'
+  if (['accelerator','accelerators','incubator','fellowship','residency','program'].includes(cat)) return 'accelerators'
+
+  // Keyword inference
+  if (containsAny(hay, grants)) return 'grants'
+  if (containsAny(hay, accelerators)) return 'accelerators'
+  if (containsAny(hay, courses)) return 'courses'
+  return 'guides_docs' // sensible default
 }
 
 function extractTwitterHandle(meta: ResourceMeta): string | null {
@@ -178,10 +185,11 @@ export default async function BeyondPage() {
   const [blogContent, content] = await Promise.all([getBlogHtml(), getBeyondContent()])
   const { resources, profiles } = content
 
-  const tools = resources.filter(r => r.section === 'tools')
-  const languages = resources.filter(r => r.section === 'languages')
-  const fundamentals = resources.filter(r => r.section === 'fundamentals')
-  const other = resources.filter(r => r.section === 'other')
+  // 🔁 New buckets
+  const guidesDocs = resources.filter(r => r.section === 'guides_docs')
+  const courses = resources.filter(r => r.section === 'courses')
+  const grants = resources.filter(r => r.section === 'grants')
+  const accelerators = resources.filter(r => r.section === 'accelerators')
 
   const Card = ({ r }: { r: (ResourceMeta & { key: string }) }) => (
     <a
@@ -251,7 +259,8 @@ export default async function BeyondPage() {
           </Link>
           <h1 className="text-xl md:text-2xl font-display font-bold text-white mb-3">Beyond</h1>
           <p className="text-lg text-white/90 max-w-3xl">
-          Tackle advanced topics like zero-knowledge, infra tooling, or creating your own product with a go-to-market strategy. Learning how to build your own protocols, contribute to ecosystems, search and apply for grants and incubators.
+            Tackle advanced topics like zero-knowledge, infra tooling, or creating your own product with a go-to-market strategy.
+            Learn to build protocols, contribute to ecosystems, and find grants or accelerators.
           </p>
         </div>
 
@@ -260,7 +269,7 @@ export default async function BeyondPage() {
           <summary className="flex items-center gap-2 cursor-pointer select-none px-4 md:px-5 py-3 md:py-4 list-none focus:outline-none focus:ring-2 focus:ring-[#73FDEA]/40">
             <ChevronRight className="h-4 w-4 text-white/70 transition-transform duration-200 group-open:rotate-90 shrink-0" />
             <span className="text-sm md:text-base font-semibold text-white">
-              Beyond: quick start guide
+              Building is also about a successful launch
             </span>
           </summary>
           <div className="px-4 md:px-5 pb-4 md:pb-5 pt-0">
@@ -268,19 +277,19 @@ export default async function BeyondPage() {
           </div>
         </details>
 
-        {/* Auto sections */}
-        <Section title="Main Tools" items={tools} />
-        <Section title="Main Languages" items={languages} />
-        <Section title="Fundamentals" items={fundamentals} />
-        {other.length ? <Section title="Other" items={other} /> : null}
+        {/* New sections */}
+        <Section title="Guides & Docs" items={guidesDocs} />
+        <Section title="Courses" items={courses} />
+        <Section title="Grants" items={grants} />
+        <Section title="Accelerators" items={accelerators} />
 
         {/* Beyond Twitter */}
-        {content.profiles.length > 0 && (
+        {profiles.length > 0 && (
           <section className="mb-12">
             <h2 className="text-lg md:text-xl font-display font-semibold text-white mb-4">
               Beyond Twitter
             </h2>
-            <BeyondTimelines profiles={content.profiles} />
+            <BeyondTimelines profiles={profiles} />
           </section>
         )}
 
