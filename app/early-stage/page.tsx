@@ -46,6 +46,7 @@ function haystack(meta: ResourceMeta) {
     ...(meta.tags || []),
     ...(meta.languages || []),
     meta.level,
+    meta.description,
   ]
     .map(toLower)
     .join(' ')
@@ -54,46 +55,53 @@ function haystack(meta: ResourceMeta) {
 const containsPhrase = (hay: string, phrase: string) => hay.includes(` ${phrase.toLowerCase()} `)
 const containsAny = (hay: string, items: string[]) => items.some((p) => containsPhrase(hay, p))
 
-// Classifier → 'tools' | 'languages' | 'fundamentals' | 'other'
-// Build a normalized haystack for phrase checks (keep your existing haystack/contains helpers)
-function classify(meta: ResourceMeta): 'tools' | 'languages' | 'fundamentals' | 'other' {
+// New classifier → 'tooling' | 'courses' | 'guides' | 'code' | 'other'
+function classify(meta: ResourceMeta): 'tooling' | 'courses' | 'guides' | 'code' | 'other' {
   const hay = haystack(meta)
 
-  // Strong signals (explicit tool names)
-  const toolNames = [
-    'hardhat','remix','metamask','phantom','git','github','vs code','vscode',
-    'docker','postman','node.js','nodejs'
+  // Tooling Docs (official docs, references, install guides, APIs, CLI)
+  const toolingSignals = [
+    'docs','documentation','reference','api reference','api docs',
+    'handbook','manual','spec','specification','readme','guide (cli)',
+    'install','installation','setup','getting started','quickstart',
+    'cli','command line','tool','tools','sdk','framework',
+    'hardhat','foundry','anvil','remix','metamask','phantom',
+    'solana cli','anchor','etherscan','solscan','node.js','npm','nvm',
   ]
 
-  // General tool context
-  const toolContext = [
-    'tool','tools','development tools','devtools','framework','development framework',
-    'environment','dev environment','wallet','editor','cli','rest api','api'
+  // Courses (programs, bootcamps, MOOCs)
+  const courseSignals = [
+    'course','courses','bootcamp','curriculum','syllabus','academy',
+    'track','learning path','program','cohort','mooc','udemy','coursera','edx',
+    'university','certificate'
   ]
 
-  const langNames = [
-    'python','javascript','typescript','solidity','rust','go','java','c++','c#','swift','kotlin'
+  // Code Samples (templates, starters, examples, scaffolds)
+  const codeSignals = [
+    'example','examples','sample','samples','snippet','snippets',
+    'template','templates','boilerplate','boilerplates','starter','starter kit',
+    'scaffold','scaffolding','reference implementation','repo','github repository',
+    'playground'
   ]
 
-  const fundPhrases = [
-    'fundamentals','fundamental','basics','intro','introduction','foundations','concepts','primer',
-    'blockchain basics','theory','cryptography','algorithms','data structures','html','css','tokens','gas'
+  // Guides (how-tos, tutorials, deep dives, best practices, articles)
+  const guideSignals = [
+    'guide','how to','how-to','tutorial','walkthrough','step by step','step-by-step',
+    'deep dive','best practices','explained','overview','article','blog','cookbook',
+    'patterns','tips','gotchas'
   ]
 
-  const hasToolName   = containsAny(hay, toolNames)
-  const hasToolCtx    = containsAny(hay, toolContext)
-  const hasLang       = containsAny(hay, langNames)
-  const isFundamental = containsAny(hay, fundPhrases) ||
-                        (containsPhrase(hay, 'general') && containsPhrase(hay, 'beginner'))
+  const isTooling = containsAny(hay, toolingSignals)
+  const isCourse  = containsAny(hay, courseSignals)
+  const isCode    = containsAny(hay, codeSignals)
+  const isGuide   = containsAny(hay, guideSignals)
 
-  // Priority: explicit tool name > language (unless also explicit tool) > tool context > fundamentals
-  if (hasToolName) return 'tools'
-  if (hasLang && !hasToolCtx) return 'languages'
-  if (hasToolCtx) return 'tools'
-  if (isFundamental) return 'fundamentals'
+  if (isCourse)  return 'courses'
+  if (isCode)    return 'code'
+  if (isTooling) return 'tooling'
+  if (isGuide)   return 'guides'
   return 'other'
 }
-
 
 // Blog MD -> HTML
 async function getBlogHtml() {
@@ -143,10 +151,11 @@ async function getEarlyResources(): Promise<(ResourceMeta & { key: string; secti
 export default async function EarlyStagePage() {
   const [blogContent, resources] = await Promise.all([getBlogHtml(), getEarlyResources()])
 
-  const tools = resources.filter(r => r.section === 'tools')
-  const languages = resources.filter(r => r.section === 'languages')
-  const fundamentals = resources.filter(r => r.section === 'fundamentals')
-  const other = resources.filter(r => r.section === 'other')
+  const toolingDocs = resources.filter(r => r.section === 'tooling')
+  const courses     = resources.filter(r => r.section === 'courses')
+  const guides      = resources.filter(r => r.section === 'guides')
+  const codeSamples = resources.filter(r => r.section === 'code')
+  const other       = resources.filter(r => r.section === 'other')
 
   const Card = ({ r }: { r: (ResourceMeta & { key: string }) }) => (
     <a
@@ -216,8 +225,8 @@ export default async function EarlyStagePage() {
           </Link>
           <h1 className="text-xl md:text-2xl font-display font-bold text-white mb-3">Early Stage</h1>
           <p className="text-lg text-white/90 max-w-3xl">
-            Learning blockchain basics: smart contracts, tokens, main programming languages, gas calculations,
-            devnet & tooling setup (Hardhat, Node.js, Remix, etc.).
+            Learn the ecosystem fast: official docs for key tools, structured courses, practical guides,
+            and copy-pasteable code samples & starters.
           </p>
         </div>
 
@@ -235,9 +244,10 @@ export default async function EarlyStagePage() {
         </details>
 
         {/* Auto sections */}
-        <Section title="Main Tools" items={tools} />
-        <Section title="Main Languages" items={languages} />
-        <Section title="Fundamentals" items={fundamentals} />
+        <Section title="Tooling Docs" items={toolingDocs} />
+        <Section title="Courses" items={courses} />
+        <Section title="Guides" items={guides} />
+        <Section title="Code Samples" items={codeSamples} />
         {other.length ? <Section title="Other" items={other} /> : null}
 
         {/* CTA */}

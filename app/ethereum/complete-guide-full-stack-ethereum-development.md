@@ -7,5 +7,5 @@ languages: ["JavaScript", "Solidity", "React"]
 url: "https://www.freecodecamp.org/news/full-stack-ethereum-development/"
 dateAdded: 2021-01-01
 level: "Intermediate"
-category: "Ethereum"
+category: "Guide"
 ---

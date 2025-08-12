@@ -7,5 +7,5 @@ languages: ["JavaScript", "Solidity"]
 url: "https://www.notonlyowner.com/learn/what-happens-when-you-send-one-dai"
 dateAdded: 2021-01-01
 level: "Intermediate"
-category: "Ethereum"
+category: "Guides"
 ---

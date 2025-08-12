@@ -7,5 +7,5 @@ languages: ["JavaScript", "Solidity"]
 url: "https://eth.build/"
 dateAdded: 2024-01-01
 level: "Beginner"
-category: "Blockchain Resources"
+category: "Courses"
 ---

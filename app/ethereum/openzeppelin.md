@@ -7,5 +7,5 @@ languages: ["Solidity", "JavaScript"]
 url: "https://openzeppelin.com/"
 dateAdded: 2024-01-01
 level: "Intermediate"
-category: "Smart Contracts"
+category: "Templates"
 ---

@@ -7,5 +7,5 @@ languages: ["JavaScript"]
 url: "https://www.neonevm.org/blog/how-to-use-blockscout-for-neon-evm"
 dateAdded: 2024-01-01
 level: "Beginner"
-category: "Neon EVM"
+category: "Guides"
 ---

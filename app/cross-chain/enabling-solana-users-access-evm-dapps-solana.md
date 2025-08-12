@@ -7,5 +7,5 @@ languages: ["JavaScript", "Rust"]
 url: "https://www.neonevm.org/blog/enabling-solana-users-to-access-evm-dapps-running-on-solana"
 dateAdded: 2024-01-01
 level: "Intermediate"
-category: "Cross-Chain"
+category: "Guides"
 ---

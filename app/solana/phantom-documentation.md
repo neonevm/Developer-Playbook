@@ -7,5 +7,5 @@ languages: ["JavaScript", "Web3"]
 url: "https://docs.phantom.com/introduction"
 dateAdded: 2024-01-01
 level: "Beginner"
-category: "Blockchain Resources"
+category: "Documentation"
 ---

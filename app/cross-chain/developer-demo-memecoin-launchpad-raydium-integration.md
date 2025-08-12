@@ -7,5 +7,5 @@ languages: ["JavaScript", "Solidity"]
 url: "https://www.neonevm.org/blog/developer-demo--memecoin-launchpad-with-raydium-integration-via-neon-evm"
 dateAdded: 2024-01-01
 level: "Intermediate"
-category: "Neon EVM"
+category: "Guides"
 ---
