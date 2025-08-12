@@ -7,5 +7,5 @@ languages: ["JavaScript", "Solidity"]
 url: "https://www.neonevm.org/blog/elizaos-plugin-action-for-deploying-contracts-on-neon-evm--a-developers-tutorial"
 dateAdded: 2024-01-01
 level: "Intermediate"
-category: "Neon EVM"
+category: "Guides"
 ---

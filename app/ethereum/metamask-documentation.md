@@ -7,5 +7,5 @@ languages: ["JavaScript", "Web3"]
 url: "https://docs.metamask.io/"
 dateAdded: 2024-01-01
 level: "Beginner"
-category: "Wallets"
+category: "Documentation"
 ---

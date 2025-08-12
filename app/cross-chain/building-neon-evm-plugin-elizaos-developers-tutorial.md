@@ -7,5 +7,5 @@ languages: ["JavaScript", "Solidity"]
 url: "https://www.neonevm.org/blog/building-a-neon-evm-plugin-for-elizaos--a-developers-tutorial"
 dateAdded: 2024-01-01
 level: "Intermediate"
-category: "Neon EVM"
+category: "Guides"
 ---

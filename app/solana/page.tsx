@@ -31,6 +31,7 @@ type TwitterProfile = { handle: string; title?: string; avatar?: string; bio?: s
 
 // ---------- helpers ----------
 const toLower = (s: unknown) => String(s || '').toLowerCase().trim()
+const arrLower = (a?: unknown[]) => (Array.isArray(a) ? a.map(toLower) : [])
 
 const isSolanaTag = (tags?: unknown) => {
   if (!Array.isArray(tags)) return false
@@ -44,6 +45,16 @@ const isTwitterTag = (tags?: unknown) => {
   return t.includes('twitter') || t.includes('x') || t.includes('twitter profile')
 }
 
+const isGithub = (url?: string) => {
+  if (!url) return false
+  try {
+    const u = new URL(url)
+    return u.hostname.replace(/^www\./, '') === 'github.com'
+  } catch {
+    return false
+  }
+}
+
 const formatDate = (d?: Date | string) => {
   if (!d) return ''
   const dt = typeof d === 'string' ? new Date(d) : d
@@ -52,7 +63,7 @@ const formatDate = (d?: Date | string) => {
 }
 
 function haystack(meta: ResourceMeta) {
-  const parts = [meta.title, meta.category, ...(meta.tags || []), ...(meta.languages || []), meta.level]
+  const parts = [meta.title, meta.category, meta.description, ...(meta.tags || []), ...(meta.languages || []), meta.level]
     .map(toLower)
     .join(' ')
   return ` ${parts.replace(/[^a-z0-9+]+/g, ' ').replace(/\s+/g, ' ').trim()} `
@@ -60,36 +71,38 @@ function haystack(meta: ResourceMeta) {
 const containsPhrase = (hay: string, phrase: string) => hay.includes(` ${phrase.toLowerCase()} `)
 const containsAny = (hay: string, items: string[]) => items.some((p) => containsPhrase(hay, p))
 
-function classify(meta: ResourceMeta): 'tools' | 'languages' | 'fundamentals' | 'other' {
+// New classifier → 'guides' | 'code' | 'courses'
+function classify(meta: ResourceMeta): 'guides' | 'code' | 'courses' {
   const hay = haystack(meta)
+  const tags = arrLower(meta.tags)
 
-  const toolNames = [
+  // Courses (books, bootcamps, tutorials series)
+  const courseSignals = [
+    'course','courses','bootcamp','academy','curriculum','lesson','lectures','mooc','program',
+    'tutorial series','cohort','workshop','learn','training'
+  ]
+  if (tags.includes('book') || containsAny(hay, courseSignals)) return 'courses'
+
+  // Code & Templates (GitHub or strong code/template hints)
+  const codeSignals = [
+    'template','templates','starter','starter kit','boilerplate','example','examples','sample','samples',
+    'repo','repository','scaffold','sdk','library','cookbook'
+  ]
+  if (isGithub(meta.url) || containsAny(hay, codeSignals)) return 'code'
+
+  // Guides & Docs (default, including ecosystem/tooling docs)
+  const solanaEcosystemSignals = [
     'anchor','solana cli','solana-cli','solana playground','solana-playground',
-    'metaplex','sugar','phantom','solflare','backpack',
-    'helius','quicknode','shyft','triton','jito',
-    '@solana/web3.js','web3.js','solana explorer','explorer'
+    'metaplex','sugar','phantom','solflare','backpack','helius','quicknode','shyft','triton','jito',
+    '@solana/web3.js','web3.js','solana explorer','explorer','rpc','validator','pda','spl token','token program'
   ]
-  const toolContext = [
-    'tool','tools','devtools','framework','development framework','environment','dev environment',
-    'wallet','editor','cli','sdk','rpc','validator'
+  const guideSignals = [
+    'docs','documentation','reference','api reference','guide','guides','how to','tutorial','handbook',
+    'overview','walkthrough','article','blog','deep dive','concepts','introduction','intro','primer','fundamentals'
   ]
-  const langNames = ['rust','typescript','javascript','python','c','c++']
-  const fundPhrases = [
-    'fundamentals','fundamental','basics','intro','introduction','foundations','concepts','primer',
-    'account model','cpi','pda','pdas','spl token','token program','borsh','lamports','transactions',
-    'programs','on-chain programs'
-  ]
+  if (containsAny(hay, guideSignals) || containsAny(hay, solanaEcosystemSignals)) return 'guides'
 
-  const hasToolName   = containsAny(hay, toolNames)
-  const hasToolCtx    = containsAny(hay, toolContext)
-  const hasLang       = containsAny(hay, langNames)
-  const isFundamental = containsAny(hay, fundPhrases) || (containsPhrase(hay, 'general') && containsPhrase(hay, 'beginner'))
-
-  if (hasToolName) return 'tools'
-  if (hasLang && !hasToolCtx) return 'languages'
-  if (hasToolCtx) return 'tools'
-  if (isFundamental) return 'fundamentals'
-  return 'other'
+  return 'guides'
 }
 
 // Pull @handle from authors/url/title
@@ -147,6 +160,7 @@ async function getSolanaContent(): Promise<{
     const { data } = matter(raw)
     const meta = data as ResourceMeta
 
+    // Twitter-profile files (by tag)
     if (isTwitterTag(meta.tags)) {
       const h = extractTwitterHandle(meta)
       if (h) {
@@ -155,16 +169,17 @@ async function getSolanaContent(): Promise<{
           handles.add(key)
           profiles.push({
             handle: h,
-            // prefer displayName if you set it, else keep title (often @handle)
+            // prefer displayName if set, else keep title (often @handle)
             title: meta.displayName || meta.title,
             avatar: typeof meta.avatar === 'string' ? meta.avatar : undefined,
             bio: typeof meta.bio === 'string' ? meta.bio : undefined,
           })
         }
       }
-      continue
+      continue // do NOT include as resource card
     }
 
+    // Normal resource cards: need Solana tag + url
     if (!isSolanaTag(meta.tags)) continue
     if (!meta.url) continue
 
@@ -183,7 +198,9 @@ async function getSolanaContent(): Promise<{
     })
   }
 
+  // newest first for resources
   resources.sort((a, b) => (new Date(b.dateAdded || 0).getTime()) - (new Date(a.dateAdded || 0).getTime()))
+
   return { resources, profiles }
 }
 
@@ -191,10 +208,10 @@ export default async function SolanaPage() {
   const [blogContent, content] = await Promise.all([getBlogHtml(), getSolanaContent()])
   const { resources, profiles } = content
 
-  const tools = resources.filter(r => r.section === 'tools')
-  const languages = resources.filter(r => r.section === 'languages')
-  const fundamentals = resources.filter(r => r.section === 'fundamentals')
-  const other = resources.filter(r => r.section === 'other')
+  // New buckets
+  const guidesDocs    = resources.filter(r => r.section === 'guides')
+  const codeTemplates = resources.filter(r => r.section === 'code')
+  const courses       = resources.filter(r => r.section === 'courses')
 
   const Card = ({ r }: { r: (ResourceMeta & { key: string }) }) => (
     <a
@@ -264,7 +281,8 @@ export default async function SolanaPage() {
           </Link>
           <h1 className="text-xl md:text-2xl font-display font-bold text-white mb-3">Solana</h1>
           <p className="text-lg text-white/90 max-w-3xl">
-          Explore Solana’s account model, Rust/Anchor programming, and program deployment. Building dApps using Solana-native tools and work with SPL tokens, PDAs, and the Anchor framework.
+            Explore Solana’s account model, Rust/Anchor programming, and program deployment. Building dApps using
+            Solana-native tools and work with SPL tokens, PDAs, and the Anchor framework.
           </p>
         </div>
 
@@ -281,13 +299,12 @@ export default async function SolanaPage() {
           </div>
         </details>
 
-        {/* Auto sections */}
-        <Section title="Main Tools" items={tools} />
-        <Section title="Main Languages" items={languages} />
-        <Section title="Fundamentals" items={fundamentals} />
-        {other.length ? <Section title="Other" items={other} /> : null}
+        {/* New auto sections */}
+        <Section title="Guides & Docs" items={guidesDocs} />
+        <Section title="Code & Templates" items={codeTemplates} />
+        <Section title="Courses" items={courses} />
 
-        {/* Solana Twitter (from .md with 'Twitter' tag; avatars/bios pulled from frontmatter) */}
+        {/* Solana Twitter (unchanged) */}
         {profiles.length > 0 && (
           <section className="mb-12">
             <h2 className="text-lg md:text-xl font-display font-semibold text-white mb-4">

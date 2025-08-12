@@ -7,5 +7,5 @@ languages: ["JavaScript", "Rust"]
 url: "https://www.neonevm.org/blog/unveiling-solana-signature-sdk-enabling-solana-users-to-access-evm-dapps"
 dateAdded: 2024-01-01
 level: "Intermediate"
-category: "Cross-Chain"
+category: "Guides"
 ---

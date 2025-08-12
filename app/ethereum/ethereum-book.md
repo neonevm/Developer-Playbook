@@ -7,5 +7,5 @@ languages: ["JavaScript", "Solidity"]
 url: "https://github.com/ethereumbook/ethereumbook"
 dateAdded: 2024-01-01
 level: "Intermediate"
-category: "Blockchain Resources"
+category: "Guides"
 ---

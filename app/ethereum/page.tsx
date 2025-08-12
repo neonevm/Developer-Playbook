@@ -6,9 +6,10 @@ import { marked } from 'marked'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowLeft, Github, ExternalLink, ChevronRight } from 'lucide-react'
+import EthereumTimelines from './EthereumTimelines'
 
 export const runtime = 'nodejs'
-export const dynamic = 'force-static' // use 'force-dynamic' in dev if you want to see new files without rebuild
+export const dynamic = 'force-static'
 
 type ResourceMeta = {
   title: string
@@ -20,80 +21,116 @@ type ResourceMeta = {
   dateAdded?: string | Date
   level?: string
   category?: string
+  // twitter extras
+  avatar?: string
+  bio?: string
+  displayName?: string
+}
+
+type TwitterProfile = {
+  handle: string
+  title?: string
+  avatar?: string
+  bio?: string
+  displayName?: string
 }
 
 // ---------- helpers ----------
 const toLower = (s: unknown) => String(s || '').toLowerCase().trim()
+const arrLower = (a?: unknown[]) => (Array.isArray(a) ? a.map(toLower) : [])
 
-const isEthereumTag = (tags?: unknown) => {
-  if (!Array.isArray(tags)) return false
-  const t = tags.map(toLower)
-  // accept a few common variants
-  return t.includes('ethereum') || t.includes('eth') || t.includes('evm') || t.includes('ethereum dev')
+const isEthereumTag = (tags?: unknown) =>
+  Array.isArray(tags) && tags.map(toLower).some(t => ['ethereum','eth','evm','ethereum dev'].includes(t))
+
+const isTwitterTag = (tags?: unknown) =>
+  Array.isArray(tags) && tags.map(toLower).some(t => ['twitter','x','twitter profile'].includes(t))
+
+const isGithub = (url?: string) => {
+  if (!url) return false
+  try {
+    const u = new URL(url)
+    return u.hostname.replace(/^www\./,'') === 'github.com'
+  } catch { return false }
 }
 
 const formatDate = (d?: Date | string) => {
   if (!d) return ''
   const dt = typeof d === 'string' ? new Date(d) : d
-  if (isNaN(dt.getTime())) return ''
-  return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`
+  return isNaN(dt.getTime()) ? '' :
+    `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`
 }
 
-// Build a normalized haystack for phrase matching (prevents "video" matching "ide")
 function haystack(meta: ResourceMeta) {
-  const parts = [
-    meta.title,
-    meta.category,
-    ...(meta.tags || []),
-    ...(meta.languages || []),
-    meta.level,
-  ]
-    .map(toLower)
-    .join(' ')
-  return ` ${parts.replace(/[^a-z0-9+]+/g, ' ').replace(/\s+/g, ' ').trim()} `
+  const parts = [meta.title, meta.category, meta.description, ...(meta.tags || []), ...(meta.languages || []), meta.level]
+    .map(toLower).join(' ')
+  return ` ${parts.replace(/[^a-z0-9+]+/g,' ').replace(/\s+/g,' ').trim()} `
 }
 const containsPhrase = (hay: string, phrase: string) => hay.includes(` ${phrase.toLowerCase()} `)
-const containsAny = (hay: string, items: string[]) => items.some((p) => containsPhrase(hay, p))
+const containsAny = (hay: string, items: string[]) => items.some(p => containsPhrase(hay, p))
 
-// Classifier → 'tools' | 'languages' | 'fundamentals' | 'other'
-function classify(meta: ResourceMeta): 'tools' | 'languages' | 'fundamentals' | 'other' {
+// Classifier → 'guides' | 'code' | 'courses'  (Ecosystem removed)
+// Anything that would've been "ecosystem" now falls under Guides & Docs unless it matches Code or Courses.
+function classify(meta: ResourceMeta): 'guides' | 'code' | 'courses' {
   const hay = haystack(meta)
+  const tags = arrLower(meta.tags)
 
-  // Strong tool names for Ethereum ecosystem
-  const toolNames = [
-    'hardhat','foundry','anvil','remix','metamask','openzeppelin',
-    'ethers.js','ethers','web3.js','tenderly','infura','alchemy',
-    'git','github','vs code','vscode','docker','postman','node.js','nodejs'
+  const courseSignals = [
+    'course','courses','bootcamp','academy','curriculum','lesson','lectures','mooc','program',
+    'tutorial series','cohort','workshop'
+  ]
+  if (tags.includes('book') || containsAny(hay, courseSignals)) return 'courses'
+
+  const codeSignals = [
+    'template','templates','starter','starter kit','boilerplate','example','examples','sample','samples',
+    'repo','repository','scaffold','sdk','library'
+  ]
+  if (isGithub(meta.url) || containsAny(hay, codeSignals)) return 'code'
+
+  // Fold prior "ecosystem" hints into Guides & Docs
+  const ecosystemSignals = [
+    'node.js','nodejs','npm','pnpm','yarn','nvm',
+    'hardhat','foundry','forge','anvil','remix',
+    'metamask','wallet',
+    'ethers.js','ethers','viem','web3.js',
+    'tenderly','infura','alchemy','chainlink',
+    'cli','rpc','explorer','plugin','framework','tool','tools','devtools'
   ]
 
-  // General tool context
-  const toolContext = [
-    'tool','tools','development tools','devtools','framework','development framework',
-    'environment','dev environment','wallet','editor','cli','rest api','api','sdk'
+  const guideSignals = [
+    'docs','documentation','reference','api reference','guide','guides','how to','tutorial','handbook',
+    'cookbook','overview','walkthrough','article','blog','deep dive',
+    'erc20','erc-20','erc721','erc-721','erc1155','erc-1155','standard'
   ]
 
-  const langNames = [
-    'solidity','vyper','typescript','javascript','python','rust','go','java','c++','c#','swift','kotlin'
-  ]
+  if (containsAny(hay, guideSignals) || containsAny(hay, ecosystemSignals)) return 'guides'
 
-  const fundPhrases = [
-    'fundamentals','fundamental','basics','intro','introduction','foundations','concepts','primer',
-    'blockchain basics','theory','cryptography','algorithms','data structures',
-    'erc20','erc-20','erc721','erc-721','erc1155','erc-1155','tokens','gas','evm'
-  ]
+  // Default to Guides & Docs
+  return 'guides'
+}
 
-  const hasToolName   = containsAny(hay, toolNames)
-  const hasToolCtx    = containsAny(hay, toolContext)
-  const hasLang       = containsAny(hay, langNames)
-  const isFundamental = containsAny(hay, fundPhrases) ||
-                        (containsPhrase(hay, 'general') && containsPhrase(hay, 'beginner'))
-
-  // Priority: explicit tool name > language (unless also explicit tool) > tool context > fundamentals
-  if (hasToolName) return 'tools'
-  if (hasLang && !hasToolCtx) return 'languages'
-  if (hasToolCtx) return 'tools'
-  if (isFundamental) return 'fundamentals'
-  return 'other'
+// Twitter handle extraction
+function extractTwitterHandle(meta: ResourceMeta): string | null {
+  const handleRe = /^@?([A-Za-z0-9_]{1,15})$/
+  for (const a of meta.authors || []) {
+    const m = String(a).trim().match(handleRe)
+    if (m) return m[1]
+  }
+  if (meta.url) {
+    try {
+      const u = new URL(meta.url)
+      const host = u.hostname.replace(/^www\./,'')
+      if (host === 'twitter.com' || host === 'x.com') {
+        const seg = u.pathname.split('/').filter(Boolean)[0] || ''
+        const m = seg.match(handleRe)
+        if (m) return m[1]
+      }
+    } catch {}
+  }
+  if (meta.title?.trim().startsWith('@')) {
+    const m = meta.title.trim().match(handleRe)
+    if (m) return m[1]
+  }
+  return null
 }
 
 // Blog MD -> HTML
@@ -108,20 +145,48 @@ async function getBlogHtml() {
   }
 }
 
-// Read all .md (except blogpost.md) with Ethereum tags
-async function getEthereumResources(): Promise<(ResourceMeta & { key: string; section: ReturnType<typeof classify> })[]> {
+// Read .md and split into resources + twitter profiles
+async function getEthereumContent(): Promise<{
+  resources: (ResourceMeta & { key: string; section: ReturnType<typeof classify> })[]
+  profiles: TwitterProfile[]
+}> {
   const dir = path.join(process.cwd(), 'app', 'ethereum')
   const files = await fs.promises.readdir(dir)
   const mdFiles = files.filter(f => f.toLowerCase().endsWith('.md') && f.toLowerCase() !== 'blogpost.md')
 
-  const list: (ResourceMeta & { key: string; section: ReturnType<typeof classify> })[] = []
+  const resources: (ResourceMeta & { key: string; section: ReturnType<typeof classify> })[] = []
+  const profiles: TwitterProfile[] = []
+  const seen = new Set<string>()
+
   for (const file of mdFiles) {
     const raw = await fs.promises.readFile(path.join(dir, file), 'utf-8')
     const { data } = matter(raw)
     const meta = data as ResourceMeta
+
+    // Twitter profiles
+    if (isTwitterTag(meta.tags)) {
+      const h = extractTwitterHandle(meta)
+      if (h) {
+        const key = h.toLowerCase()
+        if (!seen.has(key)) {
+          seen.add(key)
+          profiles.push({
+            handle: h,
+            title: meta.title,
+            displayName: meta.displayName,
+            avatar: typeof meta.avatar === 'string' ? meta.avatar : undefined,
+            bio: typeof meta.bio === 'string' ? meta.bio : undefined,
+          })
+        }
+      }
+      continue
+    }
+
+    // Normal resources
     if (!isEthereumTag(meta.tags)) continue
     if (!meta.url) continue
-    list.push({
+
+    resources.push({
       key: file,
       title: meta.title || file.replace(/\.md$/i, ''),
       description: meta.description || '',
@@ -136,18 +201,17 @@ async function getEthereumResources(): Promise<(ResourceMeta & { key: string; se
     })
   }
 
-  // newest first
-  list.sort((a, b) => (new Date(b.dateAdded || 0).getTime()) - (new Date(a.dateAdded || 0).getTime()))
-  return list
+  resources.sort((a, b) => (new Date(b.dateAdded || 0).getTime()) - (new Date(a.dateAdded || 0).getTime()))
+  return { resources, profiles }
 }
 
 export default async function EthereumPage() {
-  const [blogContent, resources] = await Promise.all([getBlogHtml(), getEthereumResources()])
+  const [blogContent, content] = await Promise.all([getBlogHtml(), getEthereumContent()])
+  const { resources, profiles } = content
 
-  const tools = resources.filter(r => r.section === 'tools')
-  const languages = resources.filter(r => r.section === 'languages')
-  const fundamentals = resources.filter(r => r.section === 'fundamentals')
-  const other = resources.filter(r => r.section === 'other')
+  const guidesDocs    = resources.filter(r => r.section === 'guides')
+  const codeTemplates = resources.filter(r => r.section === 'code')
+  const courses       = resources.filter(r => r.section === 'courses')
 
   const Card = ({ r }: { r: (ResourceMeta & { key: string }) }) => (
     <a
@@ -163,9 +227,7 @@ export default async function EthereumPage() {
         </h3>
         <ExternalLink className="h-4 w-4 text-white/50 group-hover:text-[#73FDEA] transition-colors shrink-0" />
       </div>
-
       {r.description && <p className="text-sm text-white/80 mb-4">{r.description}</p>}
-
       <div className="flex flex-wrap gap-2 text-xs">
         {r.level && <span className="inline-block bg-[#0b0b0b] border border-white/20 text-white/70 px-2 py-0.5 rounded">{r.level}</span>}
         {r.category && <span className="inline-block bg-[#0b0b0b] border border-white/20 text-white/70 px-2 py-0.5 rounded">{r.category}</span>}
@@ -175,7 +237,6 @@ export default async function EthereumPage() {
           </span>
         )}
       </div>
-
       <div className="mt-3 flex items-center justify-between text-xs text-white/50">
         <span className="truncate">{r.authors && r.authors.length > 0 ? r.authors.join(', ') : ''}</span>
         <span>{formatDate(r.dateAdded)}</span>
@@ -195,7 +256,7 @@ export default async function EthereumPage() {
 
   return (
     <div className="min-h-screen bg-black">
-      {/* Contained Banner */}
+      {/* Banner */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
         <div className="rounded-lg overflow-hidden border border-white/10 bg-[#0b0b0b]">
           <div className="relative h-40 sm:h-48 md:h-56 lg:h-64">
@@ -204,20 +265,18 @@ export default async function EthereumPage() {
         </div>
       </div>
 
-      {/* Main Content */}
+      {/* Main */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
-          <Link
-            href="/"
-            className="inline-flex items-center text-[#73FDEA] hover:text-[#FF00AA] mb-4 transition-colors duration-300"
-          >
+          <Link href="/" className="inline-flex items-center text-[#73FDEA] hover:text-[#FF00AA] mb-4 transition-colors duration-300">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Home
           </Link>
           <h1 className="text-xl md:text-2xl font-display font-bold text-white mb-3">Ethereum</h1>
           <p className="text-lg text-white/90 max-w-3xl">
-          Deep dive into Solidity, smart contract patterns, and EVM-based workflows. Learning to build dApps on EVM chains, interact with DeFi protocols, and optimize contracts.
+            Deep dive into Solidity, smart contract patterns, and EVM-based workflows. Learning to build dApps on
+            EVM chains, interact with DeFi protocols, and optimize contracts.
           </p>
         </div>
 
@@ -225,20 +284,25 @@ export default async function EthereumPage() {
         <details className="dropdown group mb-8 rounded-lg border border-white/10 bg-[#1a1a1a]">
           <summary className="flex items-center gap-2 cursor-pointer select-none px-4 md:px-5 py-3 md:py-4 list-none focus:outline-none focus:ring-2 focus:ring-[#73FDEA]/40">
             <ChevronRight className="h-4 w-4 text-white/70 transition-transform duration-200 group-open:rotate-90 shrink-0" />
-            <span className="text-sm md:text-base font-semibold text-white">
-              Ethereum Dev: quick start guide
-            </span>
+            <span className="text-sm md:text-base font-semibold text-white">Ethereum Dev: quick start guide</span>
           </summary>
           <div className="px-4 md:px-5 pb-4 md:pb-5 pt-0">
             <article className="md-content md-compact" dangerouslySetInnerHTML={{ __html: blogContent }} />
           </div>
         </details>
 
-        {/* Auto sections */}
-        <Section title="Main Tools" items={tools} />
-        <Section title="Main Languages" items={languages} />
-        <Section title="Fundamentals" items={fundamentals} />
-        {other.length ? <Section title="Other" items={other} /> : null}
+        {/* Auto sections (Ecosystem removed) */}
+        <Section title="Guides & Docs" items={guidesDocs} />
+        <Section title="Code & Templates" items={codeTemplates} />
+        <Section title="Courses" items={courses} />
+
+        {/* Ethereum Twitter (unchanged) */}
+        {profiles.length > 0 && (
+          <section className="mb-12">
+            <h2 className="text-lg md:text-xl font-display font-semibold text-white mb-4">Ethereum Twitter</h2>
+            <EthereumTimelines profiles={profiles} />
+          </section>
+        )}
 
         {/* CTA */}
         <div className="mt-12 bg-gradient-to-r from-[#8E1CF1] to-[#FF00AA] rounded-lg p-8 text-center">

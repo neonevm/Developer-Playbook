@@ -7,5 +7,5 @@ languages: ["Solidity"]
 url: "https://github.com/OpenZeppelin/openzeppelin-contracts"
 dateAdded: 2024-01-15
 level: "Advanced"
-category: "Smart Contract Templates"
+category: "Templates"
 ---

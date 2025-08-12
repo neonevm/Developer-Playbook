@@ -29,6 +29,7 @@ type ResourceMeta = {
 type TwitterProfile = { handle: string; title?: string; avatar?: string; bio?: string }
 
 const toLower = (s: unknown) => String(s || '').toLowerCase().trim()
+const arrLower = (a?: unknown[]) => (Array.isArray(a) ? a.map(toLower) : [])
 
 // Tag filter for cross-chain content
 const isCrossChainTag = (tags?: unknown) => {
@@ -48,6 +49,16 @@ const isTwitterTag = (tags?: unknown) => {
   return t.includes('twitter') || t.includes('x') || t.includes('twitter profile')
 }
 
+const isGithub = (url?: string) => {
+  if (!url) return false
+  try {
+    const u = new URL(url)
+    return u.hostname.replace(/^www\./, '') === 'github.com'
+  } catch {
+    return false
+  }
+}
+
 const formatDate = (d?: Date | string) => {
   if (!d) return ''
   const dt = typeof d === 'string' ? new Date(d) : d
@@ -56,39 +67,44 @@ const formatDate = (d?: Date | string) => {
 }
 
 function haystack(meta: ResourceMeta) {
-  const parts = [meta.title, meta.category, ...(meta.tags || []), ...(meta.languages || []), meta.level]
+  const parts = [meta.title, meta.category, meta.description, ...(meta.tags || []), ...(meta.languages || []), meta.level]
     .map(toLower)
   return ` ${parts.join(' ').replace(/[^a-z0-9+]+/g, ' ').replace(/\s+/g, ' ').trim()} `
 }
 const containsPhrase = (hay: string, phrase: string) => hay.includes(` ${phrase.toLowerCase()} `)
 const containsAny = (hay: string, items: string[]) => items.some((p) => containsPhrase(hay, p))
 
-// Classifier for sections
-function classify(meta: ResourceMeta): 'tools' | 'languages' | 'fundamentals' | 'other' {
+// NEW classifier → 'guides' | 'code' | 'courses'
+function classify(meta: ResourceMeta): 'guides' | 'code' | 'courses' {
   const hay = haystack(meta)
+  const tags = arrLower(meta.tags)
 
-  const toolNames = [
-    // well-known cross-chain stacks & tools
+  // Courses (books, bootcamps, cohorts, workshops)
+  const courseSignals = [
+    'course','courses','bootcamp','academy','curriculum','lesson','lectures','mooc',
+    'program','tutorial series','cohort','workshop','training','learn'
+  ]
+  if (tags.includes('book') || containsAny(hay, courseSignals)) return 'courses'
+
+  // Code & Templates (GitHub or code-y hints)
+  const codeSignals = [
+    'template','templates','starter','starter kit','boilerplate','example','examples','sample','samples',
+    'repo','repository','scaffold','sdk','library','cookbook','reference implementation'
+  ]
+  if (isGithub(meta.url) || containsAny(hay, codeSignals)) return 'code'
+
+  // Guides & Docs (default)
+  const guideSignals = [
+    'docs','documentation','reference','api reference','guide','guides','how to','how-to','tutorial','handbook',
+    'overview','walkthrough','article','blog','deep dive','concepts','introduction','intro','primer','fundamentals'
+  ]
+  const xchainStacks = [
     'wormhole','layerzero','hyperlane','axelar','ccip','chainlink ccip','debridge','connext','lifi','socket',
-    'bridge','relayer','ibc','hermes','rly','bridge-ui','sdk'
+    'ibc','interchain','bridging','cross-chain messaging','relayer','hermes','rly'
   ]
-  const toolCtx = ['tool','tools','framework','sdk','cli','relayer','validator','rpc']
-  const langNames = ['rust','typescript','javascript','python','go','solidity']
-  const fundPhrases = [
-    'fundamentals','basics','intro','introduction','concepts','primer',
-    'interoperability','omnichain','ibc','bridging','cross-chain messaging'
-  ]
+  if (containsAny(hay, guideSignals) || containsAny(hay, xchainStacks)) return 'guides'
 
-  const hasToolName = containsAny(hay, toolNames)
-  const hasToolCtx = containsAny(hay, toolCtx)
-  const hasLang = containsAny(hay, langNames)
-  const isFund = containsAny(hay, fundPhrases)
-
-  if (hasToolName) return 'tools'
-  if (hasLang && !hasToolCtx) return 'languages'
-  if (hasToolCtx) return 'tools'
-  if (isFund) return 'fundamentals'
-  return 'other'
+  return 'guides'
 }
 
 // Extract @handle from authors/url/title
@@ -189,10 +205,10 @@ export default async function CrossChainPage() {
   const [blogContent, content] = await Promise.all([getBlogHtml(), getCrossChainContent()])
   const { resources, profiles } = content
 
-  const tools = resources.filter(r => r.section === 'tools')
-  const languages = resources.filter(r => r.section === 'languages')
-  const fundamentals = resources.filter(r => r.section === 'fundamentals')
-  const other = resources.filter(r => r.section === 'other')
+  // NEW buckets
+  const guidesDocs    = resources.filter(r => r.section === 'guides')
+  const codeTemplates = resources.filter(r => r.section === 'code')
+  const courses       = resources.filter(r => r.section === 'courses')
 
   const Card = ({ r }: { r: (ResourceMeta & { key: string }) }) => (
     <a
@@ -262,7 +278,8 @@ export default async function CrossChainPage() {
           </Link>
           <h1 className="text-xl md:text-2xl font-display font-bold text-white mb-3">Cross-Chain</h1>
           <p className="text-lg text-white/90 max-w-3xl">
-          Combine Ethereum and Solana knowledge to build composable cross-chain dApps using Neon EVM. Learning composability feature, cross-chain token transfers, and interacting with Solana programs from EVM smart contracts.
+            Combine Ethereum and Solana knowledge to build composable cross-chain dApps using Neon EVM. Learn composability,
+            cross-chain token transfers, and interacting with Solana programs from EVM smart contracts.
           </p>
         </div>
 
@@ -279,11 +296,10 @@ export default async function CrossChainPage() {
           </div>
         </details>
 
-        {/* Auto sections */}
-        <Section title="Main Tools" items={tools} />
-        <Section title="Main Languages" items={languages} />
-        <Section title="Fundamentals" items={fundamentals} />
-        {other.length ? <Section title="Other" items={other} /> : null}
+        {/* NEW auto sections */}
+        <Section title="Guides & Docs" items={guidesDocs} />
+        <Section title="Code & Templates" items={codeTemplates} />
+        <Section title="Courses" items={courses} />
 
         {/* Cross-Chain Twitter */}
         {profiles.length > 0 && (

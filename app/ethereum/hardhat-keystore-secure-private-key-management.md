@@ -7,5 +7,5 @@ languages: ["JavaScript", "Solidity"]
 url: "https://www.neonevm.org/blog/hardhat-keystore-secure-private-key-management-for-developers"
 dateAdded: 2024-01-01
 level: "Intermediate"
-category: "Tools"
+category: "Guides"
 ---
