@@ -7,5 +7,5 @@ languages: ["English"]
 url: "https://solana.org/grants-funding"
 dateAdded: 2025-01-20
 level: "Advanced"
-category: "Solana"
+category: "Grants"
 ---

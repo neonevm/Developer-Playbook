@@ -1,183 +1,257 @@
+// app/cross-chain/page.tsx
+import fs from 'fs'
+import path from 'path'
+import matter from 'gray-matter'
+import { marked } from 'marked'
 import Link from 'next/link'
-import { ArrowLeft, BookOpen, Code, Target, Shield, Globe, Github, ExternalLink, Zap, Database } from 'lucide-react'
+import Image from 'next/image'
+import { ArrowLeft, Github, ExternalLink, ChevronRight } from 'lucide-react'
+import CrossChainTimelines from './CrossChainTimelines'
 
-const topics = [
-  {
-    title: 'Neon Composability',
-    description: 'Neon EVM composability libraries and cross-chain communication',
-    icon: Globe,
-    resources: [
-      {
-        title: 'Neon\'s Composability Libraries: Babel Fish for Blockchains',
-        type: 'Technical Deep Dive',
-        description: 'Exploring Neon\'s composability libraries and their role in cross-chain communication',
-        link: 'https://www.neonevm.org/blog/neons-composability-libraries-babel-fish-for-blockchains',
-        difficulty: 'Advanced',
-      },
-      {
-        title: 'Unveiling Composability Whitepaper: A Unified Framework for Ethereum-Solana Interaction',
-        type: 'Whitepaper Analysis',
-        description: 'Deep dive into the composability whitepaper and cross-chain interaction framework',
-        link: 'https://www.neonevm.org/blog/unveiling-composability-whitepaper-a-unified-framework-for-ethereum-solana-interaction',
-        difficulty: 'Advanced',
-      },
-      {
-        title: 'Deep Dive into Neon and Solana Composability',
-        type: 'Technical Analysis',
-        description: 'Understanding the composability between Neon EVM and Solana',
-        link: 'https://www.neonevm.org/blog/deep-dive-into-neon-and-solana-composability',
-        difficulty: 'Advanced',
-      },
-    ],
-  },
-  {
-    title: 'SDKs & Interfaces',
-    description: 'Software development kits and interfaces for cross-chain development',
-    icon: Code,
-    resources: [
-      {
-        title: 'Unveiling Solana Signature SDK: Enabling Solana Users to Access EVM dApps',
-        type: 'SDK Introduction',
-        description: 'Introduction to the Solana Signature SDK for cross-chain dApp access',
-        link: 'https://www.neonevm.org/blog/unveiling-solana-signature-sdk-enabling-solana-users-to-access-evm-dapps',
-        difficulty: 'Intermediate to Advanced',
-      },
-      {
-        title: 'Enabling Solana Users to Access EVM dApps Running on Solana',
-        type: 'Technical Guide',
-        description: 'How Solana users can access EVM dApps through Neon EVM',
-        link: 'https://www.neonevm.org/blog/enabling-solana-users-to-access-evm-dapps-running-on-solana',
-        difficulty: 'Intermediate to Advanced',
-      },
-      {
-        title: 'Solana\'s 64 Account Limit: Thinking Past the Constraint',
-        type: 'Technical Analysis',
-        description: 'Understanding and working around Solana\'s 64 account limit in smart contract development',
-        link: 'https://www.neonevm.org/blog/solanas-64-account-limit-thinking-past-the-constraint',
-        difficulty: 'Advanced',
-      },
-    ],
-  },
-  {
-    title: 'Cross-Chain DEX Integration',
-    description: 'Decentralized exchange integration across multiple chains',
-    icon: Zap,
-    resources: [
-      {
-        title: 'Developer Demo: Memecoin Launchpad with Raydium Integration via Neon EVM',
-        type: 'Project Demo',
-        description: 'Building a memecoin launchpad with Raydium integration on Neon EVM',
-        link: 'https://www.neonevm.org/blog/developer-demo--memecoin-launchpad-with-raydium-integration-via-neon-evm',
-        difficulty: 'Intermediate',
-      },
-      {
-        title: 'Effortless Cross-Chain Communication with NeonEVM, Hyperlane, and Solana\'s Speed',
-        type: 'Technical Guide',
-        description: 'Cross-chain communication using Neon EVM and Hyperlane',
-        link: 'https://www.neonevm.org/blog/effortless-cross-chain-communication-with-neonevm-hyperlane-and-solanas-speed-part-2',
-        difficulty: 'Advanced',
-      },
-    ],
-  },
-  {
-    title: 'Bridge Development',
-    description: 'Building cross-chain bridges and asset transfer protocols',
-    icon: Target,
-    resources: [
-      {
-        title: 'Cross-Chain Bridge Implementation',
-        type: 'Code Example',
-        description: 'Simple bridge implementation for asset transfer',
-        link: 'https://github.com/neonlabsorg/neon-pocs/tree/master',
-        difficulty: 'Advanced',
-      },
-      {
-        title: 'Multi-Chain dApp Development',
-        type: 'Tutorial',
-        description: 'dApp that works across multiple blockchains',
-        link: 'https://github.com/neonlabsorg/neon-tutorials/tree/main',
-        difficulty: 'Intermediate to Advanced',
-      },
-    ],
-  },
-  {
-    title: 'Neon EVM Development',
-    description: 'Specific tools and resources for Neon EVM development',
-    icon: Shield,
-    resources: [
-      {
-        title: 'Neon EVM Contracts',
-        type: 'Smart Contract Templates',
-        description: 'Smart contracts and examples specifically for Neon EVM development',
-        link: 'https://github.com/neonevm/neon-contracts/tree/main',
-        difficulty: 'Intermediate',
-      },
-      {
-        title: 'Neon POCs',
-        type: 'Proof of Concept',
-        description: 'Proof of Concept implementations for Neon EVM features',
-        link: 'https://github.com/neonlabsorg/neon-pocs/tree/master',
-        difficulty: 'Intermediate',
-      },
-      {
-        title: 'Neon Tutorials',
-        type: 'Tutorials',
-        description: 'Step-by-step tutorials and examples for Neon EVM development',
-        link: 'https://github.com/neonlabsorg/neon-tutorials/tree/main',
-        difficulty: 'Beginner to Intermediate',
-      },
-      {
-        title: 'How to Use Blockscout for Neon EVM',
-        type: 'Tutorial',
-        description: 'Step-by-step guide to using Blockscout for Neon EVM blockchain exploration',
-        link: 'https://www.neonevm.org/blog/how-to-use-blockscout-for-neon-evm',
-        difficulty: 'Beginner',
-      },
-    ],
-  },
-  {
-    title: 'Development Tools',
-    description: 'Tools and frameworks for cross-chain development',
-    icon: Database,
-    resources: [
-      {
-        title: 'Hardhat Keystore: Secure Private Key Management for Developers',
-        type: 'Security Guide',
-        description: 'A comprehensive guide to secure private key management using Hardhat keystore',
-        link: 'https://www.neonevm.org/blog/hardhat-keystore-secure-private-key-management-for-developers',
-        difficulty: 'Intermediate',
-      },
-      {
-        title: 'ElizaOS Plugin Action for Deploying Contracts on Neon EVM - A Developer\'s Tutorial',
-        type: 'Tutorial',
-        description: 'Complete tutorial on creating ElizaOS plugins for Neon EVM contract deployment',
-        link: 'https://www.neonevm.org/blog/elizaos-plugin-action-for-deploying-contracts-on-neon-evm--a-developers-tutorial',
-        difficulty: 'Intermediate',
-      },
-      {
-        title: 'Building a Neon EVM Plugin for ElizaOS - A Developer\'s Tutorial',
-        type: 'Tutorial',
-        description: 'Step-by-step guide to building custom plugins for ElizaOS on Neon EVM',
-        link: 'https://www.neonevm.org/blog/building-a-neon-evm-plugin-for-elizaos--a-developers-tutorial',
-        difficulty: 'Intermediate',
-      },
-    ],
-  },
-]
+export const runtime = 'nodejs'
+export const dynamic = 'force-static'
 
-const nextSteps = [
-  {
-    title: 'Beyond: Advanced Topics',
-    description: 'Advanced blockchain development and ecosystem',
-    link: '/beyond-advanced-topics',
-  },
-]
+type ResourceMeta = {
+  title: string
+  description?: string
+  authors?: string[]
+  tags?: string[]
+  languages?: string[]
+  url?: string
+  dateAdded?: string | Date
+  level?: string
+  category?: string
+  avatar?: string
+  bio?: string
+  displayName?: string
+}
 
-export default function CrossChainPage() {
+type TwitterProfile = { handle: string; title?: string; avatar?: string; bio?: string }
+
+const toLower = (s: unknown) => String(s || '').toLowerCase().trim()
+
+// Tag filter for cross-chain content
+const isCrossChainTag = (tags?: unknown) => {
+  if (!Array.isArray(tags)) return false
+  const t = tags.map(toLower)
+  const keys = [
+    'cross-chain','cross chain','interoperability','omnichain','bridge','bridges',
+    'messaging','ibc','cosmos ibc','wormhole','layerzero','hyperlane','axelar',
+    'ccip','chainlink ccip','debridge','connext','lifi','socket'
+  ]
+  return t.some(x => keys.includes(x))
+}
+
+const isTwitterTag = (tags?: unknown) => {
+  if (!Array.isArray(tags)) return false
+  const t = tags.map(toLower)
+  return t.includes('twitter') || t.includes('x') || t.includes('twitter profile')
+}
+
+const formatDate = (d?: Date | string) => {
+  if (!d) return ''
+  const dt = typeof d === 'string' ? new Date(d) : d
+  if (isNaN(dt.getTime())) return ''
+  return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`
+}
+
+function haystack(meta: ResourceMeta) {
+  const parts = [meta.title, meta.category, ...(meta.tags || []), ...(meta.languages || []), meta.level]
+    .map(toLower)
+  return ` ${parts.join(' ').replace(/[^a-z0-9+]+/g, ' ').replace(/\s+/g, ' ').trim()} `
+}
+const containsPhrase = (hay: string, phrase: string) => hay.includes(` ${phrase.toLowerCase()} `)
+const containsAny = (hay: string, items: string[]) => items.some((p) => containsPhrase(hay, p))
+
+// Classifier for sections
+function classify(meta: ResourceMeta): 'tools' | 'languages' | 'fundamentals' | 'other' {
+  const hay = haystack(meta)
+
+  const toolNames = [
+    // well-known cross-chain stacks & tools
+    'wormhole','layerzero','hyperlane','axelar','ccip','chainlink ccip','debridge','connext','lifi','socket',
+    'bridge','relayer','ibc','hermes','rly','bridge-ui','sdk'
+  ]
+  const toolCtx = ['tool','tools','framework','sdk','cli','relayer','validator','rpc']
+  const langNames = ['rust','typescript','javascript','python','go','solidity']
+  const fundPhrases = [
+    'fundamentals','basics','intro','introduction','concepts','primer',
+    'interoperability','omnichain','ibc','bridging','cross-chain messaging'
+  ]
+
+  const hasToolName = containsAny(hay, toolNames)
+  const hasToolCtx = containsAny(hay, toolCtx)
+  const hasLang = containsAny(hay, langNames)
+  const isFund = containsAny(hay, fundPhrases)
+
+  if (hasToolName) return 'tools'
+  if (hasLang && !hasToolCtx) return 'languages'
+  if (hasToolCtx) return 'tools'
+  if (isFund) return 'fundamentals'
+  return 'other'
+}
+
+// Extract @handle from authors/url/title
+function extractTwitterHandle(meta: ResourceMeta): string | null {
+  const handleRe = /^@?([A-Za-z0-9_]{1,15})$/
+  for (const a of meta.authors || []) {
+    const m = String(a).trim().match(handleRe)
+    if (m) return m[1]
+  }
+  if (meta.url) {
+    try {
+      const u = new URL(meta.url)
+      const host = u.hostname.replace(/^www\./, '')
+      if (host === 'twitter.com' || host === 'x.com') {
+        const seg = u.pathname.split('/').filter(Boolean)[0] || ''
+        const m = seg.match(handleRe)
+        if (m) return m[1]
+      }
+    } catch {}
+  }
+  if (meta.title?.trim().startsWith('@')) {
+    const m = meta.title.trim().match(handleRe)
+    if (m) return m[1]
+  }
+  return null
+}
+
+// Blog MD -> HTML
+async function getBlogHtml() {
+  try {
+    const filePath = path.join(process.cwd(), 'app', 'cross-chain', 'blogpost.md')
+    const fileContent = await fs.promises.readFile(filePath, 'utf-8')
+    const { content } = matter(fileContent)
+    return marked.parse(content)
+  } catch {
+    return marked.parse('# Cross-Chain: Start Here\n\n_Add **app/cross-chain/blogpost.md** to show this section._')
+  }
+}
+
+// Read .md files for cross-chain page
+async function getCrossChainContent(): Promise<{
+  resources: (ResourceMeta & { key: string; section: ReturnType<typeof classify> })[]
+  profiles: TwitterProfile[]
+}> {
+  const dir = path.join(process.cwd(), 'app', 'cross-chain')
+  const files = await fs.promises.readdir(dir)
+  const mdFiles = files.filter(f => f.toLowerCase().endsWith('.md') && f.toLowerCase() !== 'blogpost.md')
+
+  const resources: (ResourceMeta & { key: string; section: ReturnType<typeof classify> })[] = []
+  const handles = new Set<string>()
+  const profiles: TwitterProfile[] = []
+
+  for (const file of mdFiles) {
+    const raw = await fs.promises.readFile(path.join(dir, file), 'utf-8')
+    const { data } = matter(raw)
+    const meta = data as ResourceMeta
+
+    if (isTwitterTag(meta.tags)) {
+      const h = extractTwitterHandle(meta)
+      if (h) {
+        const key = h.toLowerCase()
+        if (!handles.has(key)) {
+          handles.add(key)
+          profiles.push({
+            handle: h,
+            title: meta.displayName || meta.title,
+            avatar: typeof meta.avatar === 'string' ? meta.avatar : undefined,
+            bio: typeof meta.bio === 'string' ? meta.bio : undefined,
+          })
+        }
+      }
+      continue
+    }
+
+    if (!isCrossChainTag(meta.tags)) continue
+    if (!meta.url) continue
+
+    resources.push({
+      key: file,
+      title: meta.title || file.replace(/\.md$/i, ''),
+      description: meta.description || '',
+      authors: Array.isArray(meta.authors) ? meta.authors : [],
+      tags: Array.isArray(meta.tags) ? meta.tags : [],
+      languages: Array.isArray(meta.languages) ? meta.languages : [],
+      url: meta.url,
+      dateAdded: meta.dateAdded,
+      level: meta.level || '',
+      category: meta.category || '',
+      section: classify(meta),
+    })
+  }
+
+  resources.sort((a, b) => (new Date(b.dateAdded || 0).getTime()) - (new Date(a.dateAdded || 0).getTime()))
+  return { resources, profiles }
+}
+
+export default async function CrossChainPage() {
+  const [blogContent, content] = await Promise.all([getBlogHtml(), getCrossChainContent()])
+  const { resources, profiles } = content
+
+  const tools = resources.filter(r => r.section === 'tools')
+  const languages = resources.filter(r => r.section === 'languages')
+  const fundamentals = resources.filter(r => r.section === 'fundamentals')
+  const other = resources.filter(r => r.section === 'other')
+
+  const Card = ({ r }: { r: (ResourceMeta & { key: string }) }) => (
+    <a
+      key={r.key}
+      href={r.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group block rounded-lg border border-white/10 bg-[#1a1a1a] p-5 hover:border-white/30 hover:bg-[#232323] transition-all"
+    >
+      <div className="flex items-start justify-between gap-2 mb-2">
+        <h3 className="text-lg font-display font-semibold text-white group-hover:text-[#73FDEA] transition-colors">
+          {r.title}
+        </h3>
+        <ExternalLink className="h-4 w-4 text-white/50 group-hover:text-[#73FDEA] transition-colors shrink-0" />
+      </div>
+
+      {r.description && <p className="text-sm text-white/80 mb-4">{r.description}</p>}
+
+      <div className="flex flex-wrap gap-2 text-xs">
+        {r.level && <span className="inline-block bg-[#0b0b0b] border border-white/20 text-white/70 px-2 py-0.5 rounded">{r.level}</span>}
+        {r.category && <span className="inline-block bg-[#0b0b0b] border border-white/20 text-white/70 px-2 py-0.5 rounded">{r.category}</span>}
+        {r.languages && r.languages.length > 0 && (
+          <span className="inline-block bg-[#0b0b0b] border border-white/20 text-white/70 px-2 py-0.5 rounded">
+            {r.languages.join(', ')}
+          </span>
+        )}
+      </div>
+
+      <div className="mt-3 flex items-center justify-between text-xs text-white/50">
+        <span className="truncate">{r.authors && r.authors.length > 0 ? r.authors.join(', ') : ''}</span>
+        <span>{formatDate(r.dateAdded)}</span>
+      </div>
+    </a>
+  )
+
+  const Section = ({ title, items }: { title: string; items: (ResourceMeta & { key: string })[] }) =>
+    items.length ? (
+      <section className="mb-12">
+        <h2 className="text-lg md:text-xl font-display font-semibold text-white mb-4">{title}</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {items.map((r) => <Card key={r.key} r={r} />)}
+        </div>
+      </section>
+    ) : null
+
   return (
     <div className="min-h-screen bg-black">
+      {/* Contained Banner */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+        <div className="rounded-lg overflow-hidden border border-white/10 bg-[#0b0b0b]">
+          <div className="relative h-40 sm:h-48 md:h-56 lg:h-64">
+            <Image src="/CrossChain.png" alt="Cross-Chain" fill className="object-cover" priority />
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Page Header */}
+        {/* Header */}
         <div className="mb-8">
           <Link
             href="/"
@@ -186,107 +260,58 @@ export default function CrossChainPage() {
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Home
           </Link>
-          <h1 className="text-3xl font-display font-bold text-white mb-4">Cross-Chain Development</h1>
+          <h1 className="text-xl md:text-2xl font-display font-bold text-white mb-3">Cross-Chain</h1>
           <p className="text-lg text-white/90 max-w-3xl">
           Combine Ethereum and Solana knowledge to build composable cross-chain dApps using Neon EVM. Learning composability feature, cross-chain token transfers, and interacting with Solana programs from EVM smart contracts.
           </p>
         </div>
 
-        {/* Topics */}
-        <div className="space-y-8 mb-12">
-          {topics.map((topic) => (
-            <div key={topic.title} className="bg-[#1a1a1a] border border-white/10 rounded-lg p-6">
-              <div className="flex items-center mb-4">
-                <div className="w-10 h-10 bg-gradient-to-r from-[#FF00AA] to-[#8E1CF1] rounded-lg flex items-center justify-center mr-4">
-                  <topic.icon className="h-5 w-5 text-white" />
-                </div>
-                <h2 className="text-xl font-display font-semibold text-white">{topic.title}</h2>
-              </div>
-              <p className="text-white/80 mb-6">{topic.description}</p>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {topic.resources.map((resource) => (
-                  <a
-                    key={resource.title}
-                    href={resource.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block p-4 border border-white/20 rounded-lg hover:border-white/40 hover:bg-[#2a2a2a] transition-all duration-300 bg-[#2a2a2a] group"
-                  >
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <h3 className="text-lg font-display font-semibold text-white group-hover:text-[#73FDEA] transition-colors duration-300 mb-2">
-                          {resource.title}
-                        </h3>
-                        <p className="text-white/80 text-sm mb-3">{resource.description}</p>
-                        <div className="flex items-center space-x-3">
-                          <span className="inline-block bg-[#1a1a1a] text-white/70 text-xs px-2 py-1 rounded border border-white/20">
-                            {resource.type}
-                          </span>
-                          <span className="inline-block bg-[#1a1a1a] text-white/70 text-xs px-2 py-1 rounded border border-white/20">
-                            {resource.difficulty}
-                          </span>
-                        </div>
-                      </div>
-                      <ExternalLink className="h-4 w-4 text-white/50 group-hover:text-[#73FDEA] transition-colors duration-300" />
-                    </div>
-                  </a>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Next Steps */}
-        <div className="bg-[#1a1a1a] border border-white/10 rounded-lg p-6 mb-8">
-          <h2 className="text-2xl font-display font-semibold text-white mb-4">What's Next?</h2>
-          <p className="text-white/80 mb-6">
-            Ready to explore advanced blockchain development concepts?
-          </p>
-          
-          <div className="grid grid-cols-1 gap-4">
-            {nextSteps.map((step) => (
-              <Link
-                key={step.title}
-                href={step.link}
-                className="block p-4 border border-white/20 rounded-lg hover:border-white/40 hover:bg-[#2a2a2a] transition-all duration-300 bg-[#2a2a2a] group"
-              >
-                <h3 className="text-lg font-display font-semibold text-white group-hover:text-[#73FDEA] transition-colors duration-300 mb-2">
-                  {step.title}
-                </h3>
-                <p className="text-white/80 text-sm">{step.description}</p>
-              </Link>
-            ))}
+        {/* Blogpost — foldable */}
+        <details className="dropdown group mb-8 rounded-lg border border-white/10 bg-[#1a1a1a]">
+          <summary className="flex items-center gap-2 cursor-pointer select-none px-4 md:px-5 py-3 md:py-4 list-none focus:outline-none focus:ring-2 focus:ring-[#73FDEA]/40">
+            <ChevronRight className="h-4 w-4 text-white/70 transition-transform duration-200 group-open:rotate-90 shrink-0" />
+            <span className="text-sm md:text-base font-semibold text-white">
+              Cross-Chain Dev: quick start guide
+            </span>
+          </summary>
+          <div className="px-4 md:px-5 pb-4 md:pb-5 pt-0">
+            <article className="md-content md-compact" dangerouslySetInnerHTML={{ __html: blogContent }} />
           </div>
-        </div>
+        </details>
 
-        {/* Community Call to Action */}
-        <div className="bg-gradient-to-r from-[#8E1CF1] to-[#FF00AA] rounded-lg p-8 text-center">
-          <h3 className="text-2xl font-display font-bold text-white mb-4">Join Our Community</h3>
+        {/* Auto sections */}
+        <Section title="Main Tools" items={tools} />
+        <Section title="Main Languages" items={languages} />
+        <Section title="Fundamentals" items={fundamentals} />
+        {other.length ? <Section title="Other" items={other} /> : null}
+
+        {/* Cross-Chain Twitter */}
+        {profiles.length > 0 && (
+          <section className="mb-12">
+            <h2 className="text-lg md:text-xl font-display font-semibold text-white mb-4">
+              Cross-Chain Twitter
+            </h2>
+            <CrossChainTimelines profiles={profiles} />
+          </section>
+        )}
+
+        {/* CTA */}
+        <div className="mt-12 bg-gradient-to-r from-[#8E1CF1] to-[#FF00AA] rounded-lg p-8 text-center">
+          <h3 className="text-2xl font-display font-bold text-white mb-4">Share Your Knowledge</h3>
           <p className="text-white/90 mb-6 max-w-2xl mx-auto">
-            Connect with other cross-chain developers, ask questions, and share your progress. 
-            Our community is here to support your blockchain development journey.
+            Have a great cross-chain resource? Help the community by contributing to this collection.
           </p>
-          <div className="flex justify-center space-x-4">
-                               <a
-                     href="https://discord.gg/Y6E3FZAguZ"
-                     className="bg-white text-[#8E1CF1] hover:bg-gray-100 font-medium py-3 px-6 rounded-lg transition-all duration-300 shadow-lg transform hover:scale-105 inline-flex items-center"
-                     target="_blank"
-                     rel="noopener noreferrer"
-                   >
-                     Join Discord
-                   </a>
-                               <a
-                     href="https://github.com/Avvrik/Dev-Playbook"
-                     target="_blank"
-                     rel="noopener noreferrer"
-                     className="bg-white/20 border border-white/30 text-white hover:bg-white/30 font-medium py-3 px-6 rounded-lg transition-all duration-300"
-                   >
-                     Contribute Resources
-                   </a>
-          </div>
+          <a
+            href="https://github.com/Avvrik/Dev-Playbook"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-white text-[#8E1CF1] hover:bg-gray-100 font-medium py-3 px-6 rounded-lg transition-all duration-300 shadow-lg transform hover:scale-105 inline-flex items-center"
+          >
+            Contribute Resource
+            <Github className="h-4 w-4 ml-2" />
+          </a>
         </div>
       </div>
     </div>
   )
-} 
+}

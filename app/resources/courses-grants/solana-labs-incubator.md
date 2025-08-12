@@ -7,5 +7,5 @@ languages: ["English"]
 url: "https://incubator.solanalabs.com/"
 dateAdded: 2025-01-20
 level: "Advanced"
-category: "Solana"
+category: "Accelerators"
 ---

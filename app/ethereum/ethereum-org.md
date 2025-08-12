@@ -2,7 +2,7 @@
 title: "Ethereum.org"
 description: "Official Ethereum website with documentation and resources"
 authors: ["@ethereum"]
-tags: ["Beginner Dev", "Ethereum", "Official Documentation"]
+tags: ["Ethereum", "Official Documentation", "Ecosystem"]
 languages: ["JavaScript", "Solidity"]
 url: "https://ethereum.org/"
 dateAdded: 2024-01-01

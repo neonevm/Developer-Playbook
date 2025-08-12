@@ -7,5 +7,5 @@ languages: ["English"]
 url: "https://onchain.org/magazine/best-grants-for-web3-founders-projects-in-2025/"
 dateAdded: 2025-01-20
 level: "Advanced"
-category: "General"
+category: "Grants"
 ---

@@ -1,100 +1,68 @@
-import Link from 'next/link'
-import { ArrowLeft, BookOpen, ExternalLink, Code, Target, Shield, Globe, Clock, User } from 'lucide-react'
+// app/resources/guides-articles/page.tsx
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
+import Link from 'next/link'
+import {
+  ArrowLeft,
+  BookOpen,
+  ExternalLink,
+  Code,
+  Target,
+  Globe,
+  Clock,
+  User,
+} from 'lucide-react'
 
-// Function to get all markdown files and parse their frontmatter
-function getGuidesArticles() {
-  try {
-    const directory = path.join(process.cwd(), 'app/resources/guides-articles')
-    
-    // Check if directory exists
-    if (!fs.existsSync(directory)) {
-      console.error('Directory does not exist:', directory)
-      return []
-    }
-    
-    const files = fs.readdirSync(directory)
-    
-    const articles = files
-      .filter(file => file.endsWith('.md'))
-      .map(file => {
-        try {
-          const filePath = path.join(directory, file)
-          const fileContents = fs.readFileSync(filePath, 'utf8')
-          const { data } = matter(fileContents)
-          
-          // Safely extract date
-          let date = '2024'
-          if (data.dateAdded && typeof data.dateAdded === 'string') {
-            const dateParts = data.dateAdded.split('-')
-            if (dateParts.length > 0) {
-              date = dateParts[0]
-            }
-          }
-          
-          return {
-            title: data.title || 'Untitled',
-            description: data.description || 'No description available',
-            author: data.authors?.[0]?.replace('@', '') || 'Unknown',
-            date: date,
-            readTime: '8 min', // Default read time
-            difficulty: data.level || 'Beginner',
-            url: data.url || '#',
-            type: getArticleType(data.tags || []),
-            icon: getIconForCategory(data.category || 'General'),
-            category: data.category || 'General',
-            tags: data.tags || []
-          }
-        } catch (error) {
-          console.error(`Error parsing ${file}:`, error)
-          return {
-            title: file.replace('.md', ''),
-            description: 'Error parsing file',
-            author: 'Unknown',
-            date: '2024',
-            readTime: '8 min',
-            difficulty: 'Beginner',
-            url: '#',
-            type: 'Technical Guide',
-            icon: 'BookOpen',
-            category: 'General',
-            tags: []
-          }
-        }
-      })
-    
-    return articles
-  } catch (error) {
-    console.error('Error reading guides articles:', error)
-    return []
-  }
+export const runtime = 'nodejs'
+export const dynamic = 'force-static' // build-time scan
+
+// ---------- Types ----------
+type Item = {
+  key: string
+  title: string
+  description?: string
+  author?: string
+  date?: string // year as string
+  readTime?: string
+  difficulty?: string
+  url?: string
+  type: string
+  icon: 'Globe' | 'Code' | 'Target' | 'BookOpen'
+  category: string
+  tags: string[]
 }
 
-// Helper function to determine article type based on tags
-function getArticleType(tags: string[] = []) {
-  if (tags.includes('Security')) return 'Security Guide'
-  if (tags.includes('Tutorial')) return 'Tutorial'
-  if (tags.includes('Deep Dive')) return 'Technical Deep Dive'
-  if (tags.includes('Career Guide')) return 'Career Guide'
-  if (tags.includes('Full Stack')) return 'Full Stack Tutorial'
-  if (tags.includes('Language Guide')) return 'Language Guide'
-  if (tags.includes('Optimization')) return 'Optimization Guide'
-  if (tags.includes('Zero Knowledge')) return 'Cryptography Guide'
-  if (tags.includes('Cross-Chain')) return 'Cross-Chain Guide'
-  if (tags.includes('Composability')) return 'Composability Guide'
-  if (tags.includes('DeFi')) return 'DeFi Guide'
-  if (tags.includes('ElizaOS')) return 'Plugin Tutorial'
-  if (tags.includes('Blockchain Explorer')) return 'Tool Guide'
-  if (tags.includes('Scalability')) return 'Scalability Analysis'
-  if (tags.includes('Smart Contracts')) return 'Smart Contract Guide'
-  if (tags.includes('Blockchain Fundamentals')) return 'Educational'
+type Section = { title: string; description: string; items: Item[] }
+
+// ---------- Helpers ----------
+const DIR = path.join(process.cwd(), 'app', 'resources', 'guides-articles')
+const toStr = (v: unknown): string => (typeof v === 'string' ? v : '')
+const toArr = (v: unknown): string[] => (Array.isArray(v) ? v.map(String) : [])
+const low = (s: string) => s.toLowerCase()
+
+const inferType = (tags: string[] = []): string => {
+  const t = tags.map(low)
+  if (t.includes('security')) return 'Security Guide'
+  if (t.includes('tutorial')) return 'Tutorial'
+  if (t.includes('deep dive')) return 'Technical Deep Dive'
+  if (t.includes('career guide')) return 'Career Guide'
+  if (t.includes('full stack')) return 'Full Stack Tutorial'
+  if (t.includes('language guide')) return 'Language Guide'
+  if (t.includes('optimization')) return 'Optimization Guide'
+  if (t.includes('zero knowledge')) return 'Cryptography Guide'
+  if (t.includes('cross-chain')) return 'Cross-Chain Guide'
+  if (t.includes('composability')) return 'Composability Guide'
+  if (t.includes('defi')) return 'DeFi Guide'
+  if (t.includes('elizaos')) return 'Plugin Tutorial'
+  if (t.includes('blockchain explorer')) return 'Tool Guide'
+  if (t.includes('scalability')) return 'Scalability Analysis'
+  if (t.includes('smart contracts')) return 'Smart Contract Guide'
+  if (t.includes('blockchain fundamentals')) return 'Educational'
   return 'Technical Guide'
 }
 
-// Helper function to get icon based on category
-function getIconForCategory(category: string) {
+const iconForCategory = (category: string): Item['icon'] => {
   switch (category) {
     case 'Neon EVM':
       return 'Globe'
@@ -105,186 +73,265 @@ function getIconForCategory(category: string) {
     case 'Cross-Chain':
       return 'Globe'
     case 'General':
-      return 'BookOpen'
     default:
       return 'BookOpen'
   }
 }
 
-// Group articles by category
-function groupArticlesByCategory(articles: any[]) {
-  const categories = {
-    'Neon EVM & Cross-Chain Development': {
-      description: 'Articles focused on Neon EVM development and cross-chain interoperability',
-      articles: articles.filter(article => 
-        article.category === 'Neon EVM' || article.category === 'Cross-Chain'
-      )
-    },
-    'Blockchain Fundamentals & Deep Dives': {
-      description: 'In-depth articles explaining blockchain concepts and mechanisms',
-      articles: articles.filter(article => 
-        article.category === 'Ethereum' || article.category === 'General'
-      )
-    },
-    'Tutorials & Guides': {
-      description: 'Step-by-step tutorials and practical development guides',
-      articles: articles.filter(article => 
-        article.type.includes('Tutorial') || article.type.includes('Guide')
-      )
-    },
-    'Best Practices & Security': {
-      description: 'Articles on development best practices and security considerations',
-      articles: articles.filter(article => 
-        article.type.includes('Security') || article.type.includes('Optimization')
-      )
+const yearFromDate = (d?: string | Date) => {
+  if (!d) return undefined
+  const dt = typeof d === 'string' ? new Date(d) : d
+  if (isNaN(dt.getTime())) {
+    // try YYYY-MM-DD string split fallback
+    if (typeof d === 'string') return d.split('-')[0]
+    return undefined
+  }
+  return String(dt.getFullYear())
+}
+
+// ---------- Loader ----------
+async function loadArticles(): Promise<Item[]> {
+  let files: string[] = []
+  try {
+    files = (await fs.promises.readdir(DIR)).filter((f) => f.toLowerCase().endsWith('.md'))
+  } catch {
+    console.warn('Guides & Articles folder not found:', DIR)
+    return []
+  }
+
+  const items: Item[] = []
+  for (const file of files) {
+    try {
+      const raw = await fs.promises.readFile(path.join(DIR, file), 'utf-8')
+      const { data } = matter(raw)
+
+      const title = toStr(data.title) || file.replace(/\.md$/i, '')
+      const description = toStr(data.description)
+      const authors = toArr(data.authors)
+      const firstAuthor = authors[0]?.replace(/^@/, '')
+      const category = toStr(data.category) || 'General'
+      const tags = toArr(data.tags)
+      const url = toStr(data.url)
+      const difficulty = toStr(data.level) || 'Beginner'
+      const type = inferType(tags)
+      const icon = iconForCategory(category)
+      const date = yearFromDate(data.dateAdded)
+      const readTime = toStr((data as any).readTime) || undefined
+
+      if (!title || !url) continue
+
+      items.push({
+        key: file,
+        title,
+        description,
+        author: firstAuthor || 'Unknown',
+        date,
+        readTime,
+        difficulty,
+        url,
+        type,
+        icon,
+        category,
+        tags,
+      })
+    } catch (err) {
+      console.warn('Failed to parse', file, err)
     }
   }
-  
-  return categories
+
+  // newest first
+  items.sort((a, b) => {
+    const da = new Date((a as any).dateAdded || 0).getTime()
+    const db = new Date((b as any).dateAdded || 0).getTime()
+    return db - da
+  })
+
+  return items
 }
 
-// Get icon component based on string
-function getIconComponent(iconName: string) {
-  switch (iconName) {
-    case 'Globe':
-      return Globe
-    case 'Code':
-      return Code
-    case 'Target':
-      return Target
-    case 'BookOpen':
-      return BookOpen
-    default:
-      return BookOpen
+// Assign each article to exactly one section (first match wins)
+function buildSections(items: Item[]): Section[] {
+  const sections: Section[] = [
+    {
+      title: 'Neon EVM & Cross-Chain Development',
+      description: 'Articles focused on Neon EVM development and cross-chain interoperability.',
+      items: [],
+    },
+    {
+      title: 'Blockchain Fundamentals & Deep Dives',
+      description: 'In-depth articles explaining blockchain concepts and mechanisms.',
+      items: [],
+    },
+    {
+      title: 'Tutorials & Guides',
+      description: 'Step-by-step tutorials and practical development guides.',
+      items: [],
+    },
+    {
+      title: 'Best Practices & Security',
+      description: 'Development best practices and security considerations.',
+      items: [],
+    },
+  ]
+
+  const pushTo = (idx: number, it: Item) => sections[idx].items.push(it)
+
+  for (const it of items) {
+    const c = low(it.category)
+    const t = it.tags.map(low)
+    const type = low(it.type)
+
+    if (c === 'neon evm' || c === 'cross-chain' || t.includes('cross-chain') || t.includes('neon') || t.includes('evm')) {
+      pushTo(0, it)
+      continue
+    }
+
+    if (c === 'ethereum' || c === 'general' || t.includes('fundamentals') || type.includes('deep dive')) {
+      pushTo(1, it)
+      continue
+    }
+
+    if (type.includes('tutorial') || type.includes('guide')) {
+      pushTo(2, it)
+      continue
+    }
+
+    if (t.includes('security') || t.includes('optimization') || type.includes('security')) {
+      pushTo(3, it)
+      continue
+    }
+
+    // default bucket
+    pushTo(1, it)
   }
+
+  // remove empty
+  return sections.filter((s) => s.items.length > 0)
 }
 
-export default function GuidesArticlesPage() {
-  try {
-    const allArticles = getGuidesArticles()
-    const categorizedArticles = groupArticlesByCategory(allArticles)
+function Icon({ name, className }: { name: Item['icon']; className?: string }) {
+  const map = { Globe, Code, Target, BookOpen }
+  const Cmp = map[name] || BookOpen
+  return <Cmp className={className} />
+}
 
-    return (
-      <div className="min-h-screen bg-black">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* Page Header */}
-          <div className="mb-8">
-            <Link
-              href="/"
-              className="inline-flex items-center text-[#73FDEA] hover:text-[#FF00AA] mb-4 transition-colors duration-300"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Home
-            </Link>
-            <h1 className="text-3xl font-display font-bold text-white mb-4">Guides & Articles</h1>
-            <p className="text-lg text-white/90 max-w-3xl">
-              Tutorials, deep dives, and personal dev journeys. 
-              In-depth articles written by blockchain developers and experts sharing their knowledge and experiences.
-            </p>
-          </div>
+// ---------- Page ----------
+export default async function GuidesArticlesPage() {
+  const items = await loadArticles()
+  const groups = buildSections(items)
 
-          {/* Article Categories */}
-          <div className="space-y-12">
-            {Object.entries(categorizedArticles).map(([categoryName, categoryData]: [string, any]) => (
-              <div key={categoryName} className="bg-[#1a1a1a] border border-white/10 rounded-lg p-6">
-                <div className="mb-6">
-                  <h2 className="text-2xl font-display font-semibold text-white mb-2">{categoryName}</h2>
-                  <p className="text-white/80">{categoryData.description}</p>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {categoryData.articles.map((article: any) => {
-                    const IconComponent = getIconComponent(article.icon)
-                    return (
-                      <a
-                        key={article.title}
-                        href={article.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block p-6 border border-white/20 rounded-lg hover:border-white/40 hover:bg-[#2a2a2a] transition-all duration-300 bg-[#2a2a2a] group"
-                      >
-                        <div className="flex items-start space-x-4">
-                          <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-r from-[#FF00AA] to-[#8E1CF1] rounded-lg flex items-center justify-center">
-                            <IconComponent className="h-5 w-5 text-white" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <h3 className="text-lg font-display font-semibold text-white group-hover:text-[#73FDEA] transition-colors duration-300 mb-2">
-                              {article.title}
-                            </h3>
-                            <p className="text-white/80 text-sm mb-3">
-                              {article.description}
-                            </p>
-                            <div className="flex items-center justify-between mb-3">
-                              <div className="flex items-center space-x-4 text-xs text-white/70">
-                                <span className="flex items-center">
-                                  <Clock className="h-3 w-3 mr-1" />
-                                  {article.readTime}
-                                </span>
-                                <span className="inline-block bg-[#1a1a1a] text-white/70 px-2 py-1 rounded border border-white/20">
-                                  {article.difficulty}
-                                </span>
-                              </div>
-                              <div className="flex items-center space-x-2">
-                                <span className="text-[#FF00AA] font-semibold">{article.type}</span>
-                              </div>
-                            </div>
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center space-x-2 text-xs text-white/60">
-                                <User className="h-3 w-3" />
-                                <span>{article.author}</span>
-                                <span>•</span>
-                                <span>{article.date}</span>
-                              </div>
-                            </div>
-                          </div>
-                          <ExternalLink className="h-4 w-4 text-white/50 group-hover:text-[#73FDEA] transition-colors duration-300" />
-                        </div>
-                      </a>
-                    )
-                  })}
-                </div>
+  return (
+    <div className="min-h-screen bg-black">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <Link
+            href="/"
+            className="inline-flex items-center text-[#73FDEA] hover:text-[#FF00AA] mb-4 transition-colors duration-300"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Home
+          </Link>
+        <h1 className="text-3xl font-display font-bold text-white mb-4">Guides & Articles</h1>
+          <p className="text-lg text-white/90 max-w-3xl">
+            Tutorials, deep dives, and developer journeys—pulled automatically from Markdown files in{' '}
+            <code className="text-white/80">app/resources/guides-articles/</code>.
+          </p>
+        </div>
+
+        {/* Sections */}
+        <div className="space-y-10">
+          {groups.map((group) => (
+            <section key={group.title}>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-display font-semibold text-white">
+                  {group.title}{' '}
+                  <span className="text-white/50 text-sm">({group.items.length})</span>
+                </h2>
+                <p className="text-white/60 text-sm hidden md:block">{group.description}</p>
               </div>
-            ))}
-          </div>
 
-          {/* Call to Action */}
-          <div className="mt-12 bg-gradient-to-r from-[#8E1CF1] to-[#FF00AA] rounded-lg p-8 text-center">
-            <h3 className="text-2xl font-display font-bold text-white mb-4">Write an Article</h3>
-            <p className="text-white/90 mb-6 max-w-2xl mx-auto">
-              Have knowledge to share? Write an original article and help the community grow. 
-              Your insights could help thousands of developers on their blockchain journey.
-            </p>
-            <a
-              href="https://github.com/Avvrik/Dev-Playbook"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-white text-[#8E1CF1] hover:bg-gray-100 font-medium py-3 px-6 rounded-lg transition-all duration-300 shadow-lg transform hover:scale-105 inline-flex items-center"
-            >
-              Submit Your Article
-              <BookOpen className="h-4 w-4 ml-2" />
-            </a>
-          </div>
+              {/* Compact cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {group.items.map((a) => (
+                  <a
+                    key={a.key}
+                    href={a.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group rounded-lg border border-white/10 bg-[#1a1a1a] hover:border-white/30 hover:bg-[#202020] transition-colors p-4"
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="flex-shrink-0 w-9 h-9 rounded-md bg-gradient-to-r from-[#FF00AA] to-[#8E1CF1] grid place-items-center">
+                        <Icon name={a.icon} className="h-4 w-4 text-white" />
+                      </div>
+
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-start justify-between gap-3">
+                          <h3 className="truncate text-base font-medium text-white group-hover:text-[#73FDEA]">
+                            {a.title}
+                          </h3>
+                          <ExternalLink className="h-4 w-4 flex-shrink-0 text-white/60 group-hover:text-[#73FDEA]" />
+                        </div>
+
+                        {a.description && (
+                          <p className="text-xs text-white/70 mt-1 line-clamp-2">{a.description}</p>
+                        )}
+
+                        <div className="mt-2 flex flex-wrap items-center gap-3 text-[11px] text-white/70">
+                          {a.readTime && (
+                            <span className="inline-flex items-center gap-1">
+                              <Clock className="h-3 w-3" />
+                              {a.readTime}
+                            </span>
+                          )}
+                          {a.difficulty && (
+                            <span className="inline-block rounded border border-white/20 bg-black/30 px-2 py-0.5">
+                              {a.difficulty}
+                            </span>
+                          )}
+                          <span className="inline-block rounded border border-white/20 bg-black/30 px-2 py-0.5 text-white/60">
+                            {a.type}
+                          </span>
+                        </div>
+
+                        <div className="mt-2 flex items-center gap-2 text-[11px] text-white/60 truncate">
+                          <User className="h-3 w-3" />
+                          <span className="truncate">{a.author || 'Unknown'}</span>
+                          {a.date && (
+                            <>
+                              <span>•</span>
+                              <span>{a.date}</span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
+
+        {/* CTA */}
+        <div className="mt-12 bg-gradient-to-r from-[#8E1CF1] to-[#FF00AA] rounded-lg p-8 text-center">
+          <h3 className="text-2xl font-display font-bold text-white mb-4">Write an Article</h3>
+          <p className="text-white/90 mb-6 max-w-2xl mx-auto">
+            Add a Markdown file in <code className="text-white/80">app/resources/guides-articles/</code> and it will
+            appear here after a rebuild.
+          </p>
+          <a
+            href="https://github.com/Avvrik/Dev-Playbook"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-white text-[#8E1CF1] hover:bg-gray-100 font-medium py-3 px-6 rounded-lg transition-all duration-300 shadow-lg inline-flex items-center"
+          >
+            Submit Your Article
+            <BookOpen className="h-4 w-4 ml-2" />
+          </a>
         </div>
       </div>
-    )
-  } catch (error) {
-    console.error('Error rendering GuidesArticlesPage:', error)
-    return (
-      <div className="min-h-screen bg-black">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="mb-8">
-            <Link
-              href="/"
-              className="inline-flex items-center text-[#73FDEA] hover:text-[#FF00AA] mb-4 transition-colors duration-300"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Home
-            </Link>
-            <h1 className="text-3xl font-display font-bold text-white mb-4">Guides & Articles</h1>
-            <p className="text-lg text-white/90">Error loading articles. Please try again later.</p>
-          </div>
-        </div>
-      </div>
-    )
-  }
-} 
+    </div>
+  )
+}

@@ -7,5 +7,5 @@ languages: ["Python"]
 url: "https://www.freecodecamp.org/learn/scientific-computing-with-python/"
 dateAdded: 2024-01-15
 level: "Beginner"
-category: "General"
+category: "Other Courses"
 ---

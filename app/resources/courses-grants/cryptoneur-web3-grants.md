@@ -7,5 +7,5 @@ languages: ["English"]
 url: "https://www.cryptoneur.xyz/en/web3-grants/grants?page=1&sort=grantName.asc&per_page=10"
 dateAdded: 2025-01-20
 level: "Advanced"
-category: "General"
+category: "Grants"
 ---

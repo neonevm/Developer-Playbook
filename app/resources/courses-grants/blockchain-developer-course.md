@@ -7,5 +7,5 @@ languages: ["Solidity", "JavaScript"]
 url: "https://consensys.net/academy/"
 dateAdded: 2024-01-15
 level: "Beginner"
-category: "Ethereum"
+category: "Blockchain Courses"
 ---

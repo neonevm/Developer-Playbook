@@ -1,307 +1,274 @@
-import Link from 'next/link'
-import { ArrowLeft, GraduationCap, ExternalLink, Code, Shield, Globe, BookOpen } from 'lucide-react'
+// app/resources/courses-grants/page.tsx
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
+import Link from 'next/link'
+import { ArrowLeft, GraduationCap, ExternalLink, Code, Shield, Globe, BookOpen } from 'lucide-react'
 
-// Function to get all markdown files and parse their frontmatter
-function getCoursesData() {
-  try {
-    const directory = path.join(process.cwd(), 'app/resources/courses-grants')
-    
-    // Check if directory exists
-    if (!fs.existsSync(directory)) {
-      console.error('Directory does not exist:', directory)
-      return []
-    }
-    
-    const files = fs.readdirSync(directory)
-    
-    const courses = files
-      .filter(file => file.endsWith('.md'))
-      .map(file => {
-        try {
-          const filePath = path.join(directory, file)
-          const fileContents = fs.readFileSync(filePath, 'utf8')
-          const { data } = matter(fileContents)
-          
-                     return {
-             title: data.title || 'Untitled',
-             description: data.description || 'No description available',
-             authors: data.authors || [],
-             tags: data.tags || [],
-             languages: data.languages || [],
-             url: data.url || '#',
-             dateAdded: data.dateAdded || '2024-01-01',
-             level: data.level || 'Beginner',
-             category: data.category || 'General',
-             platform: data.authors?.[0]?.replace('@', '') || 'Unknown',
-             difficulty: data.level || 'Beginner',
-             icon: getIconForCategory(data.category || 'General', data.tags || [])
-           }
-        } catch (error) {
-          console.error(`Error parsing ${file}:`, error)
-          return {
-            title: file.replace('.md', ''),
-            description: 'Error parsing file',
-            authors: [],
-            tags: [],
-            languages: [],
-            url: '#',
-            dateAdded: '2024-01-01',
-            level: 'Beginner',
-            category: 'General',
-            platform: 'Unknown',
-            difficulty: 'Beginner',
-            icon: 'GraduationCap'
-          }
-        }
-      })
-    
-    return courses
-  } catch (error) {
-    console.error('Error reading courses data:', error)
-    return []
-  }
+export const runtime = 'nodejs'
+export const dynamic = 'force-static' // build-time scan
+
+// ---------- Types ----------
+type Item = {
+  key: string
+  title: string
+  description?: string
+  authors: string[]
+  tags: string[]
+  languages: string[]
+  url?: string
+  dateAdded?: string | Date
+  level?: string
+  category?: string
+  platform?: string
+  icon: 'Code' | 'Shield' | 'Globe' | 'BookOpen' | 'GraduationCap'
+}
+type Group = { category: string; items: Item[] }
+
+// ---------- Helpers ----------
+const DIR = path.join(process.cwd(), 'app', 'resources', 'courses-grants')
+const toStr = (v: unknown): string => (typeof v === 'string' ? v : '')
+const toArr = (v: unknown): string[] => (Array.isArray(v) ? v.map(String) : [])
+const low = (s: string) => s.toLowerCase()
+
+const hasAny = (arr: string[], words: string[]) => {
+  const L = arr.map(low)
+  return words.some((w) => L.includes(low(w)))
 }
 
-// Helper function to get icon based on category and tags
-function getIconForCategory(category: string, tags: string[]) {
-  if (tags.some(tag => tag.includes('Solidity') || tag.includes('Smart Contracts'))) {
+function pickIcon(category: string, tags: string[]): Item['icon'] {
+  const t = tags.map(low)
+  const c = low(category)
+  if (t.some((x) => x.includes('solidity') || x.includes('smart contract') || x.includes('rust') || x.includes('programming')))
     return 'Code'
-  }
-  
-  if (tags.some(tag => tag.includes('Cryptography') || tag.includes('Security'))) {
-    return 'Shield'
-  }
-  
-  if (tags.some(tag => tag.includes('Web3') || tag.includes('Fundamentals'))) {
-    return 'Globe'
-  }
-  
-  if (tags.some(tag => tag.includes('Rust') || tag.includes('Programming'))) {
-    return 'Code'
-  }
-  
-  if (tags.some(tag => tag.includes('Grants') || tag.includes('Funding'))) {
-    return 'GraduationCap'
-  }
-  
-  if (tags.some(tag => tag.includes('Accelerator'))) {
-    return 'GraduationCap'
-  }
-  
-  if (category.includes('Fundamentals') || tags.some(tag => tag.includes('Academic'))) {
-    return 'BookOpen'
-  }
-  
+  if (t.some((x) => x.includes('cryptography') || x.includes('security'))) return 'Shield'
+  if (t.some((x) => x.includes('web3') || x.includes('fundamentals') || x.includes('blockchain'))) return 'Globe'
+  if (c.includes('fundamental') || t.some((x) => x.includes('academic'))) return 'BookOpen'
   return 'GraduationCap'
 }
 
-// Get icon component based on string
-function getIconComponent(iconName: string) {
-  switch (iconName) {
-    case 'Code':
-      return Code
-    case 'Shield':
-      return Shield
-    case 'Globe':
-      return Globe
-    case 'BookOpen':
-      return BookOpen
-    case 'GraduationCap':
-      return GraduationCap
-    default:
-      return GraduationCap
+// Classify into a display category (uses frontmatter if present)
+function classifyCategory(frontCategory?: string, tags: string[] = []): string {
+  const t = tags.map(low)
+  const c = low(frontCategory || '')
+
+  if (c) return frontCategory!
+
+  if (t.some((x) => x.includes('accelerator') || x.includes('incubator'))) return 'Accelerator Programs'
+  if (t.some((x) => x.includes('grant') || x.includes('funding'))) return 'Grants & Funding'
+  if (t.some((x) => x.includes('solidity') || x.includes('rust') || x.includes('programming')))
+    return 'Programming Languages for Web3'
+  if (t.some((x) => x.includes('smart contract') || x.includes('solidity'))) return 'Smart Contract Development'
+  if (t.some((x) => x.includes('fundamental') || x.includes('blockchain'))) return 'Blockchain Fundamentals'
+  if (t.some((x) => x.includes('advanced') || x.includes('cryptography'))) return 'Advanced Web3 Topics'
+  if (t.some((x) => x.includes('free') || x.includes('beginner'))) return 'Free Web3 Courses'
+
+  return 'General'
+}
+
+function Icon({ name, className }: { name: Item['icon']; className?: string }) {
+  const map = { Code, Shield, Globe, BookOpen, GraduationCap }
+  const Cmp = map[name] || GraduationCap
+  return <Cmp className={className} />
+}
+
+function isExternal(url?: string) {
+  if (!url) return true
+  try {
+    const u = new URL(url)
+    return !['localhost', '127.0.0.1'].includes(u.hostname)
+  } catch {
+    return true
   }
 }
 
-// Group courses by category
-function groupCoursesByCategory(courses: any[]) {
-  const categories = {
-    'Programming Languages for Web3': {
-      description: 'Courses on programming languages essential for blockchain development',
-      courses: courses.filter(course => 
-        course.tags.some((tag: string) => tag.includes('Rust') || tag.includes('Programming') || tag.includes('Solidity'))
-      )
-    },
-    'Free Web3 Courses': {
-      description: 'High-quality free courses to get started with blockchain development',
-      courses: courses.filter(course => 
-        course.tags.some((tag: string) => tag.includes('Free') || tag.includes('Beginner'))
-      )
-    },
-    'Blockchain Fundamentals': {
-      description: 'Core blockchain and cryptocurrency courses',
-      courses: courses.filter(course => 
-        course.tags.some((tag: string) => tag.includes('Fundamentals') || tag.includes('Blockchain'))
-      )
-    },
-    'Smart Contract Development': {
-      description: 'Courses focused on smart contract programming and development',
-      courses: courses.filter(course => 
-        course.tags.some((tag: string) => tag.includes('Smart Contracts') || tag.includes('Solidity'))
-      )
-    },
-    'Advanced Web3 Topics': {
-      description: 'Specialized courses on advanced blockchain concepts',
-      courses: courses.filter(course => 
-        course.tags.some((tag: string) => tag.includes('Advanced') || tag.includes('Cryptography'))
-      )
-    },
-    'Grants & Funding': {
-      description: 'Resources for finding and applying to blockchain grants and funding opportunities',
-      courses: courses.filter(course => 
-        course.tags.some((tag: string) => tag.includes('Grants') || tag.includes('Funding'))
-      )
-    },
-    'Accelerator Programs': {
-      description: 'Comprehensive accelerator and incubator programs for blockchain startups and Web3 projects',
-      courses: courses.filter(course => 
-        course.tags.some((tag: string) => tag.includes('Accelerator'))
-      )
+// ---------- Loader ----------
+async function getItems(): Promise<Group[]> {
+  let files: string[] = []
+  try {
+    files = (await fs.promises.readdir(DIR)).filter((f) => f.toLowerCase().endsWith('.md'))
+  } catch {
+    console.warn('Courses/Grants folder not found:', DIR)
+    return []
+  }
+
+  const list: Item[] = []
+  for (const file of files) {
+    try {
+      const raw = await fs.promises.readFile(path.join(DIR, file), 'utf-8')
+      const { data } = matter(raw)
+
+      const title = toStr(data.title) || file.replace(/\.md$/i, '')
+      const description = toStr(data.description)
+      const authors = toArr(data.authors)
+      const tags = toArr(data.tags)
+      const languages = toArr(data.languages)
+      const url = toStr(data.url)
+      const dateAdded = data.dateAdded
+      const level = toStr(data.level)
+      const platform = authors[0]?.replace(/^@/, '')
+
+      const category = classifyCategory(toStr(data.category), tags)
+      const icon = pickIcon(category, tags)
+
+      if (!title || !url) continue
+
+      list.push({
+        key: file,
+        title,
+        description,
+        authors,
+        tags,
+        languages,
+        url,
+        dateAdded,
+        level,
+        category,
+        platform,
+        icon,
+      })
+    } catch (err) {
+      console.warn('Failed to parse', file, err)
     }
   }
-  
-  return categories
+
+  // newest first
+  list.sort((a, b) => {
+    const da = new Date(a.dateAdded || 0).getTime()
+    const db = new Date(b.dateAdded || 0).getTime()
+    return db - da
+  })
+
+  // group by category
+  const map = new Map<string, Item[]>()
+  for (const ex of list) {
+    const key = ex.category || 'General'
+    if (!map.has(key)) map.set(key, [])
+    map.get(key)!.push(ex)
+  }
+
+  // alphabetical categories
+  return Array.from(map.entries())
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([category, items]) => ({ category, items }))
 }
 
-export default function CoursesPage() {
-  try {
-    const allCourses = getCoursesData()
-    const categorizedCourses = groupCoursesByCategory(allCourses)
+// ---------- Page ----------
+export default async function CoursesPage() {
+  const groups = await getItems()
 
-    return (
-      <div className="min-h-screen bg-black">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* Page Header */}
-          <div className="mb-8">
-            <Link
-              href="/"
-              className="inline-flex items-center text-[#73FDEA] hover:text-[#FF00AA] mb-4 transition-colors duration-300"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Home
-            </Link>
-            <h1 className="text-3xl font-display font-bold text-white mb-4">
-              Courses
-            </h1>
-            <p className="text-lg text-white/90 max-w-3xl">
-              Structured learning paths and comprehensive courses. 
-              From free beginner courses to advanced paid programs, find the perfect learning path for your blockchain journey.
-            </p>
-          </div>
+  return (
+    <div className="min-h-screen bg-black">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <Link
+            href="/"
+            className="inline-flex items-center text-[#73FDEA] hover:text-[#FF00AA] mb-4 transition-colors duration-300"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Home
+          </Link>
+          <h1 className="text-3xl font-display font-bold text-white mb-4">Courses & Grants</h1>
+          <p className="text-lg text-white/90 max-w-3xl">
+            This list is compiled automatically from Markdown files. Drop a new <code>.md</code> into
+            <code className="mx-1 text-white/80">app/resources/courses-grants/</code> and it appears here after a rebuild.
+          </p>
+        </div>
 
-          {/* Course Categories */}
-          <div className="space-y-12">
-            {Object.entries(categorizedCourses).map(([categoryName, categoryData]: [string, any]) => {
-              // Only show categories that have courses
-              if (categoryData.courses.length === 0) return null
-              
-              return (
-                <div key={categoryName} className="bg-[#1a1a1a] border border-white/10 rounded-lg p-6">
-                  <div className="mb-6">
-                    <h2 className="text-2xl font-display font-semibold text-white mb-2">
-                      {categoryName}
-                    </h2>
-                    <p className="text-white/80">{categoryData.description}</p>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {categoryData.courses.map((course: any) => {
-                      const IconComponent = getIconComponent(course.icon)
-                      return (
-                        <div
-                          key={course.title}
-                          className="block p-6 border border-white/20 rounded-lg hover:border-white/40 hover:bg-[#2a2a2a] transition-all duration-300 bg-[#2a2a2a] group"
-                        >
-                          <a
-                            href={course.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-start space-x-4"
-                          >
-                            <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-r from-[#FF00AA] to-[#8E1CF1] rounded-lg flex items-center justify-center">
-                              <IconComponent className="h-5 w-5 text-white" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <h3 className="text-lg font-display font-semibold text-white group-hover:text-[#73FDEA] transition-colors duration-300 mb-2">
-                                {course.title}
-                              </h3>
-                              <p className="text-white/80 text-sm mb-3">
-                                {course.description}
-                              </p>
-                                                             <div className="flex items-center justify-between mb-3">
-                                 <div className="flex items-center space-x-4 text-xs text-white/70">
-                                   <span className="inline-block bg-[#1a1a1a] text-white/70 px-2 py-1 rounded border border-white/20">
-                                     {course.difficulty}
-                                   </span>
-                                 </div>
-                               </div>
-                              <div className="flex items-center justify-between">
-                                <div className="flex flex-wrap gap-2">
-                                  {course.tags.slice(0, 3).map((tag: string) => (
-                                    <span
-                                      key={tag}
-                                      className="inline-block bg-[#1a1a1a] text-white/60 text-xs px-2 py-1 rounded border border-white/20"
-                                    >
-                                      {tag}
-                                    </span>
-                                  ))}
-                                </div>
-                                <span className="text-white/50 text-xs">{course.platform}</span>
-                              </div>
-                            </div>
-                            <ExternalLink className="h-4 w-4 text-white/50 group-hover:text-[#73FDEA] transition-colors duration-300" />
-                          </a>
+        {/* Groups */}
+        <div className="space-y-10">
+          {groups.map((group) => (
+            <section key={group.category}>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-display font-semibold text-white">
+                  {group.category}{' '}
+                  <span className="text-white/50 text-sm">({group.items.length})</span>
+                </h2>
+              </div>
+
+              {/* Compact cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {group.items.map((c) => (
+                  <a
+                    key={c.key}
+                    href={c.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group rounded-lg border border-white/10 bg-[#1a1a1a] hover:border-white/30 hover:bg-[#202020] transition-colors p-4"
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="flex-shrink-0 w-9 h-9 rounded-md bg-gradient-to-r from-[#FF00AA] to-[#8E1CF1] grid place-items-center">
+                        <Icon name={c.icon} className="h-4 w-4 text-white" />
+                      </div>
+
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-start justify-between gap-3">
+                          <h3 className="truncate text-base font-medium text-white group-hover:text-[#73FDEA]">
+                            {c.title}
+                          </h3>
+                          {isExternal(c.url) && (
+                            <ExternalLink className="h-4 w-4 flex-shrink-0 text-white/60 group-hover:text-[#73FDEA]" />
+                          )}
                         </div>
-                      )
-                    })}
-                  </div>
-                </div>
-              )
-            })}
-          </div>
 
-          {/* Call to Action */}
-          <div className="mt-12 bg-gradient-to-r from-[#8E1CF1] to-[#FF00AA] rounded-lg p-8 text-center">
-            <h3 className="text-2xl font-display font-bold text-white mb-4">
-              Share Your Course
-            </h3>
-            <p className="text-white/90 mb-6 max-w-2xl mx-auto">
-              Know of a great web3 course or tutorial? Help the community by suggesting it to our collection.
-            </p>
-            <a
-              href="https://github.com/Avvrik/Dev-Playbook"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-white text-[#8E1CF1] hover:bg-gray-100 font-medium py-3 px-6 rounded-lg transition-all duration-300 shadow-lg transform hover:scale-105 inline-flex items-center"
-            >
-              Suggest a Course
-              <GraduationCap className="h-4 w-4 ml-2" />
-            </a>
-          </div>
+                        {c.description && (
+                          <p className="text-xs text-white/70 mt-1 line-clamp-2">{c.description}</p>
+                        )}
+
+                        <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px]">
+                          {c.level && (
+                            <span className="inline-block rounded border border-white/20 bg-black/30 px-2 py-0.5 text-white/70">
+                              {c.level}
+                            </span>
+                          )}
+                          {c.languages?.[0] && (
+                            <span className="inline-block rounded border border-white/20 bg-black/30 px-2 py-0.5 text-white/70">
+                              {c.languages[0]}
+                            </span>
+                          )}
+                          {c.tags.slice(0, 2).map((t) => (
+                            <span
+                              key={t}
+                              className="inline-block rounded border border-white/20 bg-black/30 px-2 py-0.5 text-white/60"
+                            >
+                              {t}
+                            </span>
+                          ))}
+                        </div>
+
+                        {(c.platform || c.authors.length > 0) && (
+                          <div className="mt-2 text-[11px] text-white/50 truncate">
+                            {c.platform || c.authors.join(', ')}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
+
+        {/* CTA */}
+        <div className="mt-12 bg-gradient-to-r from-[#8E1CF1] to-[#FF00AA] rounded-lg p-8 text-center">
+          <h3 className="text-2xl font-display font-bold text-white mb-4">Share a Course or Grant</h3>
+          <p className="text-white/90 mb-6 max-w-2xl mx-auto">
+            Know a great course, grant, or accelerator? Add a Markdown card to{' '}
+            <code className="text-white/80">app/resources/courses-grants/</code>.
+          </p>
+          <a
+            href="https://github.com/Avvrik/Dev-Playbook"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-white text-[#8E1CF1] hover:bg-gray-100 font-medium py-3 px-6 rounded-lg transition-all duration-300 shadow-lg inline-flex items-center"
+          >
+            Suggest a Course
+            <GraduationCap className="h-4 w-4 ml-2" />
+          </a>
         </div>
       </div>
-    )
-  } catch (error) {
-    console.error('Error rendering CoursesPage:', error)
-    return (
-      <div className="min-h-screen bg-black">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="mb-8">
-            <Link
-              href="/"
-              className="inline-flex items-center text-[#73FDEA] hover:text-[#FF00AA] mb-4 transition-colors duration-300"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Home
-            </Link>
-            <h1 className="text-3xl font-display font-bold text-white mb-4">Courses</h1>
-            <p className="text-lg text-white/90">Error loading courses. Please try again later.</p>
-          </div>
-        </div>
-      </div>
-    )
-  }
-} 
+    </div>
+  )
+}
