@@ -7,5 +7,5 @@ languages: ["Solidity", "JavaScript"]
 url: "https://consensys.net/diligence/"
 dateAdded: 2024-01-01
 level: "Advanced"
-category: "Security"
+category: "Guides"
 ---
