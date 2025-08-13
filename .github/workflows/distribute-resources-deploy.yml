@@ -41,7 +41,7 @@ jobs:
       run: npm run build
 
     - name: Generate Cloudflare Pages artifacts (Next on Pages)
-      run: npx @cloudflare/next-on-pages@latest
+      run: npx --yes @cloudflare/next-on-pages@latest
 
     - name: Publish to Cloudflare Pages
       uses: cloudflare/wrangler-action@v3
