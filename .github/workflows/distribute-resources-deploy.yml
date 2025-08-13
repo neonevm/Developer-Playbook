@@ -1,6 +1,7 @@
-name: Distribute Resources
+name: Distribute Resources + Deploy CF
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - 'app/resources/**/*.md'
@@ -9,7 +10,7 @@ on:
 
 jobs:
   distribute-resources:
-    runs-on: ubuntu-latest
+    runs-on: ["gha-runner-scale-set"]
     
     steps:
     - name: Checkout code
@@ -35,3 +36,13 @@ jobs:
         
     - name: Push changes
       run: git push
+
+    - name: Build project
+      run: npm run build
+
+    - name: Publish to Cloudflare Pages
+      uses: cloudflare/wrangler-action@v3
+      with:
+        apiToken: ${{ secrets.CF_PAGES_TOKEN }}
+        command: |
+          pages deploy ./app --project-name="developer-playbook"
