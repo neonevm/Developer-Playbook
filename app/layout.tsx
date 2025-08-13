@@ -4,6 +4,7 @@ import './globals.css'
 import Link from 'next/link'
 import { Github } from 'lucide-react'
 import Image from 'next/image'
+import neonLogo from '@/public/NeonEVM Logo Pink.png'
 
 const inter = localFont({
   src: [
@@ -85,7 +86,7 @@ export default function RootLayout({
                 <Link href="https://neonevm.org" className="flex items-center">
                   {/* Neon EVM Logo */}
                   <Image
-                    src="/NeonEVM Logo Pink.png"
+                    src={neonLogo}
                     alt="Neon EVM Logo"
                     width={160}
                     height={60}
