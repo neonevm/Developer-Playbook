@@ -6,14 +6,14 @@ Solana development means working in **two layers**:
 
 ---
 
-## 1️⃣ Keep Your Existing Skills
+## 1. Keep Your Existing Skills
 
 - **Python** → Great for automation, bots, and querying data with [`solana-py`](https://github.com/michaelhly/solana-py).  
 - **JavaScript / TypeScript** → Essential for frontends and tooling with [`@solana/web3.js`](https://solana-labs.github.io/solana-web3.js/).  
 
 ---
 
-## 2️⃣ Learn the Solana Stack
+## 2. Learn the Solana Stack
 
 - **Solana CLI** → Keys, airdrops, deployment, account inspection  
 - **Anchor Framework** → Beginner-friendly, reduces Rust boilerplate  
@@ -23,7 +23,7 @@ Solana development means working in **two layers**:
 
 ---
 
-## 3️⃣ Learn Rust for On-Chain Work
+## 3. Learn Rust for On-Chain Work
 
 Focus on:  
 - Accounts and how they store state  
@@ -33,22 +33,13 @@ Focus on:
 
 ---
 
-## 4️⃣ Key Solana Concepts
+## 4. Key Solana Concepts
 
 - Account-based state — data lives outside the program  
 - Transactions can have multiple instructions  
 - Low fees, but watch compute limits  
 - Recent blockhashes for transaction validity  
 
----
-
-## 5️⃣ First Project Path
-
-1. Install Solana CLI + Anchor  
-2. Write & deploy a “Hello World” program locally  
-3. Interact via JS/Python script  
-4. Build a simple program (counter, token, NFT minter)  
-5. Deploy to Devnet and test with a wallet  
 
 ---
 

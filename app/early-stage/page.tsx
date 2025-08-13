@@ -207,7 +207,7 @@ export default async function EarlyStagePage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
         <div className="rounded-lg overflow-hidden border border-white/10 bg-[#0b0b0b]">
           <div className="relative h-40 sm:h-48 md:h-56 lg:h-64">
-            <Image src="/Early.svg" alt="Early Stage" fill className="object-cover" priority />
+            <Image src="/Early.png" alt="Early Stage" fill className="object-cover" priority />
           </div>
         </div>
       </div>

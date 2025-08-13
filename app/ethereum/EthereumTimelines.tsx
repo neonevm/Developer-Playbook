@@ -1,4 +1,3 @@
-// app/ethereum/EthereumTimelines.tsx
 'use client'
 
 type Profile = {
@@ -12,8 +11,7 @@ type Profile = {
 function displayNameOf(p: Profile) {
   if (p.displayName && p.displayName.trim()) return p.displayName.trim()
   if (p.title && !p.title.startsWith('@')) return p.title.trim()
-  // fallback: use handle (without @) as name
-  return p.handle
+  return p.handle.replace(/^@/, '')
 }
 
 export default function EthereumTimelines({ profiles }: { profiles: Profile[] }) {
@@ -22,10 +20,13 @@ export default function EthereumTimelines({ profiles }: { profiles: Profile[] })
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {profiles.map((p) => {
+        const handle = p.handle.replace(/^@/, '') // normalize
         const name = displayNameOf(p)
-        const handle = p.handle
-        const sameAsHandle =
-          name.replace(/^@/, '').toLowerCase() === handle.toLowerCase()
+        const sameAsHandle = name.replace(/^@/, '').toLowerCase() === handle.toLowerCase()
+
+        // fallback avatar like Solana component
+        const avatar =
+          (p.avatar && p.avatar.trim()) || `https://unavatar.io/twitter/${handle}`
 
         return (
           <div
@@ -34,18 +35,19 @@ export default function EthereumTimelines({ profiles }: { profiles: Profile[] })
           >
             <div className="flex items-start gap-3">
               <div className="relative h-10 w-10 rounded-full overflow-hidden bg-[#1a1a1a] border border-white/10 shrink-0">
-                {p.avatar ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={p.avatar} alt={`@${handle}`} className="h-full w-full object-cover" />
-                ) : (
-                  <div className="h-full w-full grid place-items-center text-white/60 text-xs">
-                    {(name?.[0] || 'X').toUpperCase()}
-                  </div>
-                )}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={avatar}
+                  alt={`@${handle} avatar`}
+                  className="h-full w-full object-cover"
+                  onError={(e) => {
+                    // final fallback to unavatar
+                    (e.currentTarget as HTMLImageElement).src = `https://unavatar.io/twitter/${handle}`
+                  }}
+                />
               </div>
 
               <div className="min-w-0">
-                {/* Name + handle; handle appears at most once */}
                 {sameAsHandle ? (
                   <span className="text-white font-semibold truncate">@{handle}</span>
                 ) : (
