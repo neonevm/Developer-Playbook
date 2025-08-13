@@ -3,12 +3,66 @@ import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
 
-export interface CourseData { /* unchanged */ }
-export interface CategoryData { /* unchanged */ }
-export interface MiniGuideData { /* unchanged */ }
-export interface MiniGuideCategoryData { /* unchanged */ }
-export interface CodeExampleData { /* unchanged */ }
-export interface CodeExampleCategoryData { /* unchanged */ }
+export interface CourseData {
+  title: string
+  description: string
+  authors: string[]
+  tags: string[]
+  languages: string[]
+  url: string
+  dateAdded: string
+  level: string
+  category: string
+  platform: string
+  duration: string
+  difficulty: string
+}
+
+export interface CategoryData {
+  category: string
+  description: string
+  courses: CourseData[]
+}
+
+export interface MiniGuideData {
+  title: string
+  description: string
+  authors: string[]
+  tags: string[]
+  languages: string[]
+  url: string
+  dateAdded: string
+  level: string
+  category: string
+  difficulty: string
+  duration: string
+}
+
+export interface MiniGuideCategoryData {
+  category: string
+  description: string
+  guides: MiniGuideData[]
+}
+
+export interface CodeExampleData {
+  title: string
+  description: string
+  authors: string[]
+  tags: string[]
+  languages: string[]
+  url: string
+  dateAdded: string
+  level: string
+  category: string
+  complexity: string
+  githubUrl: string
+}
+
+export interface CodeExampleCategoryData {
+  category: string
+  description: string
+  examples: CodeExampleData[]
+}
 
 /** Canonical stage names EXACTLY as expected in tags */
 const STAGES = ['Beginner','Early','Ethereum','Solana','Cross-Chain','Beyond'] as const
