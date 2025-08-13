@@ -288,7 +288,7 @@ export default async function CrossChainPage() {
           <summary className="flex items-center gap-2 cursor-pointer select-none px-4 md:px-5 py-3 md:py-4 list-none focus:outline-none focus:ring-2 focus:ring-[#73FDEA]/40">
             <ChevronRight className="h-4 w-4 text-white/70 transition-transform duration-200 group-open:rotate-90 shrink-0" />
             <span className="text-sm md:text-base font-semibold text-white">
-              Cross-Chain Dev: quick start guide
+              Cross-Chain Dev: what you need to know
             </span>
           </summary>
           <div className="px-4 md:px-5 pb-4 md:pb-5 pt-0">
