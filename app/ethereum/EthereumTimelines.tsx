@@ -20,19 +20,16 @@ export default function EthereumTimelines({ profiles }: { profiles: Profile[] })
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {profiles.map((p) => {
-        const handle = p.handle.replace(/^@/, '') // normalize
+        const raw = p.handle.replace(/^@/, '').trim()
+        const handle = raw.toLowerCase()                      // 👈 normalize to lowercase
         const name = displayNameOf(p)
-        const sameAsHandle = name.replace(/^@/, '').toLowerCase() === handle.toLowerCase()
+        const sameAsHandle = name.replace(/^@/, '').toLowerCase() === handle
 
-        // fallback avatar like Solana component
         const avatar =
           (p.avatar && p.avatar.trim()) || `https://unavatar.io/twitter/${handle}`
 
         return (
-          <div
-            key={handle}
-            className="rounded-lg border border-white/10 bg-[#0f0f10] p-4 hover:border-white/20 transition-colors"
-          >
+          <div key={handle} className="rounded-lg border border-white/10 bg-[#0f0f10] p-4 hover:border-white/20 transition-colors">
             <div className="flex items-start gap-3">
               <div className="relative h-10 w-10 rounded-full overflow-hidden bg-[#1a1a1a] border border-white/10 shrink-0">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -41,7 +38,6 @@ export default function EthereumTimelines({ profiles }: { profiles: Profile[] })
                   alt={`@${handle} avatar`}
                   className="h-full w-full object-cover"
                   onError={(e) => {
-                    // final fallback to unavatar
                     (e.currentTarget as HTMLImageElement).src = `https://unavatar.io/twitter/${handle}`
                   }}
                 />
@@ -57,13 +53,11 @@ export default function EthereumTimelines({ profiles }: { profiles: Profile[] })
                   </div>
                 )}
 
-                {p.bio && (
-                  <p className="text-white/70 text-sm mt-1 line-clamp-3">{p.bio}</p>
-                )}
+                {p.bio && <p className="text-white/70 text-sm mt-1 line-clamp-3">{p.bio}</p>}
 
                 <div className="mt-3">
                   <a
-                    href={`https://x.com/${handle}`}
+                    href={`https://x.com/${handle}`}        // 👈 use lowercase handle in URL too
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-xs px-2.5 py-1 rounded bg-white text-black hover:bg-gray-200 font-medium transition-colors"
