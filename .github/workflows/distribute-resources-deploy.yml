@@ -45,4 +45,4 @@ jobs:
       with:
         apiToken: ${{ secrets.CF_PAGES_TOKEN }}
         command: |
-          pages deploy ./app --project-name="developer-playbook"
+          pages deploy --project-name="developer-playbook"
