@@ -3,8 +3,8 @@ name: Distribute Resources + Deploy CF
 on:
   workflow_dispatch:
   push:
-    paths:
-      - 'app/resources/**/*.md'
+    #paths:
+    #  - 'app/resources/**/*.md'
     branches:
       - main
 
