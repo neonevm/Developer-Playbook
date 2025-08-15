@@ -35,9 +35,9 @@ const contentTypes = [
 ];
 
 const featuredContributors = [
-  { name: "@Your Twitter", role: "DevRel", twitter: "link", avatar: "👨‍💻" },
+  { name: "@Jules_Gallen", role: "DevRel", twitter: "Jules_Gallen", avatar: "👨‍💻" },
+  { name: "@mnedelchev_", role: "Solidity Team Lead", twitter: "mnedelchev_", avatar: "👨‍💻" },
   { name: "@Your Twitter", role: "Software Engineer", twitter: "link", avatar: "👨‍💻" },
-  { name: "@Your Twitter", role: "Blockchain Security Researcher", twitter: "link", avatar: "👨‍💻" },
 ];
 
 export default function HomePage() {
@@ -143,7 +143,7 @@ export default function HomePage() {
           </p>
           <div className="flex justify-center space-x-4">
             <a
-              href="https://github.com/Avvrik/Dev-Playbook"
+              href="https://github.com/neonlabsorg/Developer-Playbook"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-white text-[#8E1CF1] hover:bg-gray-100 font-medium py-3 px-6 rounded-lg transition-all duration-300 shadow-lg"
@@ -201,7 +201,7 @@ export default function HomePage() {
               <ul className="space-y-2 text-white/80">
                 <li>
                   <a
-                    href="https://github.com/Avvrik/Dev-Playbook"
+                    href="https://github.com/neonlabsorg/Developer-Playbook"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="hover:text-[#73FDEA] transition-colors duration-300"
@@ -228,7 +228,7 @@ export default function HomePage() {
                   <Twitter className="h-6 w-6" />
                 </a>
                 <a
-                  href="https://github.com/Avvrik/Dev-Playbook"
+                  href="https://github.com/neonlabsorg/Developer-Playbook"
                   className="text-white/70 hover:text-[#73FDEA] transition-colors duration-300"
                 >
                   <Github className="h-6 w-6" />

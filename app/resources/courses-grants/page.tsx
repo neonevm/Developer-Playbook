@@ -259,7 +259,7 @@ export default async function CoursesPage() {
             <code className="text-white/80">app/resources/courses-grants/</code>.
           </p>
           <a
-            href="https://github.com/Avvrik/Dev-Playbook"
+            href="https://github.com/neonlabsorg/Developer-Playbook"
             target="_blank"
             rel="noopener noreferrer"
             className="bg-white text-[#8E1CF1] hover:bg-gray-100 font-medium py-3 px-6 rounded-lg transition-all duration-300 shadow-lg inline-flex items-center"

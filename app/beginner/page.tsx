@@ -30,7 +30,7 @@ const hasAny = (hay: string[], needles: string[]) =>
 const isBeginnerDevTag = (tags?: unknown) => {
   if (!Array.isArray(tags)) return false
   const t = tags.map(toLower)
-  return t.includes('beginner dev') || t.includes('beignner dev')
+  return t.includes('beginner') || t.includes('beignner dev')
 }
 
 const formatDate = (d?: Date | string) => {
@@ -184,8 +184,8 @@ export default async function BeginnerPage() {
         <div className="rounded-lg overflow-hidden border border-white/10 bg-[#0b0b0b]">
           <div className="relative h-40 sm:h-48 md:h-56 lg:h-64">
             <Image
-              src="/No coding background - no problem Start here.svg"
-              alt="No coding background - no problem. Start here."
+              src="/beginner.png"
+              alt="beginner"
               fill
               className="object-cover"
               priority
@@ -241,7 +241,7 @@ export default async function BeginnerPage() {
             Have a great beginner resource? Help the community by contributing to this collection.
           </p>
           <a
-            href="https://github.com/Avvrik/Dev-Playbook"
+            href="https://github.com/neonlabsorg/Developer-Playbook"
             target="_blank"
             rel="noopener noreferrer"
             className="bg-white text-[#8E1CF1] hover:bg-gray-100 font-medium py-3 px-6 rounded-lg transition-all duration-300 shadow-lg transform hover:scale-105 inline-flex items-center"

@@ -203,7 +203,7 @@ export default async function CodeExamplesPage() {
             here after a rebuild.
           </p>
           <a
-            href="https://github.com/Avvrik/Dev-Playbook"
+            href="https://github.com/neonlabsorg/Developer-Playbook"
             target="_blank"
             rel="noopener noreferrer"
             className="bg-white text-[#8E1CF1] hover:bg-gray-100 font-medium py-2.5 px-5 rounded-lg transition-all duration-300 shadow-lg inline-flex items-center"
