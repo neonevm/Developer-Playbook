@@ -5,6 +5,7 @@ import matter from 'gray-matter'
 import { marked } from 'marked'
 import Link from 'next/link'
 import Image from 'next/image'
+import Script from 'next/script'
 import { ArrowLeft, Github, ExternalLink, ChevronRight } from 'lucide-react'
 
 export const runtime = 'nodejs'
@@ -59,7 +60,6 @@ const containsAny = (hay: string, items: string[]) => items.some((p) => contains
 function classify(meta: ResourceMeta): 'tooling' | 'courses' | 'guides' | 'code' | 'other' {
   const hay = haystack(meta)
 
-  // Tooling Docs (official docs, references, install guides, APIs, CLI)
   const toolingSignals = [
     'docs','documentation','reference','api reference','api docs',
     'handbook','manual','spec','specification','readme','guide (cli)',
@@ -68,23 +68,17 @@ function classify(meta: ResourceMeta): 'tooling' | 'courses' | 'guides' | 'code'
     'hardhat','foundry','anvil','remix','metamask','phantom',
     'solana cli','anchor','etherscan','solscan','node.js','npm','nvm',
   ]
-
-  // Courses (programs, bootcamps, MOOCs)
   const courseSignals = [
     'course','courses','bootcamp','curriculum','syllabus','academy',
     'track','learning path','program','cohort','mooc','udemy','coursera','edx',
     'university','certificate'
   ]
-
-  // Code Samples (templates, starters, examples, scaffolds)
   const codeSignals = [
     'example','examples','sample','samples','snippet','snippets',
     'template','templates','boilerplate','boilerplates','starter','starter kit',
     'scaffold','scaffolding','reference implementation','repo','github repository',
     'playground'
   ]
-
-  // Guides (how-tos, tutorials, deep dives, best practices, articles)
   const guideSignals = [
     'guide','how to','how-to','tutorial','walkthrough','step by step','step-by-step',
     'deep dive','best practices','explained','overview','article','blog','cookbook',
@@ -143,7 +137,6 @@ async function getEarlyResources(): Promise<(ResourceMeta & { key: string; secti
     })
   }
 
-  // newest first
   list.sort((a, b) => (new Date(b.dateAdded || 0).getTime()) - (new Date(a.dateAdded || 0).getTime()))
   return list
 }
@@ -201,6 +194,8 @@ export default async function EarlyStagePage() {
       </section>
     ) : null
 
+  const listUrl = 'https://twitter.com/i/lists/1959973436228288972'
+
   return (
     <div className="min-h-screen bg-black">
       {/* Contained Banner */}
@@ -249,6 +244,66 @@ export default async function EarlyStagePage() {
         <Section title="Guides" items={guides} />
         <Section title="Code Samples" items={codeSamples} />
         {other.length ? <Section title="Other" items={other} /> : null}
+
+        <section className="mb-12">
+          <h2 className="text-lg md:text-xl font-display font-semibold text-white mb-4">
+            Selected voices to boost your dev learning on X
+          </h2>
+
+          <div className="rounded-lg border border-white/10 bg-[#1a1a1a] p-4">
+            <div className="mb-3 text-sm text-white/70">
+              Curated builders & educators worth following{' '}
+              <a
+                className="text-[#73FDEA] hover:text-[#FF00AA]"
+                href="https://twitter.com/i/lists/1959973436228288972"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                (open on X)
+              </a>.
+            </div>
+
+            {/* Programmatic timeline container */}
+            <div id="x-list" />
+
+            {/* Hidden fallback hint */}
+            <div id="x-fallback" className="hidden mt-3 text-xs text-white/60">
+              If you see “Nothing to see here”, enable third-party cookies or disable tracker blockers
+              for this site, then refresh. You can also open the list directly on X.
+            </div>
+          </div>
+
+          {/* Load widgets.js */}
+          <Script src="https://platform.twitter.com/widgets.js" strategy="afterInteractive" />
+
+          {/* Create the timeline and reveal fallback if the iframe never mounts */}
+          <Script id="x-init" strategy="afterInteractive">
+            {`
+              (function initList(){
+                function mount() {
+                  var el = document.getElementById('x-list');
+                  if (!window.twttr || !window.twttr.widgets || !el) return setTimeout(mount, 80);
+                  if (el.dataset.mounted) return;
+                  el.dataset.mounted = '1';
+                  window.twttr.widgets.createTimeline(
+                    { sourceType: 'list', id: '1959973436228288972' },
+                    el,
+                    { theme: 'dark', height: 620, dnt: true }
+                  );
+                  // If no iframe appears, show a helpful hint
+                  setTimeout(function(){
+                    if (!el.querySelector('iframe')) {
+                      var fb = document.getElementById('x-fallback');
+                      if (fb) fb.classList.remove('hidden');
+                    }
+                  }, 3000);
+                }
+                mount();
+              })();
+            `}
+          </Script>
+        </section>
+
 
         {/* CTA */}
         <div className="mt-12 bg-gradient-to-r from-[#8E1CF1] to-[#FF00AA] rounded-lg p-8 text-center">
