@@ -5,8 +5,8 @@ import matter from 'gray-matter'
 import { marked } from 'marked'
 import Link from 'next/link'
 import Image from 'next/image'
+import Script from 'next/script'
 import { ArrowLeft, Github, ExternalLink, ChevronRight } from 'lucide-react'
-import SolanaTimelines from './SolanaTimelines'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-static' // keep static; no API calls needed
@@ -21,13 +21,7 @@ type ResourceMeta = {
   dateAdded?: string | Date
   level?: string
   category?: string
-  // optional for Twitter profiles
-  avatar?: string
-  bio?: string
-  displayName?: string
 }
-
-type TwitterProfile = { handle: string; title?: string; avatar?: string; bio?: string }
 
 // ---------- helpers ----------
 const toLower = (s: unknown) => String(s || '').toLowerCase().trim()
@@ -36,13 +30,13 @@ const arrLower = (a?: unknown[]) => (Array.isArray(a) ? a.map(toLower) : [])
 const isSolanaTag = (tags?: unknown) => {
   if (!Array.isArray(tags)) return false
   const t = tags.map(toLower)
-  return t.includes('solana') || t.includes('sol') || t.includes('svm') || t.includes('solana dev') || t.includes('solana program')
-}
-
-const isTwitterTag = (tags?: unknown) => {
-  if (!Array.isArray(tags)) return false
-  const t = tags.map(toLower)
-  return t.includes('twitter') || t.includes('x') || t.includes('twitter profile')
+  return (
+    t.includes('solana') ||
+    t.includes('sol') ||
+    t.includes('svm') ||
+    t.includes('solana dev') ||
+    t.includes('solana program')
+  )
 }
 
 const isGithub = (url?: string) => {
@@ -71,7 +65,7 @@ function haystack(meta: ResourceMeta) {
 const containsPhrase = (hay: string, phrase: string) => hay.includes(` ${phrase.toLowerCase()} `)
 const containsAny = (hay: string, items: string[]) => items.some((p) => containsPhrase(hay, p))
 
-// New classifier → 'guides' | 'code' | 'courses'
+// Classifier → 'guides' | 'code' | 'courses'
 function classify(meta: ResourceMeta): 'guides' | 'code' | 'courses' {
   const hay = haystack(meta)
   const tags = arrLower(meta.tags)
@@ -105,31 +99,6 @@ function classify(meta: ResourceMeta): 'guides' | 'code' | 'courses' {
   return 'guides'
 }
 
-// Pull @handle from authors/url/title
-function extractTwitterHandle(meta: ResourceMeta): string | null {
-  const handleRe = /^@?([A-Za-z0-9_]{1,15})$/
-  for (const a of meta.authors || []) {
-    const m = String(a).trim().match(handleRe)
-    if (m) return m[1]
-  }
-  if (meta.url) {
-    try {
-      const u = new URL(meta.url)
-      const host = u.hostname.replace(/^www\./, '')
-      if (host === 'twitter.com' || host === 'x.com') {
-        const seg = u.pathname.split('/').filter(Boolean)[0] || ''
-        const m = seg.match(handleRe)
-        if (m) return m[1]
-      }
-    } catch {}
-  }
-  if (meta.title?.trim().startsWith('@')) {
-    const m = meta.title.trim().match(handleRe)
-    if (m) return m[1]
-  }
-  return null
-}
-
 // Blog MD -> HTML
 async function getBlogHtml() {
   try {
@@ -142,44 +111,21 @@ async function getBlogHtml() {
   }
 }
 
-// Read .md files: resources + twitter profiles (avatar/bio pulled from frontmatter)
+// Read .md files: resources only (Twitter section removed)
 async function getSolanaContent(): Promise<{
   resources: (ResourceMeta & { key: string; section: ReturnType<typeof classify> })[]
-  profiles: TwitterProfile[]
 }> {
   const dir = path.join(process.cwd(), 'app', 'solana')
   const files = await fs.promises.readdir(dir)
   const mdFiles = files.filter(f => f.toLowerCase().endsWith('.md') && f.toLowerCase() !== 'blogpost.md')
 
   const resources: (ResourceMeta & { key: string; section: ReturnType<typeof classify> })[] = []
-  const handles = new Set<string>()
-  const profiles: TwitterProfile[] = []
 
   for (const file of mdFiles) {
     const raw = await fs.promises.readFile(path.join(dir, file), 'utf-8')
     const { data } = matter(raw)
     const meta = data as ResourceMeta
 
-    // Twitter-profile files (by tag)
-    if (isTwitterTag(meta.tags)) {
-      const h = extractTwitterHandle(meta)
-      if (h) {
-        const key = h.toLowerCase()
-        if (!handles.has(key)) {
-          handles.add(key)
-          profiles.push({
-            handle: h,
-            // prefer displayName if set, else keep title (often @handle)
-            title: meta.displayName || meta.title,
-            avatar: typeof meta.avatar === 'string' ? meta.avatar : undefined,
-            bio: typeof meta.bio === 'string' ? meta.bio : undefined,
-          })
-        }
-      }
-      continue // do NOT include as resource card
-    }
-
-    // Normal resource cards: need Solana tag + url
     if (!isSolanaTag(meta.tags)) continue
     if (!meta.url) continue
 
@@ -201,14 +147,14 @@ async function getSolanaContent(): Promise<{
   // newest first for resources
   resources.sort((a, b) => (new Date(b.dateAdded || 0).getTime()) - (new Date(a.dateAdded || 0).getTime()))
 
-  return { resources, profiles }
+  return { resources }
 }
 
 export default async function SolanaPage() {
   const [blogContent, content] = await Promise.all([getBlogHtml(), getSolanaContent()])
-  const { resources, profiles } = content
+  const { resources } = content
 
-  // New buckets
+  // Buckets
   const guidesDocs    = resources.filter(r => r.section === 'guides')
   const codeTemplates = resources.filter(r => r.section === 'code')
   const courses       = resources.filter(r => r.section === 'courses')
@@ -257,6 +203,9 @@ export default async function SolanaPage() {
       </section>
     ) : null
 
+  const listId = '1959976961242980629'
+  const listUrl = 'https://x.com/i/lists/1959976961242980629'
+
   return (
     <div className="min-h-screen bg-black">
       {/* Contained Banner */}
@@ -281,7 +230,7 @@ export default async function SolanaPage() {
           </Link>
           <h1 className="text-xl md:text-2xl font-display font-bold text-white mb-3">Solana</h1>
           <p className="text-lg text-white/90 max-w-3xl">
-            Explore Solana’s account model, Rust/Anchor programming, and program deployment. Building dApps using
+            Explore Solana’s account model, Rust/Anchor programming, and program deployment. Build dApps with
             Solana-native tools and work with SPL tokens, PDAs, and the Anchor framework.
           </p>
         </div>
@@ -299,20 +248,69 @@ export default async function SolanaPage() {
           </div>
         </details>
 
-        {/* New auto sections */}
+        {/* Auto sections */}
         <Section title="Guides & Docs" items={guidesDocs} />
         <Section title="Code & Templates" items={codeTemplates} />
         <Section title="Courses" items={courses} />
 
-        {/* Solana Twitter (unchanged) */}
-        {profiles.length > 0 && (
-          <section className="mb-12">
-            <h2 className="text-lg md:text-xl font-display font-semibold text-white mb-4">
-              Solana Twitter
-            </h2>
-            <SolanaTimelines profiles={profiles} />
-          </section>
-        )}
+        {/* New: Interactive Twitter List section */}
+        <section className="mb-12">
+          <h2 className="text-lg md:text-xl font-display font-semibold text-white mb-4">
+            Solana’s core builders shaping the ecosystem
+          </h2>
+
+          <div className="rounded-lg border border-white/10 bg-[#1a1a1a] p-4">
+            <div className="mb-3 text-sm text-white/70">
+              Curated accounts worth following{' '}
+              <a
+                className="text-[#73FDEA] hover:text-[#FF00AA]"
+                href={listUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                (open on X)
+              </a>.
+            </div>
+
+            {/* Programmatic timeline container */}
+            <div id="x-list-sol" />
+
+            {/* Hidden fallback hint */}
+            <div id="x-fallback-sol" className="hidden mt-3 text-xs text-white/60">
+              If you see “Nothing to see here”, enable third-party cookies or disable tracker blockers
+              for this site, then refresh. You can also open the list directly on X.
+            </div>
+          </div>
+
+          {/* Load widgets.js */}
+          <Script src="https://platform.twitter.com/widgets.js" strategy="afterInteractive" />
+
+          {/* Create the timeline and reveal fallback if the iframe never mounts */}
+          <Script id="x-init-sol" strategy="afterInteractive">
+            {`
+              (function initSolList(){
+                function mount() {
+                  var el = document.getElementById('x-list-sol');
+                  if (!window.twttr || !window.twttr.widgets || !el) return setTimeout(mount, 80);
+                  if (el.dataset.mounted) return;
+                  el.dataset.mounted = '1';
+                  window.twttr.widgets.createTimeline(
+                    { sourceType: 'list', id: '${listId}' },
+                    el,
+                    { theme: 'dark', height: 620, dnt: true }
+                  );
+                  setTimeout(function(){
+                    if (!el.querySelector('iframe')) {
+                      var fb = document.getElementById('x-fallback-sol');
+                      if (fb) fb.classList.remove('hidden');
+                    }
+                  }, 3000);
+                }
+                mount();
+              })();
+            `}
+          </Script>
+        </section>
 
         {/* CTA */}
         <div className="mt-12 bg-gradient-to-r from-[#8E1CF1] to-[#FF00AA] rounded-lg p-8 text-center">

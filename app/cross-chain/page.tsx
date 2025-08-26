@@ -5,8 +5,8 @@ import matter from 'gray-matter'
 import { marked } from 'marked'
 import Link from 'next/link'
 import Image from 'next/image'
+import Script from 'next/script'
 import { ArrowLeft, Github, ExternalLink, ChevronRight } from 'lucide-react'
-import CrossChainTimelines from './CrossChainTimelines'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-static'
@@ -21,12 +21,7 @@ type ResourceMeta = {
   dateAdded?: string | Date
   level?: string
   category?: string
-  avatar?: string
-  bio?: string
-  displayName?: string
 }
-
-type TwitterProfile = { handle: string; title?: string; avatar?: string; bio?: string }
 
 const toLower = (s: unknown) => String(s || '').toLowerCase().trim()
 const arrLower = (a?: unknown[]) => (Array.isArray(a) ? a.map(toLower) : [])
@@ -41,12 +36,6 @@ const isCrossChainTag = (tags?: unknown) => {
     'ccip','chainlink ccip','debridge','connext','lifi','socket'
   ]
   return t.some(x => keys.includes(x))
-}
-
-const isTwitterTag = (tags?: unknown) => {
-  if (!Array.isArray(tags)) return false
-  const t = tags.map(toLower)
-  return t.includes('twitter') || t.includes('x') || t.includes('twitter profile')
 }
 
 const isGithub = (url?: string) => {
@@ -74,26 +63,23 @@ function haystack(meta: ResourceMeta) {
 const containsPhrase = (hay: string, phrase: string) => hay.includes(` ${phrase.toLowerCase()} `)
 const containsAny = (hay: string, items: string[]) => items.some((p) => containsPhrase(hay, p))
 
-// NEW classifier → 'guides' | 'code' | 'courses'
+// Classifier → 'guides' | 'code' | 'courses'
 function classify(meta: ResourceMeta): 'guides' | 'code' | 'courses' {
   const hay = haystack(meta)
   const tags = arrLower(meta.tags)
 
-  // Courses (books, bootcamps, cohorts, workshops)
   const courseSignals = [
     'course','courses','bootcamp','academy','curriculum','lesson','lectures','mooc',
     'program','tutorial series','cohort','workshop','training','learn'
   ]
   if (tags.includes('book') || containsAny(hay, courseSignals)) return 'courses'
 
-  // Code & Templates (GitHub or code-y hints)
   const codeSignals = [
     'template','templates','starter','starter kit','boilerplate','example','examples','sample','samples',
     'repo','repository','scaffold','sdk','library','cookbook','reference implementation'
   ]
   if (isGithub(meta.url) || containsAny(hay, codeSignals)) return 'code'
 
-  // Guides & Docs (default)
   const guideSignals = [
     'docs','documentation','reference','api reference','guide','guides','how to','how-to','tutorial','handbook',
     'overview','walkthrough','article','blog','deep dive','concepts','introduction','intro','primer','fundamentals'
@@ -105,31 +91,6 @@ function classify(meta: ResourceMeta): 'guides' | 'code' | 'courses' {
   if (containsAny(hay, guideSignals) || containsAny(hay, xchainStacks)) return 'guides'
 
   return 'guides'
-}
-
-// Extract @handle from authors/url/title
-function extractTwitterHandle(meta: ResourceMeta): string | null {
-  const handleRe = /^@?([A-Za-z0-9_]{1,15})$/
-  for (const a of meta.authors || []) {
-    const m = String(a).trim().match(handleRe)
-    if (m) return m[1]
-  }
-  if (meta.url) {
-    try {
-      const u = new URL(meta.url)
-      const host = u.hostname.replace(/^www\./, '')
-      if (host === 'twitter.com' || host === 'x.com') {
-        const seg = u.pathname.split('/').filter(Boolean)[0] || ''
-        const m = seg.match(handleRe)
-        if (m) return m[1]
-      }
-    } catch {}
-  }
-  if (meta.title?.trim().startsWith('@')) {
-    const m = meta.title.trim().match(handleRe)
-    if (m) return m[1]
-  }
-  return null
 }
 
 // Blog MD -> HTML
@@ -144,40 +105,20 @@ async function getBlogHtml() {
   }
 }
 
-// Read .md files for cross-chain page
+// Read .md files for cross-chain page (resources only; Twitter removed)
 async function getCrossChainContent(): Promise<{
   resources: (ResourceMeta & { key: string; section: ReturnType<typeof classify> })[]
-  profiles: TwitterProfile[]
 }> {
   const dir = path.join(process.cwd(), 'app', 'cross-chain')
   const files = await fs.promises.readdir(dir)
   const mdFiles = files.filter(f => f.toLowerCase().endsWith('.md') && f.toLowerCase() !== 'blogpost.md')
 
   const resources: (ResourceMeta & { key: string; section: ReturnType<typeof classify> })[] = []
-  const handles = new Set<string>()
-  const profiles: TwitterProfile[] = []
 
   for (const file of mdFiles) {
     const raw = await fs.promises.readFile(path.join(dir, file), 'utf-8')
     const { data } = matter(raw)
     const meta = data as ResourceMeta
-
-    if (isTwitterTag(meta.tags)) {
-      const h = extractTwitterHandle(meta)
-      if (h) {
-        const key = h.toLowerCase()
-        if (!handles.has(key)) {
-          handles.add(key)
-          profiles.push({
-            handle: h,
-            title: meta.displayName || meta.title,
-            avatar: typeof meta.avatar === 'string' ? meta.avatar : undefined,
-            bio: typeof meta.bio === 'string' ? meta.bio : undefined,
-          })
-        }
-      }
-      continue
-    }
 
     if (!isCrossChainTag(meta.tags)) continue
     if (!meta.url) continue
@@ -198,14 +139,13 @@ async function getCrossChainContent(): Promise<{
   }
 
   resources.sort((a, b) => (new Date(b.dateAdded || 0).getTime()) - (new Date(a.dateAdded || 0).getTime()))
-  return { resources, profiles }
+  return { resources }
 }
 
 export default async function CrossChainPage() {
   const [blogContent, content] = await Promise.all([getBlogHtml(), getCrossChainContent()])
-  const { resources, profiles } = content
+  const { resources } = content
 
-  // NEW buckets
   const guidesDocs    = resources.filter(r => r.section === 'guides')
   const codeTemplates = resources.filter(r => r.section === 'code')
   const courses       = resources.filter(r => r.section === 'courses')
@@ -254,6 +194,9 @@ export default async function CrossChainPage() {
       </section>
     ) : null
 
+  const listId = '1959979019140563201'
+  const listUrl = 'https://x.com/i/lists/1959979019140563201'
+
   return (
     <div className="min-h-screen bg-black">
       {/* Contained Banner */}
@@ -296,20 +239,69 @@ export default async function CrossChainPage() {
           </div>
         </details>
 
-        {/* NEW auto sections */}
+        {/* Auto sections */}
         <Section title="Guides & Docs" items={guidesDocs} />
         <Section title="Code & Templates" items={codeTemplates} />
         <Section title="Courses" items={courses} />
 
-        {/* Cross-Chain Twitter */}
-        {profiles.length > 0 && (
-          <section className="mb-12">
-            <h2 className="text-lg md:text-xl font-display font-semibold text-white mb-4">
-              Cross-Chain Twitter
-            </h2>
-            <CrossChainTimelines profiles={profiles} />
-          </section>
-        )}
+        {/* New: Interactive Twitter List section */}
+        <section className="mb-12">
+          <h2 className="text-lg md:text-xl font-display font-semibold text-white mb-4">
+            Cross-chain infra and dev tooling in one place
+          </h2>
+
+          <div className="rounded-lg border border-white/10 bg-[#1a1a1a] p-4">
+            <div className="mb-3 text-sm text-white/70">
+              Curated accounts worth following{' '}
+              <a
+                className="text-[#73FDEA] hover:text-[#FF00AA]"
+                href={listUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                (open on X)
+              </a>.
+            </div>
+
+            {/* Programmatic timeline container */}
+            <div id="x-list-xchain" />
+
+            {/* Hidden fallback hint */}
+            <div id="x-fallback-xchain" className="hidden mt-3 text-xs text-white/60">
+              If you see “Nothing to see here”, enable third-party cookies or disable tracker blockers
+              for this site, then refresh. You can also open the list directly on X.
+            </div>
+          </div>
+
+          {/* Load widgets.js */}
+          <Script src="https://platform.twitter.com/widgets.js" strategy="afterInteractive" />
+
+          {/* Create the timeline and reveal fallback if the iframe never mounts */}
+          <Script id="x-init-xchain" strategy="afterInteractive">
+            {`
+              (function initXChainList(){
+                function mount() {
+                  var el = document.getElementById('x-list-xchain');
+                  if (!window.twttr || !window.twttr.widgets || !el) return setTimeout(mount, 80);
+                  if (el.dataset.mounted) return;
+                  el.dataset.mounted = '1';
+                  window.twttr.widgets.createTimeline(
+                    { sourceType: 'list', id: '${listId}' },
+                    el,
+                    { theme: 'dark', height: 620, dnt: true }
+                  );
+                  setTimeout(function(){
+                    if (!el.querySelector('iframe')) {
+                      var fb = document.getElementById('x-fallback-xchain');
+                      if (fb) fb.classList.remove('hidden');
+                    }
+                  }, 3000);
+                }
+                mount();
+              })();
+            `}
+          </Script>
+        </section>
 
         {/* CTA */}
         <div className="mt-12 bg-gradient-to-r from-[#8E1CF1] to-[#FF00AA] rounded-lg p-8 text-center">
