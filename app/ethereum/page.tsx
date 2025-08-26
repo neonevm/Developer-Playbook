@@ -5,8 +5,8 @@ import matter from 'gray-matter'
 import { marked } from 'marked'
 import Link from 'next/link'
 import Image from 'next/image'
+import Script from 'next/script'
 import { ArrowLeft, Github, ExternalLink, ChevronRight } from 'lucide-react'
-import EthereumTimelines from './EthereumTimelines'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-static'
@@ -21,18 +21,6 @@ type ResourceMeta = {
   dateAdded?: string | Date
   level?: string
   category?: string
-  // twitter extras
-  avatar?: string
-  bio?: string
-  displayName?: string
-}
-
-type TwitterProfile = {
-  handle: string
-  title?: string
-  avatar?: string
-  bio?: string
-  displayName?: string
 }
 
 // ---------- helpers ----------
@@ -41,9 +29,6 @@ const arrLower = (a?: unknown[]) => (Array.isArray(a) ? a.map(toLower) : [])
 
 const isEthereumTag = (tags?: unknown) =>
   Array.isArray(tags) && tags.map(toLower).some(t => ['ethereum','eth','evm','ethereum dev'].includes(t))
-
-const isTwitterTag = (tags?: unknown) =>
-  Array.isArray(tags) && tags.map(toLower).some(t => ['twitter','x','twitter profile'].includes(t))
 
 const isGithub = (url?: string) => {
   if (!url) return false
@@ -68,8 +53,7 @@ function haystack(meta: ResourceMeta) {
 const containsPhrase = (hay: string, phrase: string) => hay.includes(` ${phrase.toLowerCase()} `)
 const containsAny = (hay: string, items: string[]) => items.some(p => containsPhrase(hay, p))
 
-// Classifier → 'guides' | 'code' | 'courses'  (Ecosystem removed)
-// Anything that would've been "ecosystem" now falls under Guides & Docs unless it matches Code or Courses.
+// Classifier → 'guides' | 'code' | 'courses'
 function classify(meta: ResourceMeta): 'guides' | 'code' | 'courses' {
   const hay = haystack(meta)
   const tags = arrLower(meta.tags)
@@ -86,7 +70,6 @@ function classify(meta: ResourceMeta): 'guides' | 'code' | 'courses' {
   ]
   if (isGithub(meta.url) || containsAny(hay, codeSignals)) return 'code'
 
-  // Fold prior "ecosystem" hints into Guides & Docs
   const ecosystemSignals = [
     'node.js','nodejs','npm','pnpm','yarn','nvm',
     'hardhat','foundry','forge','anvil','remix',
@@ -103,34 +86,7 @@ function classify(meta: ResourceMeta): 'guides' | 'code' | 'courses' {
   ]
 
   if (containsAny(hay, guideSignals) || containsAny(hay, ecosystemSignals)) return 'guides'
-
-  // Default to Guides & Docs
   return 'guides'
-}
-
-// Twitter handle extraction
-function extractTwitterHandle(meta: ResourceMeta): string | null {
-  const handleRe = /^@?([A-Za-z0-9_]{1,15})$/
-  for (const a of meta.authors || []) {
-    const m = String(a).trim().match(handleRe)
-    if (m) return m[1]
-  }
-  if (meta.url) {
-    try {
-      const u = new URL(meta.url)
-      const host = u.hostname.replace(/^www\./,'')
-      if (host === 'twitter.com' || host === 'x.com') {
-        const seg = u.pathname.split('/').filter(Boolean)[0] || ''
-        const m = seg.match(handleRe)
-        if (m) return m[1]
-      }
-    } catch {}
-  }
-  if (meta.title?.trim().startsWith('@')) {
-    const m = meta.title.trim().match(handleRe)
-    if (m) return m[1]
-  }
-  return null
 }
 
 // Blog MD -> HTML
@@ -145,44 +101,21 @@ async function getBlogHtml() {
   }
 }
 
-// Read .md and split into resources + twitter profiles
+// Read .md and collect resources
 async function getEthereumContent(): Promise<{
   resources: (ResourceMeta & { key: string; section: ReturnType<typeof classify> })[]
-  profiles: TwitterProfile[]
 }> {
   const dir = path.join(process.cwd(), 'app', 'ethereum')
   const files = await fs.promises.readdir(dir)
   const mdFiles = files.filter(f => f.toLowerCase().endsWith('.md') && f.toLowerCase() !== 'blogpost.md')
 
   const resources: (ResourceMeta & { key: string; section: ReturnType<typeof classify> })[] = []
-  const profiles: TwitterProfile[] = []
-  const seen = new Set<string>()
 
   for (const file of mdFiles) {
     const raw = await fs.promises.readFile(path.join(dir, file), 'utf-8')
     const { data } = matter(raw)
     const meta = data as ResourceMeta
 
-    // Twitter profiles
-    if (isTwitterTag(meta.tags)) {
-      const h = extractTwitterHandle(meta)
-      if (h) {
-        const key = h.toLowerCase()
-        if (!seen.has(key)) {
-          seen.add(key)
-          profiles.push({
-            handle: h,
-            title: meta.title,
-            displayName: meta.displayName,
-            avatar: typeof meta.avatar === 'string' ? meta.avatar : undefined,
-            bio: typeof meta.bio === 'string' ? meta.bio : undefined,
-          })
-        }
-      }
-      continue
-    }
-
-    // Normal resources
     if (!isEthereumTag(meta.tags)) continue
     if (!meta.url) continue
 
@@ -202,12 +135,12 @@ async function getEthereumContent(): Promise<{
   }
 
   resources.sort((a, b) => (new Date(b.dateAdded || 0).getTime()) - (new Date(a.dateAdded || 0).getTime()))
-  return { resources, profiles }
+  return { resources }
 }
 
 export default async function EthereumPage() {
   const [blogContent, content] = await Promise.all([getBlogHtml(), getEthereumContent()])
-  const { resources, profiles } = content
+  const { resources } = content
 
   const guidesDocs    = resources.filter(r => r.section === 'guides')
   const codeTemplates = resources.filter(r => r.section === 'code')
@@ -254,6 +187,9 @@ export default async function EthereumPage() {
       </section>
     ) : null
 
+  const ethListId = '1959975314357916004'
+  const ethListUrl = 'https://x.com/i/lists/1959975314357916004'
+
   return (
     <div className="min-h-screen bg-black">
       {/* Banner */}
@@ -291,18 +227,69 @@ export default async function EthereumPage() {
           </div>
         </details>
 
-        {/* Auto sections (Ecosystem removed) */}
+        {/* Auto sections */}
         <Section title="Guides & Docs" items={guidesDocs} />
         <Section title="Code & Templates" items={codeTemplates} />
         <Section title="Courses" items={courses} />
 
-        {/* Ethereum Twitter (unchanged) */}
-        {profiles.length > 0 && (
-          <section className="mb-12">
-            <h2 className="text-lg md:text-xl font-display font-semibold text-white mb-4">Ethereum Twitter</h2>
-            <EthereumTimelines profiles={profiles} />
-          </section>
-        )}
+        {/* New: Interactive Twitter List section (Early-Stage style) */}
+        <section className="mb-12">
+          <h2 className="text-lg md:text-xl font-display font-semibold text-white mb-4">
+            Ethereum’s core builders shaping the ecosystem
+          </h2>
+
+          <div className="rounded-lg border border-white/10 bg-[#1a1a1a] p-4">
+            <div className="mb-3 text-sm text-white/70">
+              Curated accounts worth following{' '}
+              <a
+                className="text-[#73FDEA] hover:text-[#FF00AA]"
+                href={ethListUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                (open on X)
+              </a>.
+            </div>
+
+            {/* Programmatic timeline container */}
+            <div id="x-list-eth" />
+
+            {/* Hidden fallback hint */}
+            <div id="x-fallback-eth" className="hidden mt-3 text-xs text-white/60">
+              If you see “Nothing to see here”, enable third-party cookies or disable tracker blockers
+              for this site, then refresh. You can also open the list directly on X.
+            </div>
+          </div>
+
+          {/* Load widgets.js once it’s safe */}
+          <Script src="https://platform.twitter.com/widgets.js" strategy="afterInteractive" />
+
+          {/* Create the timeline and reveal fallback if the iframe never mounts */}
+          <Script id="x-init-eth" strategy="afterInteractive">
+            {`
+              (function initEthList(){
+                function mount() {
+                  var el = document.getElementById('x-list-eth');
+                  if (!window.twttr || !window.twttr.widgets || !el) return setTimeout(mount, 80);
+                  if (el.dataset.mounted) return;
+                  el.dataset.mounted = '1';
+                  window.twttr.widgets.createTimeline(
+                    { sourceType: 'list', id: '${ethListId}' },
+                    el,
+                    { theme: 'dark', height: 620, dnt: true }
+                  );
+                  setTimeout(function(){
+                    if (!el.querySelector('iframe')) {
+                      var fb = document.getElementById('x-fallback-eth');
+                      if (fb) fb.classList.remove('hidden');
+                    }
+                  }, 3000);
+                }
+                mount();
+              })();
+            `}
+          </Script>
+        </section>
 
         {/* CTA */}
         <div className="mt-12 bg-gradient-to-r from-[#8E1CF1] to-[#FF00AA] rounded-lg p-8 text-center">
