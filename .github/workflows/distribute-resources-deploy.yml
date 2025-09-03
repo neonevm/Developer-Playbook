@@ -10,7 +10,7 @@ on:
 
 jobs:
   distribute-resources:
-    runs-on: ["gha-runner-scale-set"]
+    runs-on: ["gha-runner-scale-set-neonevm"]
     
     steps:
     - name: Checkout code

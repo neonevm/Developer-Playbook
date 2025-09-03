@@ -40,7 +40,7 @@ on:
 
 jobs:
   validate-content:
-    runs-on: ["gha-runner-scale-set"]
+    runs-on: ["gha-runner-scale-set-neonevm"]
     
     steps:
     - name: Checkout code
