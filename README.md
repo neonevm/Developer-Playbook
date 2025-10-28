@@ -15,7 +15,7 @@ It provides articles and curated resources, structured and organized by learning
    - Add new resources as individual markdown files in the appropriate folders inside 'app/resources' folder
    - Include a learning journey stage tag for automatic categorization
    - Follow our content submission format (see below)
-   - To publish your own article directly in the Playbook (Builder-Powered Articles section), add your `.md` file to:
+   - ✅ To publish your own article directly in the Playbook (Builder-Powered Articles section), add your `.md` file to:
      `/app/resources/guides-articles`
      using the template here:
      `/app/resources/guides-articles/_TEMPLATE.md`
