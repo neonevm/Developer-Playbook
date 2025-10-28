@@ -4,26 +4,21 @@ import path from 'path'
 import matter from 'gray-matter'
 import Link from 'next/link'
 import {
-  ArrowLeft,
-  BookOpen,
-  ExternalLink,
-  Code,
-  Target,
-  Globe,
-  Clock,
-  User,
+  ArrowLeft, BookOpen, ExternalLink, Code, Target, Globe, Clock, User,
 } from 'lucide-react'
 
 export const runtime = 'nodejs'
-export const dynamic = 'force-static' // build-time scan
+export const dynamic = 'force-static'
 
 // ---------- Types ----------
 type Item = {
   key: string
+  slug: string
   title: string
   description?: string
   author?: string
   date?: string // year as string
+  dateAdded?: string // full ISO for sorting
   readTime?: string
   difficulty?: string
   url?: string
@@ -31,13 +26,15 @@ type Item = {
   icon: 'Globe' | 'Code' | 'Target' | 'BookOpen'
   category: string
   tags: string[]
+  href: string // computed internal/external href for the card
+  external: boolean
 }
 
 type Section = { title: string; description: string; items: Item[] }
 
 // ---------- Helpers ----------
 const DIR = path.join(process.cwd(), 'app', 'resources', 'guides-articles')
-const toStr = (v: unknown): string => (typeof v === 'string' ? v : '')
+const toStr = (v: unknown, d = ''): string => (typeof v === 'string' ? v : d)
 const toArr = (v: unknown): string[] => (Array.isArray(v) ? v.map(String) : [])
 const low = (s: string) => s.toLowerCase()
 
@@ -73,6 +70,7 @@ const iconForCategory = (category: string): Item['icon'] => {
     case 'Cross-Chain':
       return 'Globe'
     case 'General':
+    case 'Community':
     default:
       return 'BookOpen'
   }
@@ -82,11 +80,16 @@ const yearFromDate = (d?: string | Date) => {
   if (!d) return undefined
   const dt = typeof d === 'string' ? new Date(d) : d
   if (isNaN(dt.getTime())) {
-    // try YYYY-MM-DD string split fallback
     if (typeof d === 'string') return d.split('-')[0]
     return undefined
   }
   return String(dt.getFullYear())
+}
+
+const calcReadTime = (text: string): string => {
+  const words = text.trim().split(/\s+/).length
+  const mins = Math.max(1, Math.round(words / 240))
+  return `${mins} min read`
 }
 
 // ---------- Loader ----------
@@ -103,7 +106,7 @@ async function loadArticles(): Promise<Item[]> {
   for (const file of files) {
     try {
       const raw = await fs.promises.readFile(path.join(DIR, file), 'utf-8')
-      const { data } = matter(raw)
+      const { data, content } = matter(raw)
 
       const title = toStr(data.title) || file.replace(/\.md$/i, '')
       const description = toStr(data.description)
@@ -111,38 +114,48 @@ async function loadArticles(): Promise<Item[]> {
       const firstAuthor = authors[0]?.replace(/^@/, '')
       const category = toStr(data.category) || 'General'
       const tags = toArr(data.tags)
-      const url = toStr(data.url)
+      const extUrl = toStr(data.url) || ''
       const difficulty = toStr(data.level) || 'Beginner'
       const type = inferType(tags)
       const icon = iconForCategory(category)
-      const date = yearFromDate(data.dateAdded)
-      const readTime = toStr((data as any).readTime) || undefined
+      const dateAdded = toStr((data as any).dateAdded) || ''
+      const date = yearFromDate(dateAdded)
+      const readTime = toStr((data as any).readTime) || (extUrl ? undefined : calcReadTime(content))
+      const fmSlug = toStr((data as any).slug)
+      const slug = fmSlug || file.replace(/\.md$/i, '').toLowerCase().replace(/[^a-z0-9\-]+/g, '-')
 
-      if (!title || !url) continue
+      const external = Boolean(extUrl)
+      const href = external ? extUrl : `/resources/guides-articles/${slug}`
+
+      if (!title) continue
 
       items.push({
         key: file,
+        slug,
         title,
         description,
         author: firstAuthor || 'Unknown',
         date,
+        dateAdded: dateAdded || undefined,
         readTime,
         difficulty,
-        url,
+        url: extUrl || undefined,
         type,
         icon,
         category,
         tags,
+        href,
+        external,
       })
     } catch (err) {
       console.warn('Failed to parse', file, err)
     }
   }
 
-  // newest first
+  // newest first by dateAdded
   items.sort((a, b) => {
-    const da = new Date((a as any).dateAdded || 0).getTime()
-    const db = new Date((b as any).dateAdded || 0).getTime()
+    const da = a.dateAdded ? new Date(a.dateAdded).getTime() : 0
+    const db = b.dateAdded ? new Date(b.dateAdded).getTime() : 0
     return db - da
   })
 
@@ -152,6 +165,11 @@ async function loadArticles(): Promise<Item[]> {
 // Assign each article to exactly one section (first match wins)
 function buildSections(items: Item[]): Section[] {
   const sections: Section[] = [
+    {
+      title: 'Builder-Powered Articles',
+      description: 'Real builders. Real insights. Publish your learnings and help level up the ecosystem.',
+      items: [],
+    },
     {
       title: 'Neon EVM & Cross-Chain Development',
       description: 'Articles focused on Neon EVM development and cross-chain interoperability.',
@@ -181,31 +199,29 @@ function buildSections(items: Item[]): Section[] {
     const t = it.tags.map(low)
     const type = low(it.type)
 
+    // Community = internal-only AND explicitly marked as community
+    if (!it.external && (c === 'community' || t.includes('community'))) {
+      pushTo(0, it); continue
+    }
+
+    // Existing buckets
     if (c === 'neon evm' || c === 'cross-chain' || t.includes('cross-chain') || t.includes('neon') || t.includes('evm')) {
-      pushTo(0, it)
-      continue
+      pushTo(1, it); continue
     }
-
     if (c === 'ethereum' || c === 'general' || t.includes('fundamentals') || type.includes('deep dive')) {
-      pushTo(1, it)
-      continue
+      pushTo(2, it); continue
     }
-
     if (type.includes('tutorial') || type.includes('guide')) {
-      pushTo(2, it)
-      continue
+      pushTo(3, it); continue
     }
-
     if (t.includes('security') || t.includes('optimization') || type.includes('security')) {
-      pushTo(3, it)
-      continue
+      pushTo(4, it); continue
     }
 
     // default bucket
-    pushTo(1, it)
+    pushTo(2, it)
   }
 
-  // remove empty
   return sections.filter((s) => s.items.length > 0)
 }
 
@@ -232,7 +248,7 @@ export default async function GuidesArticlesPage() {
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Home
           </Link>
-        <h1 className="text-3xl font-display font-bold text-white mb-4">Guides & Articles</h1>
+          <h1 className="text-3xl font-display font-bold text-white mb-4">Guides & Articles</h1>
           <p className="text-lg text-white/90 max-w-3xl">
             Tutorials, deep dives, and developer journeys—pulled automatically from Markdown files in{' '}
             <code className="text-white/80">app/resources/guides-articles/</code>.
@@ -256,9 +272,9 @@ export default async function GuidesArticlesPage() {
                 {group.items.map((a) => (
                   <a
                     key={a.key}
-                    href={a.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    href={a.href}
+                    target={a.external ? "_blank" : undefined}
+                    rel={a.external ? "noopener noreferrer" : undefined}
                     className="group rounded-lg border border-white/10 bg-[#1a1a1a] hover:border-white/30 hover:bg-[#202020] transition-colors p-4"
                   >
                     <div className="flex items-start gap-3">
@@ -271,7 +287,9 @@ export default async function GuidesArticlesPage() {
                           <h3 className="truncate text-base font-medium text-white group-hover:text-[#73FDEA]">
                             {a.title}
                           </h3>
-                          <ExternalLink className="h-4 w-4 flex-shrink-0 text-white/60 group-hover:text-[#73FDEA]" />
+                          {a.external && (
+                            <ExternalLink className="h-4 w-4 flex-shrink-0 text-white/60 group-hover:text-[#73FDEA]" />
+                          )}
                         </div>
 
                         {a.description && (
@@ -322,7 +340,7 @@ export default async function GuidesArticlesPage() {
             appear here after a rebuild.
           </p>
           <a
-            href="https://github.com/neonlabsorg/Developer-Playbook"
+            href="https://github.com/neonevm/Developer-Playbook"
             target="_blank"
             rel="noopener noreferrer"
             className="bg-white text-[#8E1CF1] hover:bg-gray-100 font-medium py-3 px-6 rounded-lg transition-all duration-300 shadow-lg inline-flex items-center"
