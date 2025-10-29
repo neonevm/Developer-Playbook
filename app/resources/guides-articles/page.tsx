@@ -269,13 +269,19 @@ export default async function GuidesArticlesPage() {
 
               {/* Compact cards */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {group.items.map((a) => (
+                {group.items.map((a) => {
+                  const isCommunityTile = group.title === 'Builder-Powered Articles' && (low(a.category) === 'community' || a.tags.map(low).includes('community'))
+                  const tileClasses = isCommunityTile 
+                    ? "group rounded-lg border-2 border-[#FF00AA]/50 bg-gradient-to-br from-[#FF00AA]/10 to-[#8E1CF1]/10 hover:border-[#FF00AA] hover:from-[#FF00AA]/15 hover:to-[#8E1CF1]/15 transition-all p-4"
+                    : "group rounded-lg border border-white/10 bg-[#1a1a1a] hover:border-white/30 hover:bg-[#202020] transition-colors p-4"
+                  
+                  return (
                   <a
                     key={a.key}
                     href={a.href}
                     target={a.external ? "_blank" : undefined}
                     rel={a.external ? "noopener noreferrer" : undefined}
-                    className="group rounded-lg border border-white/10 bg-[#1a1a1a] hover:border-white/30 hover:bg-[#202020] transition-colors p-4"
+                    className={tileClasses}
                   >
                     <div className="flex items-start gap-3">
                       <div className="flex-shrink-0 w-9 h-9 rounded-md bg-gradient-to-r from-[#FF00AA] to-[#8E1CF1] grid place-items-center">
@@ -326,7 +332,8 @@ export default async function GuidesArticlesPage() {
                       </div>
                     </div>
                   </a>
-                ))}
+                  )
+                })}
               </div>
             </section>
           ))}
