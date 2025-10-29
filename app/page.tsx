@@ -79,23 +79,30 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {contentTypes.map((type) => (
-              <Link
-                key={type.title}
-                href={type.href}
-                className="bg-[#1a1a1a] border border-white/10 rounded-lg p-6 text-center hover:bg-[#2a2a2a] transition-all duration-300 group"
-              >
-                <div
-                  className={`w-12 h-12 bg-gradient-to-r ${type.color} rounded-lg flex items-center justify-center mx-auto mb-4 shadow-lg`}
+            {contentTypes.map((type) => {
+              const isGuidesArticles = type.title === 'Guides & Articles'
+              const tileClasses = isGuidesArticles
+                ? "border-2 border-[#FF00AA]/50 bg-gradient-to-br from-[#FF00AA]/10 to-[#8E1CF1]/10 rounded-lg p-6 text-center hover:border-[#FF00AA] hover:from-[#FF00AA]/15 hover:to-[#8E1CF1]/15 transition-all duration-300 group"
+                : "bg-[#1a1a1a] border border-white/10 rounded-lg p-6 text-center hover:bg-[#2a2a2a] transition-all duration-300 group"
+              
+              return (
+                <Link
+                  key={type.title}
+                  href={type.href}
+                  className={tileClasses}
                 >
-                  <type.icon className="h-6 w-6 text-white" />
-                </div>
-                <h3 className="text-lg font-display font-semibold text-white mb-2 group-hover:text-[#73FDEA] transition-colors duration-300">
-                  {type.title}
-                </h3>
-                <p className="text-white/80">{type.description}</p>
-              </Link>
-            ))}
+                  <div
+                    className={`w-12 h-12 bg-gradient-to-r ${type.color} rounded-lg flex items-center justify-center mx-auto mb-4 shadow-lg`}
+                  >
+                    <type.icon className="h-6 w-6 text-white" />
+                  </div>
+                  <h3 className="text-lg font-display font-semibold text-white mb-2 group-hover:text-[#73FDEA] transition-colors duration-300">
+                    {type.title}
+                  </h3>
+                  <p className="text-white/80">{type.description}</p>
+                </Link>
+              )
+            })}
           </div>
         </div>
       </section>
